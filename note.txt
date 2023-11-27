@@ -1,0 +1,95 @@
+akun mysql :
+username : makenliving
+pass : M4kenliving*
+
+
+
+{
+    "first_name":Gusti
+    "last_name":Pangarep
+    "email":Gusti@test.com
+    "phone":086456125785
+    "second_phone":2946129541639
+    "full_address":Perumahan Kota Wisata Cluster Toronto YB6 No. 45 Cibubur, Jawa Barat 16820
+    "province":Jawa Barat
+    "city":Bandung
+    "district":Cihideung
+    "postal_code":16820
+    "sending_id":3
+    "payment_id":3
+    "status":Order (Foto Belum Dikirim)
+    "potongan_ongkir":12000
+    "coupon":CB10JUL
+    "item": [
+        {
+            "product_id":1
+            "quantity":3
+        },
+        {
+            "product_id":1
+            "quantity":3
+        },
+        {
+            "product_id":1
+            "quantity":3
+        }
+    ]
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            <div style="font-size:0;position:relative;width:139.1px;height:60px;">
+                                <div style="background-color:black;width:1.3px;height:60px;position:absolute;left:0px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:1.3px;height:60px;position:absolute;left:2.6px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:1.3px;height:60px;position:absolute;left:5.2px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:1.3px;height:60px;position:absolute;left:9.1px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:2.6px;height:60px;position:absolute;left:11.7px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:2.6px;height:60px;position:absolute;left:15.6px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:1.3px;height:60px;position:absolute;left:19.5px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:2.6px;height:60px;position:absolute;left:23.4px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:1.3px;height:60px;position:absolute;left:27.3px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:1.3px;height:60px;position:absolute;left:29.9px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:2.6px;height:60px;position:absolute;left:33.8px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:1.3px;height:60px;position:absolute;left:39px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:1.3px;height:60px;position:absolute;left:41.6px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:2.6px;height:60px;position:absolute;left:44.2px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:1.3px;height:60px;position:absolute;left:49.4px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:1.3px;height:60px;position:absolute;left:52px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:2.6px;height:60px;position:absolute;left:54.6px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:1.3px;height:60px;position:absolute;left:59.8px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:1.3px;height:60px;position:absolute;left:62.4px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:2.6px;height:60px;position:absolute;left:66.3px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:2.6px;height:60px;position:absolute;left:70.2px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:1.3px;height:60px;position:absolute;left:74.1px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:2.6px;height:60px;position:absolute;left:78px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:2.6px;height:60px;position:absolute;left:83.2px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:1.3px;height:60px;position:absolute;left:87.1px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:1.3px;height:60px;position:absolute;left:89.7px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:1.3px;height:60px;position:absolute;left:92.3px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:2.6px;height:60px;position:absolute;left:96.2px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:1.3px;height:60px;position:absolute;left:100.1px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:2.6px;height:60px;position:absolute;left:104px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:1.3px;height:60px;position:absolute;left:109.2px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:1.3px;height:60px;position:absolute;left:111.8px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:2.6px;height:60px;position:absolute;left:114.4px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:1.3px;height:60px;position:absolute;left:119.6px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:1.3px;height:60px;position:absolute;left:122.2px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:2.6px;height:60px;position:absolute;left:126.1px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:1.3px;height:60px;position:absolute;left:130px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:2.6px;height:60px;position:absolute;left:132.6px;top:0px;">&nbsp;</div>
+                                <div style="background-color:black;width:1.3px;height:60px;position:absolute;left:136.5px;top:0px;">&nbsp;</div>
+                                </div>
