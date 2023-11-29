@@ -34,7 +34,7 @@ class AuthController extends Controller
 
             $user = User::create($data);
 
-            $token = $user->createToken('API Token')->accessToken;
+            $token = $user->createToken()->accessToken;
 
             return response()->json(['message' => 'berhasil menambahkan akun', 'user' => $user, 'token' => $token], 200);
         }
@@ -60,7 +60,7 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
         $role = Role::where('id', $user->role_id)->first()->name;
-        $token = auth()->user()->createToken('API Token')->accessToken;
+        $token = auth()->user()->createToken('api')->plainTextToken;
 
 
         return response()->json(['user' => auth()->user(), 'token' => $token, 'role' => $role], 200);
