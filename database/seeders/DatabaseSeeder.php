@@ -20,39 +20,35 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         Role::create([
-            'name' => 'Administrator'
+            'name' => 'Administrator',
+            'caption' => 'administrator'
         ]);
         Role::create([
-            'name' => 'Customer Service'
+            'name' => 'Customer Service',
+            'caption' => 'customer_service'
         ]);
         Role::create([
-            'name' => 'Layout'
+            'name' => 'Layout',
+            'caption' => 'layout',
         ]);
         Role::create([
-            'name' => 'Demonstration'
+            'name' => 'Demonstration',
+            'caption' => 'demontration'
         ]);
-
-        $number = mt_rand(1000, 9999);
-        $code = date("Ymd$number");
 
         User::create([
             'username' => 'Admin Maken Living',
             'email' => 'admin@makenliving.com',
             'password' => '12345678',
-            'code' => $code,
             'first_name' => 'Admin',
             'last_name' => 'Maken',
             'role_id' => '1',
         ]);
 
-        $number = mt_rand(1000, 9999);
-        $code = date("Ymd$number");
-
         User::create([
             'username' => 'Admin Maken Living',
             'email' => 'admin2@makenliving.com',
             'password' => '12345678',
-            'code' => $code,
             'first_name' => 'Admin',
             'last_name' => 'Maken 2',
             'role_id' => '1',

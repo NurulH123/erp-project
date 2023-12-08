@@ -2,51 +2,61 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 use App\Models\Role;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 
 class RoleController extends Controller
 {
-    public function indexRole()
+
+    public function show(Role $role)
     {
-
-        $data = Role::OrderBy('id', 'desc')->get();
-
-        return response()->json(['message' => 'success', 'data' => $data], 200);
+        return $role;
     }
 
-    public function oneRole($id)
+    public function create(Request $request)
     {
-
-        $data = Role::where('id', $id)->first();
-
-        return response()->json(['message' => 'success', 'data' => $data], 200);
-    }
-
-    public function createRole(Request $request)
-    {
+        $request->validate(['name' => 'required'],['name.required' => 'Nama Harus Diisi']);
 
         $data['name'] = $request->name;
+        $data['caption'] = Str::slug($request->name);
         $role = Role::create($data);
 
         return response()->json(['message' => 'role berhasil ditambahkan', 'data' => $role], 200);
     }
 
-    public function updateRole(Request $request, $id)
+    public function update(Request $request,Role $role)
     {
 
-        $data = Role::where('id', $id)->first();
         $data['name'] = $request->name;
-        $data->update();
+        $data['slug'] = Str::slug($request->name);
 
-        return response()->json(['message' => 'role berhasil diperbaharui', 'data' => $data], 200);
+        $role->update($data);
+
+        return response()->json(['message' => 'role berhasil diperbaharui', 'data' => $role], 200);
     }
 
-    public function deleteRole(Request $request, $id)
+    public function destroy(Role $role)
     {
-        $role = Role::destroy($id);
+        if (!$role->delete()) {
+            return response()->json(['message' => 'Terjadi kesalahan. Coba cek lagi']);
+        }
 
-        return response()->json(['message' => 'role berhasil dihapus'], 200);
+        return 'Data Berhasil Dihapus';
+    }
+
+    public function nonactivated(Role $role)
+    {
+        $role->update(['status' => false]);
+
+        return response()->json(['message' => 'role berhasil di non aktifkan'], 200);
+    }
+
+    public function listRole()
+    {
+
+        $data = Role::OrderBy('id', 'desc')->get();
+
+        return response()->json(['message' => 'success', 'data' => $data], 200);
     }
 }

@@ -51,13 +51,14 @@ Route::middleware('auth:sanctum')->group(function() {
         Route::post('index_users', [ProfileController::class, 'all']);
     });
 
-    Route::prefix('role')->group(function() {
-        Route::get('index', [RoleController::class, 'indexRole']);
-        Route::post('create', [RoleController::class, 'createRole']);
-        Route::post('update/{id}', [RoleController::class, 'updateRole']);
-        Route::post('delete/{id}', [RoleController::class, 'deleteRole']);
-        Route::post('one/{id}', [RoleController::class, 'oneRole']);
-    });
+    Route::resource('role', 'RoleController')->only('show', 'create', 'update', 'destroy');
+    // Route::prefix('role')->group(function() {
+        // Route::get('/', [RoleController::class, 'indexRole']);
+        // Route::post('create', [RoleController::class, 'createRole']);
+        // Route::post('update/{id}', [RoleController::class, 'updateRole']);
+        // Route::post('delete/{id}', [RoleController::class, 'deleteRole']);
+        // Route::post('one/{id}', [RoleController::class, 'oneRole']);
+    // });
 
     Route::prefix('customer')->group(function() {
         Route::get('index', [CustomerController::class, 'indexCustomer']);
