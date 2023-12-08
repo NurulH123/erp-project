@@ -13,21 +13,16 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('company_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('unit_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('name');
-            $table->string('tag');
-            $table->text('description')->nullable();
-            $table->string('model');
             $table->bigInteger('price');
+            $table->string('subtance');
             $table->integer('quantity');
-            $table->integer('minimum_quantity')->nullable();
+            $table->date('production');
             $table->string('image')->nullable();
-            $table->string('product_status');
-            $table->integer('length')->nullable();
-            $table->integer('width')->nullable();
-            $table->integer('height')->nullable();
-            $table->enum('length_class',['Centimeter','Millimeter','Inch'])->default('Centimeter');
-            $table->integer('weight')->nullable();
-            $table->enum('weight_class',['Kilogram','Gram','Pound','Ounce'])->default('Gram');
+            $table->boolean('status')->default(true)->comment('active|inactive');
+            $table->text('desc')->nullable();
             $table->timestamps();
         });
     }

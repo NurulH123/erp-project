@@ -1,0 +1,20 @@
+#######################
+Route : {{ $host }}/profile
+@method:POST
+@body : code -> berisi code user
+
+Mengambil detail data profile user
+
+************* BATAS ****************
+
+Route :
+{{ $host }}/update
+@method : PATCH
+@body : - username
+        - email
+        - first_name
+        - last_name
+        - image
+        - role_id
+        - code
+

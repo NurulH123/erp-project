@@ -49,9 +49,6 @@ class DataFrameExport implements FromCollection, WithMapping, WithHeadings, Shou
             $frames = Product::where('id',$data->product_id)->with('productcategory')->with('category')->get();
             foreach($frames as $frames){
                 $count = $frames->category->count();
-                // foreach($frames->category as $category){
-                //     $categories[] = $category->name;
-                // }
                 foreach($frames->productcategory as $category){
                     $category['quantity'] = $category->quantity;
                     $category['name'] = Category::where('id',$category->category_id)->first()->name;

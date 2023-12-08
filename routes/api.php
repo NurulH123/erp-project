@@ -43,12 +43,12 @@ Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanct
 Route::middleware('auth:sanctum')->group(function() {
 
     Route::prefix('profile')->group(function() {
-        Route::post('/', [ProfileController::class, 'indexProfile']);
-        Route::post('update', [ProfileController::class, 'updateProfile']);
+        Route::post('/', [ProfileController::class, 'index']);
+        Route::patch('update', [ProfileController::class, 'update']);
         Route::post('one_user/{id}', [ProfileController::class, 'oneProfile']);
         Route::post('update_user/{id}', [ProfileController::class, 'updateUser']);
-        Route::post('delete_user/{id}', [ProfileController::class, 'deleteProfile']);
-        Route::post('index_users', [ProfileController::class, 'allProfile']);
+        Route::post('delete_user/{id}', [ProfileController::class, 'delete']);
+        Route::post('index_users', [ProfileController::class, 'all']);
     });
 
     Route::prefix('role')->group(function() {

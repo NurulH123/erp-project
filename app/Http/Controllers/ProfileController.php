@@ -7,19 +7,20 @@ use App\Models\User;
 
 class ProfileController extends Controller
 {
-    public function indexProfile(Request $request)
+    public function index(Request $request)
     {
-        $user = $request->user();
-        $profile = User::where('code', $user->code)->with('role')->orderBy('id', 'desc')->first();
+        $profile = User::where('code', $request->code)->with('role')->orderBy('id', 'desc')->first();
 
         return response()->json(['message' => 'data berhasil diambil', 'data' => $profile], 200);
     }
 
 
-    public function updateProfile(Request $request)
+    public function update(Request $request)
     {
         $user = $request->user();
         $profile = User::where('code', $user->code)->first();
+        // dd($profile);
+        // $profile = ;
 
         if ($profile->email != $request->email) {
             $data = $request->validate([
@@ -154,7 +155,7 @@ class ProfileController extends Controller
     }
 
 
-    public function allProfile()
+    public function all()
     {
 
         $user = User::with('role')->orderBy('id', 'desc')->get();
@@ -162,7 +163,7 @@ class ProfileController extends Controller
         return response()->json(['data' => $user]);
     }
 
-    public function deleteProfile(Request $request, $id)
+    public function delete(Request $request, $id)
     {
 
         try {
