@@ -23,16 +23,16 @@ class AuthController extends Controller
                 'first_name' => 'required|max:255',
                 'last_name' => 'required|max:255',
                 'role_id' => 'required',
-
             ]);
 
 
             $data['password'] = bcrypt($request->password);
             $number = mt_rand(1000, 9999);
-            $code = date("Ymd$number");
-            $data['code'] = $code;
 
             $user = User::create($data);
+            $code = date("Ymd$number") .'-'. $user->id;
+            
+            $adminEmployee = $user->adminEmployee->create(['code' => $code]);
 
             $token = $user->createToken()->accessToken;
 
@@ -60,8 +60,8 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
         $role = Role::where('id', $user->role_id)->first()->name;
-        $token = auth()->user()->createToken('api')->plainTextToken;
 
+        $token = auth()->user()->createToken('api')->plainTextToken;
 
         return response()->json(['user' => auth()->user(), 'token' => $token, 'role' => $role], 200);
 

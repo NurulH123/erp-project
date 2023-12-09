@@ -20,6 +20,7 @@ use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\OrderPhotoController;
 use App\Http\Controllers\RajaOngkirController;
 use App\Http\Controllers\ReturnOrderController;
+use App\Http\Controllers\Company\PositionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +42,13 @@ Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 Route::middleware('auth:sanctum')->group(function() {
+
+    Route::prefix('position')->group(function() {
+        Route::get('all', [PositionController::class, 'index']);
+        Route::post('create', [PositionController::class, 'create']);
+        Route::patch('update/{id}', [PositionController::class, 'update']);
+        Route::get('status/{id}', [PositionController::class, 'index'])->name('position.change-status');
+    });
 
     Route::prefix('profile')->group(function() {
         Route::post('/', [ProfileController::class, 'index']);

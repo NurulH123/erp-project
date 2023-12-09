@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('password');
             $table->unsignedBigInteger('role_id');
             $table->boolean('status')->default(true)->comment('active|inactive');
+            $table->boolean('is_owner')->default(true)->comment('active|inactive');
             $table->rememberToken();
             $table->timestamps();
         });
