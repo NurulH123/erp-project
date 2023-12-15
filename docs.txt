@@ -1,3 +1,26 @@
+===================================================================
+|========================= AUTHENTICCATION =======================|
+===================================================================
+# REGISTER USER
+
+Route : {{ $host }}/register
+@method:POST
+@body : - first_name            - password
+        - last_name             - password_confirmation
+        - email                 - role_id
+
+Menambahkan user baru
+
+************* BATAS ****************
+# LOGIN 
+
+Route : {{ $host }}/login
+@method : POST
+@body : - email                 
+        - password
+
+Menambahkan user baru
+
 ==============================================================
 |========================= PERUSAHAAN =======================|
 ==============================================================
