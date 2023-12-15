@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
             $table->string('code')->unique();
-            $table->boolean('is_admin');
+            $table->boolean('is_admin')->default(true);
             $table->morphs('employiable');
             $table->timestamps();
         });

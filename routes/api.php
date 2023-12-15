@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\RoleController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\AddressController;
@@ -12,6 +11,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SendingController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\Company\CompanyController;
+use App\Http\Controllers\Company\EmployeeController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DasboardController;
 use App\Http\Controllers\DataLeadController;
@@ -32,10 +33,6 @@ use App\Http\Controllers\Company\PositionController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
@@ -58,6 +55,23 @@ Route::middleware('auth:sanctum')->group(function() {
         Route::post('delete_user/{id}', [ProfileController::class, 'delete']);
         Route::post('index_users', [ProfileController::class, 'all']);
     });
+
+    Route::group(
+        ['prefix' => 'company'],
+        function() {
+            Route::get('/', [CompanyController::class, 'index']);
+            Route::post('/', [CompanyController::class, 'create']);
+            Route::patch('/{id}', [CompanyController::class, 'update']);
+            Route::delete('/{company}', [CompanyController::class, 'destroy']);
+            Route::patch('/{id}/change-status', [CompanyController::class, 'changeStatus']);
+        });
+
+    Route::group(
+        ['prefix' => 'employee'],
+        function()  {
+            Route::post('/', [EmployeeController::class, 'create']);
+        }
+    );
 
     Route::resource('role', 'RoleController')->only('show', 'create', 'update', 'destroy');
     // Route::prefix('role')->group(function() {

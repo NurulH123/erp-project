@@ -37,7 +37,8 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::create([
-            'username' => 'Admin Maken Living',
+            'first_name' => 'Admin ',
+            'last_name' => 'Maken Living',
             'email' => 'admin@makenliving.com',
             'password' => '12345678',
             'first_name' => 'Admin',
@@ -45,8 +46,10 @@ class DatabaseSeeder extends Seeder
             'role_id' => '1',
         ]);
 
+        
         User::create([
-            'username' => 'Admin Maken Living',
+            'first_name' => 'Admin ',
+            'last_name' => 'Maken Living',
             'email' => 'admin2@makenliving.com',
             'password' => '12345678',
             'first_name' => 'Admin',

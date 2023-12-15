@@ -1,4 +1,7 @@
-#######################
+==============================================================
+|========================= PERUSAHAAN =======================|
+==============================================================
+
 Route : {{ $host }}/profile
 @method:POST
 @body : code -> berisi code user
@@ -18,3 +21,73 @@ Route :
         - role_id
         - code
 
+===================================================================
+|=========================== POSITION ============================|
+===================================================================
+
+Route : {{ $host }}/position
+@method:GET
+
+Mengambil semua nama data posisi/jabatan
+
+****************************************
+
+Route : {{ $host }}/position
+@method:POST
+@body : 
+
+Menambah data posisi/jabatan
+
+=====================================================================
+|================================ COMPANY ==========================|
+=====================================================================
+
+# AMBIL SEMUA DATA PERUSAHAAN
+
+Route : {{ $host }}/company
+@method:GET
+
+Mengambil semua nama data perusahaan
+
+****************************************
+
+# MENAMBAH PERUSAHAAN
+
+Route : {{ $host }}/company
+@method:POST
+@body : - user_id               - address
+        - name                  - phone
+        - category              - email (optional)
+
+Menambah data perusahaan
+
+****************************************
+# UPDATE DATA PERUSAHAAN
+
+Route : {{ $host }}/company/{id}
+@method :PATCH
+@param : id -> ID dari perusahaan
+@body : - user_id               - address
+        - name                  - phone
+        - category              - email (optional)
+
+Update data perusahaan berdasarkan id yg diberikan
+
+****************************************
+# MERUBAH STATUS PERUSAHAAN
+
+Route : {{ $host }}/company/{id}/change-status
+@method :PATCH
+@param : id -> ID dari perusahaan
+
+Merubah status Perusahaan (active/inactive) 
+Note : admin master
+
+****************************************
+# HAPUS PERUSAHAAN
+
+Route : {{ $host }}/company/{id}
+@method :DELETE
+@param : id -> ID dari perusahaan
+
+Hapus data perusahaan berdasarkan id  perusahaan
