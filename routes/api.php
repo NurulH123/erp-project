@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\BarcodeController;
@@ -73,14 +74,16 @@ Route::middleware('auth:sanctum')->group(function() {
         }
     );
 
-    Route::resource('role', 'RoleController')->only('show', 'create', 'update', 'destroy');
-    // Route::prefix('role')->group(function() {
-        // Route::get('/', [RoleController::class, 'indexRole']);
-        // Route::post('create', [RoleController::class, 'createRole']);
-        // Route::post('update/{id}', [RoleController::class, 'updateRole']);
-        // Route::post('delete/{id}', [RoleController::class, 'deleteRole']);
-        // Route::post('one/{id}', [RoleController::class, 'oneRole']);
-    // });
+    Route::group(
+        ['prefix' => 'role'],
+        function() {
+            Route::get('/', [RoleController::class, 'index']);
+            Route::get('/{role}/show', [RoleController::class, 'show']);
+            Route::post('/{id}/change-status', [RoleController::class, 'changeStatus']);
+            Route::post('/', [RoleController::class, 'create']);
+            Route::patch('{id}', [RoleController::class, 'update']);
+            Route::delete('/{id}', [RoleController::class, 'destroy']);
+    });
 
     Route::prefix('customer')->group(function() {
         Route::get('index', [CustomerController::class, 'indexCustomer']);

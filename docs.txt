@@ -22,7 +22,57 @@ Route : {{ $host }}/login
 Menambahkan user baru
 
 ==============================================================
-|========================= PERUSAHAAN =======================|
+|============================ ROLES =========================|
+==============================================================
+# AMBIL SEMUA DATA ROLE
+
+Route : {{ $host }}/role
+@method:GET
+
+Mengambil semua data role
+
+***********************************
+# MENAMBAH ROLE
+
+Route :  {{ $host }}/role
+@method : POST
+@body : - name
+        - code
+
+Menambahkan role
+
+***********************************
+# UPDATE ROLE
+
+Route :  {{ $host }}/{id}
+@method : PATCH
+@param : id -> id dari role
+@body : - name
+        - code
+
+Menambahkan role
+
+***********************************
+# HAPUS ROLE
+
+Route :  {{ $host }}/{id}
+@method : DELETE
+@param : id -> id dari role
+
+Menghapus role
+
+***********************************
+# UBAH STATUS ROLE
+
+Route :  {{ $host }}/{id}/change-status
+@method : POST
+@param : id -> id dari role
+
+Menghapus role
+
+
+==============================================================
+|=========================== PROFILE ========================|
 ==============================================================
 
 Route : {{ $host }}/profile
@@ -31,7 +81,7 @@ Route : {{ $host }}/profile
 
 Mengambil detail data profile user
 
-************* BATAS ****************
+***********************************
 
 Route :
 {{ $host }}/update

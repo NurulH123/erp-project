@@ -5,9 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Role;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class RoleController extends Controller
 {
+    public function index()
+    {
+        $data = Role::OrderBy('id', 'desc')->get();
+
+        return response()->json(['message' => 'success', 'data' => $data], 200);
+    }
 
     public function show(Role $role)
     {
@@ -16,7 +23,15 @@ class RoleController extends Controller
 
     public function create(Request $request)
     {
-        $request->validate(['name' => 'required'],['name.required' => 'Nama Harus Diisi']);
+        try {
+            $validator = Validator::make($request->all(),['name' => 'required'],['name.required' => 'Nama Harus Diisi']);
+        
+            if ($validator->fails()) {
+                return response()->json(['message' => $validator->errors()]);
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
 
         $data['name'] = $request->name;
         $data['caption'] = Str::slug($request->name);
@@ -45,18 +60,10 @@ class RoleController extends Controller
         return 'Data Berhasil Dihapus';
     }
 
-    public function nonactivated(Role $role)
+    public function changeStatus(Role $role)
     {
         $role->update(['status' => false]);
 
         return response()->json(['message' => 'role berhasil di non aktifkan'], 200);
-    }
-
-    public function listRole()
-    {
-
-        $data = Role::OrderBy('id', 'desc')->get();
-
-        return response()->json(['message' => 'success', 'data' => $data], 200);
     }
 }
