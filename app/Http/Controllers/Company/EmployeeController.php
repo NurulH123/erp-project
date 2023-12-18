@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Company;
 
-use App\Http\Controllers\Controller;
-use App\Models\Employee;
 use App\Models\User;
+use App\Models\Employee;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Models\Company;
 use Illuminate\Support\Facades\Auth;
 
 class EmployeeController extends Controller
@@ -13,26 +14,47 @@ class EmployeeController extends Controller
     public function index()
     {
         $user = User::find(Auth::id());
-        $employees = $user->company->employee();
+        $employees = $user->company->employee;
 
-        return response()->json(['data' => $employees]);
+        return response()->json(['status' => 'Ok', 'data' => $employees], 200);
     }
 
     public function create(Request $request)
     {
         $user = auth()->user();
         $dataEmployee = [];
+        $idCompany = $user->company->id;
+        $company = Company::find($idCompany);
+
+        // create code employee
+        $countEmployees = $company->employee->count();
+
+        $numEmployee = 10000000 + $countEmployees;
+        $numCompany = 1000 + $idCompany;
+        $numUser = 1000 + $user->id;
+
+        $uniqEmployee = (string)substr($numEmployee, 1);
+        $uniqIDCompany = (string)substr($numCompany, 1);
+        $userInputer = (string)substr($numUser, 1);
+
+        $code =  $userInputer.'-'.$uniqIDCompany.'-'.date('Ymd').'-'.$uniqEmployee;
 
         try {
-            $dataEmployee['username'] = $user->username;
+            $dataEmployee['code'] = $code;
+            $dataEmployee['username'] = $request->username;
             $dataEmployee['isAdmin'] = $request->is_admin;
-            $dataProfile =  $request->except('username', 'is_admmin');
+            $dataProfile =  $request->except('username', 'is_admin');
 
             // create employee
-            dd($dataEmployee, $dataProfile);
+            $company->employee()->create($dataEmployee);
+
+            return response()->json([
+                'status' => 'success', 
+                'message' => 'Data Karyawan Berhasil Ditambahkan'
+            ], 200);
 
         } catch (\Throwable $th) {
-            //throw $th;
+            throw $th->getMessage();
         }
 
 

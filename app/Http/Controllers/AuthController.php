@@ -36,7 +36,7 @@ class AuthController extends Controller
                 
                 if ($validator->fails()) {
                     return response()->json([
-                        'status' => 'Terjadi kesalahan',
+                        'status' => 'failed',
                         'message' => $validator->errors()
                     ], 500);
                 }
@@ -47,17 +47,23 @@ class AuthController extends Controller
             $data['password'] = bcrypt($request->password);
             
             $user = User::create($data);
+
+            // create code
             $number = 1000000 + $user->id;
             $uniqCode = (string)substr($number, 1);
 
-            $code = date("Ymd$uniqCode");
+            $code = '00-'.date("Ymd").'-'.$uniqCode;
             
             // Tambah Admin Owner
             $user->adminEmployee()->create(['code' => $code]);
 
             $token = $user->createToken('api')->plainTextToken;
 
-            return response()->json(['message' => 'berhasil menambahkan akun', 'user' => $user, 'token' => $token], 200);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'berhasil menambahkan akun', 
+                'user' => $user, 'token' => $token
+            ], 200);
         }
 
     }
@@ -75,16 +81,18 @@ class AuthController extends Controller
         }
 
         if (!auth()->attempt($data)) {
-            return response(['error_message' => 'Password yang anda masukkan tidak sesuai'], 404);
+            return response(['message' => 'password atau email yang anda masukkan tidak sesuai'], 404);
         }
 
-
         $user = User::where('email', $request->email)->first();
-        $role = Role::where('id', $user->role_id)->first()->name;
 
         $token = auth()->user()->createToken('api')->plainTextToken;
 
-        return response()->json(['user' => auth()->user(), 'token' => $token, 'role' => $role], 200);
+        return response()->json([
+            'status' => 'success',
+            'user' => auth()->user(), 
+            'token' => $token
+        ], 200);
 
 
     }

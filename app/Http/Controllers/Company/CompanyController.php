@@ -11,9 +11,10 @@ class CompanyController extends Controller
 {
     public function index()
     {
+        // Private
         $companies = Company::all();
 
-        return response()->json(['status' => 'Ok', 'data' => $companies]);
+        return response()->json(['status' => 'success', 'data' => $companies]);
     }
 
     public function create(CompanyRequest $request)
@@ -32,7 +33,10 @@ class CompanyController extends Controller
             'code' => $user->adminEmployee->code, 
         ]);
 
-        return response()->json(['message' => 'Perusahaan Berhasil Dibuat'], 200);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Perusahaan Berhasil Dibuat',
+        ], 200);
     }
 
     public function update(Request $request, Company $company)
@@ -43,7 +47,8 @@ class CompanyController extends Controller
         $updCompany = $user->company->update($data);
         if ($updCompany) {
             return response()->json([
-                'message' => 'Data Berhasil Diupdate'
+                'status' => 'success',
+                'message' => 'Data Berhasil Diupdate',
             ], 200);
         }
     }
@@ -56,13 +61,16 @@ class CompanyController extends Controller
         $user->company()->update(['status' => !$status]);
         $IStatus = $status ? 'Aktif' : 'Tidak Aktif';
 
-        return response()->json(['status' => 'Ok', 'message' => 'Perusahaan '.$IStatus]);
+        return response()->json([
+            'status' => 'success', 
+            'message' => 'Perusahaan '.$IStatus
+        ], 200);
     }
 
     public function destroy(Company $company)
     {
         if ($company->delete())  {
-            return response()->json(['status' => 'Ok', 'message' => 'Perusahaan Dihapus']);
+            return response()->json(['status' => 'success', 'message' => 'Perusahaan Dihapus']);
         }
 
         return response()->json(['status' => 'failed', 'message' => 'Terjadi Kesalahan']);
