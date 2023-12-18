@@ -24,7 +24,10 @@ class CompanyController extends Controller
         $data['email'] = $request->email ?? $request->email;
 
         $company = $user->company()->create($data);
-        $company->employee()->create(['code' => $user->adminEmployee->code]);
+        $company->employee()->create([
+            'code' => $user->adminEmployee->code, 
+            'username' => $user->username
+        ]);
 
         if ($company) {
             return response()->json(['message' => 'Perusahaan Berhasil Dibuat'], 200);

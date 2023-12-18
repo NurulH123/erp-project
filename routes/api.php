@@ -70,6 +70,7 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::group(
         ['prefix' => 'employee'],
         function()  {
+            Route::get('/', [EmployeeController::class, 'index']);
             Route::post('/', [EmployeeController::class, 'create']);
         }
     );

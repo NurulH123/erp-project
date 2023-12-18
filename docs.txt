@@ -5,9 +5,8 @@
 
 Route : {{ $host }}/register
 @method:POST
-@body : - first_name            - password
-        - last_name             - password_confirmation
-        - email                 - role_id
+@body : - username                      - password
+        - password_confirmation         - email                 
 
 Menambahkan user baru
 
@@ -36,7 +35,7 @@ Mengambil semua data role
 
 Route :  {{ $host }}/role
 @method : POST
-@body : - name
+@body : - name          - caption
         - code
 
 Menambahkan role
@@ -71,9 +70,9 @@ Route :  {{ $host }}/{id}/change-status
 Menghapus role
 
 
-==============================================================
-|=========================== PROFILE ========================|
-==============================================================
+========================================================================
+|=========================== PROFILE EMMPLOYEE ========================|
+========================================================================
 
 Route : {{ $host }}/profile
 @method:POST
@@ -91,7 +90,6 @@ Route :
         - first_name
         - last_name
         - image
-        - role_id
         - code
 
 ===================================================================

@@ -19,42 +19,34 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Role::create([
-            'name' => 'Administrator',
-            'caption' => 'administrator'
-        ]);
-        Role::create([
-            'name' => 'Customer Service',
-            'caption' => 'customer_service'
-        ]);
-        Role::create([
-            'name' => 'Layout',
-            'caption' => 'layout',
-        ]);
-        Role::create([
-            'name' => 'Demonstration',
-            'caption' => 'demontration'
-        ]);
+        // Role::create([
+        //     'name' => 'Administrator',
+        //     'caption' => 'administrator'
+        // ]);
+        // Role::create([
+        //     'name' => 'Customer Service',
+        //     'caption' => 'customer_service'
+        // ]);
+        // Role::create([
+        //     'name' => 'Layout',
+        //     'caption' => 'layout',
+        // ]);
+        // Role::create([
+        //     'name' => 'Demonstration',
+        //     'caption' => 'demontration'
+        // ]);
 
         User::create([
-            'first_name' => 'Admin ',
-            'last_name' => 'Maken Living',
+            'username' => 'Admin ',
             'email' => 'admin@makenliving.com',
             'password' => '12345678',
-            'first_name' => 'Admin',
-            'last_name' => 'Maken',
-            'role_id' => '1',
         ]);
 
         
         User::create([
-            'first_name' => 'Admin ',
-            'last_name' => 'Maken Living',
+            'username' => 'Admin 2',
             'email' => 'admin2@makenliving.com',
             'password' => '12345678',
-            'first_name' => 'Admin',
-            'last_name' => 'Maken 2',
-            'role_id' => '1',
         ]);
 
         Payment::create([

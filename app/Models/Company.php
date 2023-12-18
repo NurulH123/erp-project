@@ -12,12 +12,17 @@ class Company extends Model
     protected $guarded = ['id'];
 
     public function branch()
-    {
+    {   
         return $this->hasMany(BranchCompany::class);
     }
 
-    public function employee()
+    public function employee()      
     {
         return $this->morphMany(Employee::class, 'employiable');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

@@ -29,25 +29,24 @@ class AuthController extends Controller
                     ]
 
                 ); 
-
+                
                 if ($validator->fails()) {
-                    return response()->json(
-                        [
+                    return response()->json([
                         'status' => 'Terjadi kesalahan',
-                        'mmessage' => $validator->errors()
-                        ]
-                    );
+                        'message' => $validator->errors()
+                    ], 500);
                 }
             } catch (\Throwable $th) {
                 return $th->getMessage();
             }
             $data = $validator->getData();
-
             $data['password'] = bcrypt($request->password);
-            $number = 00000;
-
+            
             $user = User::create($data);
-            $code = (int)date("Ymd$number") + $user->id;
+            $number = 1000000 + $user->id;
+            $uniqCode = (string)substr($number, 1);
+
+            $code = date("Ymd$uniqCode");
             
             // Tambah Admin Owner
             $user->adminEmployee()->create(['code' => $code]);
