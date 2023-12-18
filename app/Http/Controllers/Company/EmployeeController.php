@@ -20,6 +20,21 @@ class EmployeeController extends Controller
 
     public function create(Request $request)
     {
-        
+        $user = auth()->user();
+        $dataEmployee = [];
+
+        try {
+            $dataEmployee['username'] = $user->username;
+            $dataEmployee['isAdmin'] = $request->is_admin;
+            $dataProfile =  $request->except('username', 'is_admmin');
+
+            // create employee
+            dd($dataEmployee, $dataProfile);
+
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+
+
     }
 }

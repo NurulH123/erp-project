@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('code')->unique();
             $table->string('username');
-            $table->boolean('is_admin')->default(true);
+            $table->boolean('is_admin')->default(false);
             $table->morphs('employiable');
             $table->timestamps();
         });

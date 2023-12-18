@@ -20,14 +20,18 @@ class AuthController extends Controller
                 $validator =  Validator::make(
                     $request->all(),
                     [
-
+                        'username' => 'required|max:255',
                         'email' => 'required|email|unique:users',
                         'password' => 'required|confirmed',
-                        'first_name' => 'required|max:255',
-                        'last_name' => 'required|max:255',
-                        'role_id' => 'required',
+                    ],
+                    [
+                        'username.required' => 'Nama Harus Diisi',
+                        'email.required' => 'Email Harus Diisi',
+                        'email.email' => 'Format Email Tidak Sesuai',
+                        'email.unique' => 'Email Sudah Digunakan',
+                        'password.required' => 'Password Harus Diisi',
+                        'password.confirmed' => 'Konfirmasi Password Tidak Tepat',
                     ]
-
                 ); 
                 
                 if ($validator->fails()) {

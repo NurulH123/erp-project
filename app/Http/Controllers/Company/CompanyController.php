@@ -23,15 +23,16 @@ class CompanyController extends Controller
         $data = $request->validated();
         $data['email'] = $request->email ?? $request->email;
 
-        $company = $user->company()->create($data);
+        // create coompany
+        $company = $user->company()->create($data); 
+
+        // create admin employee
         $company->employee()->create([
+            'username' => $user->username,
             'code' => $user->adminEmployee->code, 
-            'username' => $user->username
         ]);
 
-        if ($company) {
-            return response()->json(['message' => 'Perusahaan Berhasil Dibuat'], 200);
-        }
+        return response()->json(['message' => 'Perusahaan Berhasil Dibuat'], 200);
     }
 
     public function update(Request $request, Company $company)
