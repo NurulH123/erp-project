@@ -77,7 +77,7 @@ class AuthController extends Controller
         ]);
 
         if (User::where('email', $request->email)->first() == null) {
-            return response(['error_message' => 'Email belum terdaftar'], 404);
+            return response(['message' => 'Email belum terdaftar'], 404);
         }
 
         if (!auth()->attempt($data)) {

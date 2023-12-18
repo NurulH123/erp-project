@@ -67,6 +67,9 @@ class CompanyController extends Controller
         ], 200);
     }
 
+    /**
+     *  Route ini hamya utk testing
+     */
     public function destroy(Company $company)
     {
         if ($company->delete())  {
