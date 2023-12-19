@@ -20,6 +20,14 @@ Route : {{ $host }}/login
 
 Menambahkan user baru
 
+************* BATAS ****************
+# LOGOUT
+
+Route : {{ $host }}/logout
+@method : POST
+
+Logout user
+
 ==============================================================
 |============================ ROLES =========================|
 ==============================================================
@@ -95,19 +103,42 @@ Route :
 ===================================================================
 |=========================== POSITION ============================|
 ===================================================================
+# GET DATA ALL POSITION
 
 Route : {{ $host }}/position
 @method:GET
 
-Mengambil semua nama data posisi/jabatan
+Mengambil semua nama data posisi/jabatan 
+sesuai perusahaan user yg login
 
 ****************************************
+# CREATE POSITION
 
 Route : {{ $host }}/position
-@method:POST
-@body : 
+@method : POST
+@body : - name
+        - code
+        - decs (optional)
 
 Menambah data posisi/jabatan
+****************************************
+# UPDATE POSITION
+
+Route : {{ $host }}/position
+@method : PATCH
+@body : - name
+        - code
+        - decs (optional)
+
+Update data posisi/jabatan
+****************************************
+# CHANGE STATUS POSITION
+
+Route : {{ $host }}/{id}/status/change
+@method : GET
+@param : id -> id dari position
+
+Ubah status posisi/jabatan menjadi true atau false
 
 =====================================================================
 |================================ COMPANY ==========================|

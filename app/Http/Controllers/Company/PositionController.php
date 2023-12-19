@@ -59,10 +59,23 @@ class PositionController extends Controller
 
     public function update(Request $request, Position $position)
     {
-        $data['name'] = $request->name;
-        $data['code'] = $request->code;
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'code' => 'required',
+        ],[
+            'name.required' => 'Nama Harus Diisi',
+            'code.required' => 'Kode Harus Diisi',
+        ]);
 
-        $this->company->position->update($data);
+        if($validator->fails()) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Terjadi Kesalahan',
+                'data' => $validator->errors(),
+            ]);
+        }
+
+        $this->company->position->update($request->all());
         $position = Position::findOrFail($position->id);
 
         return response()->json([

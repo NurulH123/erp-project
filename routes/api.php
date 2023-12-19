@@ -44,8 +44,8 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::prefix('position')->group(function() {
         Route::get('all', [PositionController::class, 'index']);
         Route::post('create', [PositionController::class, 'create']);
-        Route::patch('update/{id}', [PositionController::class, 'update']);
-        Route::get('status/{id}', [PositionController::class, 'index'])->name('position.change-status');
+        Route::patch('{id}/update', [PositionController::class, 'update']);
+        Route::get('{id}/status/change', [PositionController::class, 'changeStatus'])->name('position.change-status');
     });
 
     Route::prefix('profile')->group(function() {
