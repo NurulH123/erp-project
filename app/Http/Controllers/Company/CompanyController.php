@@ -66,6 +66,7 @@ class CompanyController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Perusahaan Berhasil Dibuat',
+            'data' =>  $user->company
         ], 200);
     }
 
@@ -79,6 +80,7 @@ class CompanyController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Data Berhasil Diupdate',
+                'data' => $user->company
             ], 200);
         }
     }

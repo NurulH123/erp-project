@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('positions', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('code')->unique();
+            $table->string('code');
             $table->boolean('status')->default(true)->comment('active|inactive');
             $table->string('desc')->nullable();
             $table->morphs('positionable');

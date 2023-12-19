@@ -49,7 +49,7 @@ class PositionController extends Controller
                 'data' => $data,
             ]);
         } catch (\Throwable $th) {
-            throw $th->getMessage();
+            return $th->getMessage();
         }
     }
 

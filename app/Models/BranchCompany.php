@@ -10,8 +10,15 @@ class BranchCompany extends Model
 {
     use HasFactory;
 
+    protected $guarded = ['id'];
+
     public function employee()
     {
         return $this->morphMany(Employee::class, 'employiable');
+    }
+
+    public function roles()
+    {
+        return $this->morphMany(Role::class, 'roleable');
     }
 }

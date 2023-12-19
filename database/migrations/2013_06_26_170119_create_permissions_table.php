@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('role_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('name');
             $table->string('caption');
+            $table->boolean('status')->default(true)->comment('active|inactive');
             $table->timestamps();
         });
     }

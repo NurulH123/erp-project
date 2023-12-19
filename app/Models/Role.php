@@ -9,12 +9,17 @@ class Role extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'name',
-    ];
+    protected $guarded = ['id'];
+
+    protected $hidden = ['created_at', 'updated_at'];
 
     public function user()
     {
         return $this->hasMany(User::class);
+    }
+
+    public function roleable()
+    {
+        return $this->morphTo();
     }
 }

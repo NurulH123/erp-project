@@ -30,4 +30,9 @@ class Company extends Model
     {
         return $this->morphMany(Position::class, 'positionable');
     }
+
+    public function roles()
+    {
+        return $this->morphMany(Role::class, 'roleable');
+    }
 }

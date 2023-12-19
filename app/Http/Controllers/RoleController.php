@@ -11,59 +11,81 @@ class RoleController extends Controller
 {
     public function index()
     {
-        $data = Role::OrderBy('id', 'desc')->get();
+        $user = auth()->user();
+        $roles = $user->company->roles;
 
-        return response()->json(['message' => 'success', 'data' => $data], 200);
-    }
-
-    public function show(Role $role)
-    {
-        return $role;
+        return response()->json([
+            'status' => 'success', 
+            'data' => $roles
+        ]);
     }
 
     public function create(Request $request)
     {
-        try {
-            $validator = Validator::make($request->all(),['name' => 'required'],['name.required' => 'Nama Harus Diisi']);
-        
-            if ($validator->fails()) {
-                return response()->json(['message' => $validator->errors()]);
-            }
-        } catch (\Throwable $th) {
-            //throw $th;
+        $user = auth()->user();
+        $validator = Validator::make($request->all(),['name' => 'required'],['name.required' => 'Nama Harus Diisi']);
+    
+        if ($validator->fails()) {
+            return response()->json(['status' => 'failed', 'message' => $validator->errors()]);
         }
 
-        $data['name'] = $request->name;
-        $data['caption'] = Str::slug($request->name);
-        $role = Role::create($data);
+        $data = $request->all();
+        $data['caption'] = Str::snake($request->name);
 
-        return response()->json(['message' => 'role berhasil ditambahkan', 'data' => $role], 200);
+        $role = $user->company->roles()->create($data);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Role berhasil ditambahkan', 
+            'data' => $role
+        ]);
     }
 
     public function update(Request $request,Role $role)
     {
-
-        $data['name'] = $request->name;
-        $data['slug'] = Str::slug($request->name);
-
-        $role->update($data);
-
-        return response()->json(['message' => 'role berhasil diperbaharui', 'data' => $role], 200);
-    }
-
-    public function destroy(Role $role)
-    {
-        if (!$role->delete()) {
-            return response()->json(['message' => 'Terjadi kesalahan. Coba cek lagi']);
+        $user = auth()->user();
+        $validator = Validator::make($request->all(),['name' => 'required'],['name.required' => 'Nama Harus Diisi']);
+    
+        if ($validator->fails()) {
+            return response()->json(['status' => 'faiiled', 'message' => $validator->errors()]);
         }
 
-        return 'Data Berhasil Dihapus';
+        $data = $request->all();
+        $data['caption'] = Str::snake($request->name);
+
+        $user->company->roles()->update($data);
+        $role = Role::findOrFail($role->id);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Role berhasil diperbaharui', 
+            'data' => $role
+        ]);
+
     }
+
+    // public function destroy(Role $role)
+    // {
+    //     if (!$role->delete()) {
+    //         return response()->json(['message' => 'Terjadi kesalahan. Coba cek lagi']);
+    //     }
+
+    //     return 'Data Berhasil Dihapus';
+    // }
 
     public function changeStatus(Role $role)
     {
-        $role->update(['status' => false]);
+        $user = auth()->user();
+        $status = !$role->status;
+        $statusText = $status ? 'aktifkan' :  'non aktifkan';
+        $user->company->roles()->update(['status' => $status]);
 
-        return response()->json(['message' => 'role berhasil di non aktifkan'], 200);
+        $role = Role::find($role->id);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Role berhasil di '.$statusText,
+            'data' => $role
+        ]);
     }
 }

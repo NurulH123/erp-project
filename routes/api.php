@@ -79,11 +79,10 @@ Route::middleware('auth:sanctum')->group(function() {
         ['prefix' => 'role'],
         function() {
             Route::get('/', [RoleController::class, 'index']);
-            Route::get('/{role}/show', [RoleController::class, 'show']);
-            Route::post('/{id}/change-status', [RoleController::class, 'changeStatus']);
             Route::post('/', [RoleController::class, 'create']);
-            Route::patch('{id}', [RoleController::class, 'update']);
-            Route::delete('/{id}', [RoleController::class, 'destroy']);
+            Route::patch('{role}/update', [RoleController::class, 'update']);
+            Route::get('/{role}/change-status', [RoleController::class, 'changeStatus']);
+            // Route::delete('/{role}', [RoleController::class, 'destroy']);
     });
 
     Route::prefix('customer')->group(function() {
