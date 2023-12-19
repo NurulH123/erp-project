@@ -5,29 +5,25 @@ namespace App\Http\Controllers\Company;
 use App\Models\Position;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\PositionRequest;
-use App\Models\Company;
 use Illuminate\Support\Facades\Validator;
 
 class PositionController extends Controller
 {
-    private $user, $company;
-
-    public function __construct()
-    {
-        $this->user = auth()->user();
-        $this->company = Company::find($this->user->company->id);
-    }
-
     public function index()
     {
-        $positions = $this->company->positions;
+        $user = auth()->user();
+        $positions = $user->company->positions;
 
-        return response()->json(['status' => 'success', 'data' => $positions]);
+        return response()->json([
+            'status' => 'success', 
+            'data' => $positions
+        ]);
     }
 
     public function create(Request $request)
     {
+        $user = auth()->user();
+
         try {
             $validator = Validator::make($request->all(), [
                 'name' => 'required',
@@ -45,7 +41,7 @@ class PositionController extends Controller
                 ]);
             }
 
-            $data = $this->company->positions()->create($request->all());
+            $data = $user->company->positions()->create($request->all());
 
             return response()->json([
                 'status' => 'success',
@@ -59,6 +55,7 @@ class PositionController extends Controller
 
     public function update(Request $request, Position $position)
     {
+        $user = auth()->user();
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'code' => 'required',
@@ -75,10 +72,11 @@ class PositionController extends Controller
             ]);
         }
 
-        $this->company->position->update($request->all());
+        $user->company->positions()->update($request->all());
         $position = Position::findOrFail($position->id);
 
         return response()->json([
+            'status'  => 'success',
             'message'   => 'Data Telah Diupdate',
             'position' => $position
         ], 200);
@@ -86,12 +84,14 @@ class PositionController extends Controller
 
     public function changeStatus(Position $position)
     {
+        $user = auth()->user();
         $status = !$position->status;
-        $this->company->position->update(['status' => $status]);
+        $user->company->positions()->update(['status' => $status]);
 
         $updPosition = Position::findOrFail($position->id);
 
         return response()->json([
+            'status' => 'success',
             'message' => 'Status Berhasil Diubah',
             'position' => $updPosition
         ]);

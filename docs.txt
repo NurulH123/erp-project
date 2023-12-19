@@ -124,8 +124,9 @@ Menambah data posisi/jabatan
 ****************************************
 # UPDATE POSITION
 
-Route : {{ $host }}/position
+Route : {{ $host }}/{id}/update
 @method : PATCH
+@param : id -> id dari position
 @body : - name
         - code
         - decs (optional)

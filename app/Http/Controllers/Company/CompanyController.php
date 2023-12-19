@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CompanyRequest;
 use App\Models\Company;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CompanyController extends Controller
 {
@@ -28,11 +29,30 @@ class CompanyController extends Controller
     {
         $user = auth()->user();
         
-        $data = $request->validated();
-        $data['email'] = $request->email ?? $request->email;
+        // validation
+        $validator  = Validator::make($request->all(), [
+            'name'  => 'required|min:3',
+            'category' => 'required',
+            'address' => 'required',
+            'phone' =>' required',
+        ],[
+            'name.required' => 'Nama Harus Diisi',
+            'address.required' => 'Alamat Harus Diisi',
+            'phone.required' => 'Telepon Harus Diisi',
+            'category.required' => 'Kategori Harus Diisi',
+            'name.min' => 'Minimal 3 Karakter',
+        ]);
+
+        if($validator->fails()) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Terjadi Kesalahan',
+                'data' => $validator->errors()
+            ], 401);
+        }
 
         // create coompany
-        $company = $user->company()->create($data); 
+        $company = $user->company()->create($request->all()); 
 
         if (!$user->adminEmployee) {
             // create admin employee
@@ -42,6 +62,7 @@ class CompanyController extends Controller
             ]);
         }
 
+        // response
         return response()->json([
             'status' => 'success',
             'message' => 'Perusahaan Berhasil Dibuat',

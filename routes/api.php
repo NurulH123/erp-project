@@ -42,10 +42,10 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
     Route::prefix('position')->group(function() {
-        Route::get('all', [PositionController::class, 'index']);
-        Route::post('create', [PositionController::class, 'create']);
-        Route::patch('{id}/update', [PositionController::class, 'update']);
-        Route::get('{id}/status/change', [PositionController::class, 'changeStatus'])->name('position.change-status');
+        Route::get('/', [PositionController::class, 'index']);
+        Route::post('/', [PositionController::class, 'create']);
+        Route::patch('{position}/update', [PositionController::class, 'update']);
+        Route::get('{position}/status/change', [PositionController::class, 'changeStatus'])->name('position.change-status');
     });
 
     Route::prefix('profile')->group(function() {
