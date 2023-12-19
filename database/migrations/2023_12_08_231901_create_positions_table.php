@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('code')->unique();
             $table->boolean('status')->default(true)->comment('active|inactive');
+            $table->string('desc')->nullable();
             $table->morphs('positionable');
             $table->timestamps();
         });

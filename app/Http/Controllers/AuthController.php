@@ -84,13 +84,15 @@ class AuthController extends Controller
             return response(['message' => 'password atau email yang anda masukkan tidak sesuai'], 404);
         }
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::with('company')
+                ->where('email', $request->email)
+                ->first(['id', 'username', 'email', 'status', 'is_owner']);
 
         $token = auth()->user()->createToken('api')->plainTextToken;
 
         return response()->json([
             'status' => 'success',
-            'user' => auth()->user(), 
+            'data' => $user,
             'token' => $token
         ], 200);
 
@@ -99,7 +101,7 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        $request->user()->token()->revoke();
-        return response()->json(["status" => "Logged Out"], 200);
+        $request->user()->currentAccessToken()->delete();
+        return response()->json(["status" => "success", 'message' => 'Logged Out'], 200);
     }
 }

@@ -44,11 +44,16 @@ class DatabaseSeeder extends Seeder
             'password' => '12345678',
         ]);
 
+        $num1 = 1000000 + $user1->id;
+        $uniqCode1 = (string)substr($num1, 1);
+        $code1 = '00-'.date('Ymd').'-'.$uniqCode1;
 
         AdminEmployee::create([
             'user_id'   => $user1->id,
-            'code'      => $this->createCode($user1),
+            'code'      => $code1,
         ]);
+
+
 
         $user2 = User::create([
             'username' => 'Admin 2',
@@ -56,9 +61,13 @@ class DatabaseSeeder extends Seeder
             'password' => '12345678',
         ]);
 
+        $num2 = 1000000 + $user2->id;
+        $uniqCode2 = (string)substr($num2, 1);
+        $code2 = '00-'.date('Ymd').'-'.$uniqCode2;
+
         AdminEmployee::create([
             'user_id'   => $user2->id,
-            'code'      => $this->createCode($user2),
+            'code'      => $code2,
         ]);
 
         Payment::create([

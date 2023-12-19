@@ -6,20 +6,54 @@ use App\Models\Position;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PositionRequest;
+use App\Models\Company;
+use Illuminate\Support\Facades\Validator;
 
 class PositionController extends Controller
 {
-    public function index()
+    private $user, $company;
+
+    public function __construct()
     {
-        return Position::all();
+        $this->user = auth()->user();
+        $this->company = Company::find($this->user->company->id);
     }
 
-    public function create(PositionRequest $request)
+    public function index()
     {
-        $data = $request->validate();
+        $positions = $this->company->positions;
 
-        if (Position::create($data)) {
-            return response()->json(['message' => 'Data Telah Ditambahkan'], 200);
+        return response()->json(['status' => 'success', 'data' => $positions]);
+    }
+
+    public function create(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required',
+                'code' => 'required',
+            ],[
+                'name.required' => 'Nama Harus Diisi',
+                'code.required' => 'Kode Harus Diisi',
+            ]);
+
+            if($validator->fails()) {
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => 'Terjadi Kesalahan',
+                    'data' => $validator->errors(),
+                ]);
+            }
+
+            $data = $this->company->positions()->create($request->all());
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data Berhasil Ditambahkan',
+                'data' => $data,
+            ]);
+        } catch (\Throwable $th) {
+            throw $th->getMessage();
         }
     }
 
@@ -28,19 +62,19 @@ class PositionController extends Controller
         $data['name'] = $request->name;
         $data['code'] = $request->code;
 
-        $position->update($data);
-        $updPosition = Position::findOrFail($position->id);
+        $this->company->position->update($data);
+        $position = Position::findOrFail($position->id);
 
         return response()->json([
             'message'   => 'Data Telah Diupdate',
-            'position' => $updPosition
+            'position' => $position
         ], 200);
     }
 
     public function changeStatus(Position $position)
     {
         $status = !$position->status;
-        $position->update(['status' => $status]);
+        $this->company->position->update(['status' => $status]);
 
         $updPosition = Position::findOrFail($position->id);
 

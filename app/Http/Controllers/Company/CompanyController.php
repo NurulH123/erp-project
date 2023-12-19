@@ -9,6 +9,13 @@ use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
+    private $user, $company;
+
+    public function __construct()
+    {
+        $this->user = auth()->user();
+    }
+
     public function index()
     {
         // Private
@@ -27,11 +34,13 @@ class CompanyController extends Controller
         // create coompany
         $company = $user->company()->create($data); 
 
-        // create admin employee
-        $company->employee()->create([
-            'username' => $user->username,
-            'code' => $user->adminEmployee->code, 
-        ]);
+        if (!$user->adminEmployee) {
+            // create admin employee
+            $company->employee()->create([
+                'username' => $user->username,
+                'code' => $user->adminEmployee->code, 
+            ]);
+        }
 
         return response()->json([
             'status' => 'success',

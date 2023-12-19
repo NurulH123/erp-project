@@ -25,4 +25,9 @@ class Company extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function positions()
+    {
+        return $this->morphMany(Position::class, 'positionable');
+    }
 }
