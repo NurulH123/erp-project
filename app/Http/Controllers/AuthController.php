@@ -15,7 +15,6 @@ class AuthController extends Controller
         if (User::where("email", $request->email)->count() > 0) {
             return response()->json(["message" => "Email sudah digunakan"], 403);
         } else {
-
             try {
                 $validator =  Validator::make(
                     $request->all(),
@@ -61,8 +60,9 @@ class AuthController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'berhasil menambahkan akun', 
-                'user' => $user, 'token' => $token
+                'message' => 'Berhasil menambahkan akun', 
+                'user' => $user, 
+                'token' => $token
             ], 200);
         }
 
