@@ -3,9 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\AdminEmployee;
-use App\Models\Employee;
 use App\Models\Payment;
-use App\Models\Role;
 use App\Models\Sending;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -21,22 +19,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Role::create([
-        //     'name' => 'Administrator',
-        //     'caption' => 'administrator'
-        // ]);
-        // Role::create([
-        //     'name' => 'Customer Service',
-        //     'caption' => 'customer_service'
-        // ]);
-        // Role::create([
-        //     'name' => 'Layout',
-        //     'caption' => 'layout',
-        // ]);
-        // Role::create([
-        //     'name' => 'Demonstration',
-        //     'caption' => 'demontration'
-        // ]);
+
+        $this->call(PermissionSeeder::class);
 
         $user1 = User::create([
             'username' => 'Admin ',

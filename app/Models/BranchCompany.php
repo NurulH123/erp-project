@@ -21,4 +21,9 @@ class BranchCompany extends Model
     {
         return $this->morphMany(Role::class, 'roleable');
     }
+
+    public function employeeStatus()
+    {
+        return $this->morphMany(StatusEmployee::class, 'statusable');
+    }
 }

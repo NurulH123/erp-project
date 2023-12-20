@@ -6,6 +6,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\Auth\PermissionController;
 use App\Http\Controllers\BarcodeController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
@@ -81,8 +82,16 @@ Route::middleware('auth:sanctum')->group(function() {
             Route::get('/', [RoleController::class, 'index']);
             Route::post('/', [RoleController::class, 'create']);
             Route::patch('{role}/update', [RoleController::class, 'update']);
-            Route::get('/{role}/change-status', [RoleController::class, 'changeStatus']);
-            // Route::delete('/{role}', [RoleController::class, 'destroy']);
+            Route::get('/{role}/change-status', [RoleController::class, 'changeStatus'])->name('role.change-status');
+    });
+
+    Route::group(
+        ['prefix' => 'permission'],
+        function() {
+            Route::get('/', [PermissionController::class, 'index']);
+            Route::post('/', [PermissionController::class, 'create']);
+            Route::patch('{permission}/update', [PermissionController::class, 'update']);
+            Route::get('/{permission}/change-status', [PermissionController::class, 'changeStatus'])->name('permission.change-status');
     });
 
     Route::prefix('customer')->group(function() {
