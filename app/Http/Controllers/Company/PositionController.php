@@ -90,6 +90,7 @@ class PositionController extends Controller
 
         return response()->json([
             'status' => 'success',
+            'is_status' => $status,
             'message' => 'Status Berhasil Diubah',
             'position' => $updPosition
         ]);

@@ -94,6 +94,7 @@ class CompanyController extends Controller
 
         return response()->json([
             'status' => 'success', 
+            'is_status' => $status,
             'message' => 'Perusahaan '.$IStatus
         ], 200);
     }

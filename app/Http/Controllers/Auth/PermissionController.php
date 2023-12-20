@@ -67,6 +67,10 @@ class PermissionController extends Controller
 
         $permission->update(['status' => $status]);
 
-        return response()->json(['status' => 'success', 'message' => 'Status Permissioin '.$statusText]);
+        return response()->json([
+            'status' => 'success',
+            'is_status'  => $status,
+            'message' => 'Status Permissioin '.$statusText
+        ]);
     }
 }

@@ -84,6 +84,7 @@ class RoleController extends Controller
 
         return response()->json([
             'status' => 'success',
+            'is_status' => $status,
             'message' => 'Role berhasil di '.$statusText,
             'data' => $role
         ]);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\StatusEmployee;
+use Illuminate\Database\Console\Migrations\StatusCommand;
 use Illuminate\Support\Facades\Validator;
 
 class StatusEmployeeController extends Controller
@@ -48,22 +49,10 @@ class StatusEmployeeController extends Controller
 
     public function update(Request $request, StatusEmployee $status)
     {
-        $user  = auth()->user();
+        $data = $request->all();
 
-        $validator = Validator::make($request->all(), [
-            'name' =>  'required',
-            'code' => 'required',
-        ], [
-            'name.requiired' => 'Nama Harus Diisi',
-            'code.required' => 'Kode Harus Diisi'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['status' => 'failed', 'message' => $validator->errors()], 442);
-        }
-        $data = $validator->getData();
-
-        $user->company->employeeStatus()->update($data);
+        $status->update($data);
+        $status = StatusEmployee::find($status->id);
 
         return response()->json([
             'status' => 'success',
@@ -77,6 +66,12 @@ class StatusEmployeeController extends Controller
         $status = !$employeeStatus->status;
         $statusText = $status ? 'Aktif' : 'Non Aktif';
 
-        return response()->json(['status' => 'success', 'message' => 'Status '.$employeeStatus->name.' '.$statusText]);
+        $employeeStatus->update(['status' => $status]);
+
+        return response()->json([
+            'status' => 'success',
+            'is_status' => $status,
+            'message' => 'Status '.$employeeStatus->name.' '.$statusText
+        ]);
     }
 }
