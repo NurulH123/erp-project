@@ -55,7 +55,7 @@ Route :  {{ $host }}/{id}
 @method : PATCH
 @param : id -> id dari role
 @body : - name
-        - code
+        - code (optional)
 
 Menambahkan role
 
