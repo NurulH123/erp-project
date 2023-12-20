@@ -26,7 +26,7 @@ class RoleController extends Controller
         $validator = Validator::make($request->all(),['name' => 'required'],['name.required' => 'Nama Harus Diisi']);
     
         if ($validator->fails()) {
-            return response()->json(['status' => 'failed', 'message' => $validator->errors()]);
+            return response()->json(['status' => 'failed', 'message' => $validator->errors()], 442);
         }
 
         $data = $request->all();
@@ -47,7 +47,7 @@ class RoleController extends Controller
         $validator = Validator::make($request->all(),['name' => 'required'],['name.required' => 'Nama Harus Diisi']);
     
         if ($validator->fails()) {
-            return response()->json(['status' => 'faiiled', 'message' => $validator->errors()]);
+            return response()->json(['status' => 'faiiled', 'message' => $validator->errors()], 442);
         }
 
         $data = $request->all();

@@ -37,7 +37,7 @@ class AuthController extends Controller
                     return response()->json([
                         'status' => 'failed',
                         'message' => $validator->errors()
-                    ], 500);
+                    ], 442);
                 }
             } catch (\Throwable $th) {
                 return $th->getMessage();

@@ -46,9 +46,8 @@ class CompanyController extends Controller
         if($validator->fails()) {
             return response()->json([
                 'status' => 'failed',
-                'message' => 'Terjadi Kesalahan',
-                'data' => $validator->errors()
-            ], 401);
+                'message' => $validator->errors()
+            ], 442);
         }
 
         // create coompany

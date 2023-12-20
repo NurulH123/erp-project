@@ -36,9 +36,8 @@ class PositionController extends Controller
             if($validator->fails()) {
                 return response()->json([
                     'status' => 'failed',
-                    'message' => 'Terjadi Kesalahan',
-                    'data' => $validator->errors(),
-                ]);
+                    'message' => $validator->errors(),
+                ], 442);
             }
 
             $data = $user->company->positions()->create($request->all());
@@ -67,8 +66,7 @@ class PositionController extends Controller
         if($validator->fails()) {
             return response()->json([
                 'status' => 'failed',
-                'message' => 'Terjadi Kesalahan',
-                'data' => $validator->errors(),
+                'message' => $validator->errors(),
             ]);
         }
 
