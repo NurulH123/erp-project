@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('status_employees', function (Blueprint $table) {
+        Schema::create('employee_roles', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('code');
-            $table->string('desc')->nullable();
-            $table->boolean('status')->default(true)->comment('Active|inactive');
-            $table->morphs('statusable');
+            $table->foreignId('role_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('admin_employee_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->boolean('status');
             $table->timestamps();
         });
     }
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('status_employees');
+        Schema::dropIfExists('employee_roles');
     }
 };

@@ -11,7 +11,7 @@ class Role extends Model
 
     protected $guarded = ['id'];
 
-    protected $hidden = ['created_at', 'updated_at'];
+    protected $hidden = ['created_at', 'updated_at'];   
 
     public function user()
     {
@@ -21,5 +21,10 @@ class Role extends Model
     public function roleable()
     {
         return $this->morphTo();
+    }
+
+    public function employees()
+    {
+        return $this->belongsToMany(AdminEmployee::class, 'employee_roles', 'role_id', 'admin_employee_id');
     }
 }

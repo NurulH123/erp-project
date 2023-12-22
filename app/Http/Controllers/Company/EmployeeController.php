@@ -27,7 +27,41 @@ class EmployeeController extends Controller
         $idCompany = $user->company->id;
         $company = Company::find($idCompany);
 
-        $this->validated($request);
+        // Prosess Validasi
+        $rules =  [
+            'username'  => 'required',
+            'gender'    => 'required',
+            'phone'     => 'required',
+            'address'   => 'required',
+        ];
+
+        $messages = [
+            'username.required' => 'Nama Harus Diisi',
+            'gender.required'   => 'Jenis Kelamin Harus Diisi',
+            'phone.required'    => 'Hp Harus Diisi',
+            'address.required'  => 'Alamat Harus Diisi',
+        ];
+
+        if ($request->is_admin) {
+            // Rules user register
+            $rules['email'] = 'required|email';
+            $rules['password'] = 'required|confirmed';
+
+            // Message user register
+            $messages['email.required'] = 'Email Harus Diisi';
+            $messages['email.email'] = 'Format Email Tidak Sesuai';
+            $messages['password.required'] = 'Password Harus Diisi';
+            $messages['password.confirmed'] = 'Konfirmasi Password Tidak Sesuai';
+        }
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => $validator->errors()
+            ]);
+        }
 
         // create code employee
         $countEmployees = $company->employee->count();
@@ -47,6 +81,15 @@ class EmployeeController extends Controller
         // Process inputing data employee
         if ($request->is_admin) {
             $dataEmployee = $request->only('username', 'is_admin');
+            $dataUser = $request->only('username', 'email', 'password');
+            $dataUser['password'] = bcrypt($request->password);
+
+            $user = User::create($dataUser); // Menambahkan data user
+            $adminEmployee = $user->adminEmployee()->create(['code' => $code]);// Menambahkan data user
+            
+            if (!emptyArray($request->roles)) {
+                $adminEmployee->roles()->attach($request->roles);
+            }
         }
 
         $employee = $company->employee()->create($dataEmployee);
@@ -84,26 +127,10 @@ class EmployeeController extends Controller
     //     }
         
     // }
-    private function validated(Request $request)
+    protected function validator(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'username'  => 'required',
-            'gender'    => 'required',
-            'phone'     => 'required',
-            'address'   => 'required',
-        ], [
-            'username.required' => 'Nama Harus Diisi',
-            'gender.required'   => 'Jenis Kelamin Harus Diisi',
-            'phone.required'    => 'Hp Harus Diisi',
-            'address.required'  => 'Alamat Harus Diisi',
-        ]);
+        
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'failed',
-                'message' => $validator->errors()
-            ]);
-        }
-
+        return dd('ok');
     }
 }
