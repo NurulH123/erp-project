@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class EmployeeController extends Controller
 {
@@ -26,6 +27,8 @@ class EmployeeController extends Controller
         $idCompany = $user->company->id;
         $company = Company::find($idCompany);
 
+        $this->validated($request);
+
         // create code employee
         $countEmployees = $company->employee->count();
 
@@ -38,41 +41,69 @@ class EmployeeController extends Controller
         $userInputer = (string)substr($numUser, 1);
 
         $code =  $userInputer.'-'.$uniqIDCompany.'-'.date('Ymd').'-'.$uniqEmployee;
+        $dataEmployee = $request->only('username');
+        $dataEmployee['code'] = $code;
 
-        try {
-            $dataEmployee['code'] = $code;
-            $dataEmployee['username'] = $request->username;
-            $dataEmployee['isAdmin'] = $request->is_admin;
-            $dataProfile =  $request->except('username', 'is_admin');
-
-            // create employee
-            $company->employee()->create($dataEmployee);
-
-            return response()->json([
-                'status' => 'success', 
-                'message' => 'Data Karyawan Berhasil Ditambahkan'
-            ], 200);
-
-        } catch (\Throwable $th) {
-            throw $th->getMessage();
+        // Process inputing data employee
+        if ($request->is_admin) {
+            $dataEmployee = $request->only('username', 'is_admin');
         }
+
+        $employee = $company->employee()->create($dataEmployee);
+
+        // Process inputing profile
+        $dataProfile = $request->all();
+        $employee = Employee::find($employee->id);
+
+        $employee->profile()->create($dataProfile);
+
+        return response()->json([
+            'status' => 'success', 
+            'message' => 'Data Karyawan Berhasil Ditambahkan',
+            'data' => [
+                'employee' => $employee,
+                'profile' => $employee->profile,
+            ]
+        ], 200);
     }
 
-    /**
-     *  Route ini hanya utk testing
-     */
-    public function destroy(Employee $employee)
-    {
-        try {
-            if ($employee->delete()) {
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Data Telah Dihapus'
-                ]);
-            }
-        } catch (\Throwable $th) {
-            throw $th->getMessage();
-        }
+    // /**
+    //  *  Route ini hanya utk testing
+    //  */
+    // public function destroy(Employee $employee)
+    // {
+    //     try {
+    //         if ($employee->delete()) {
+    //             return response()->json([
+    //                 'status' => 'success',
+    //                 'message' => 'Data Telah Dihapus'
+    //             ]);
+    //         }
+    //     } catch (\Throwable $th) {
+    //         throw $th->getMessage();
+    //     }
         
+    // }
+    private function validated(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'username'  => 'required',
+            'gender'    => 'required',
+            'phone'     => 'required',
+            'address'   => 'required',
+        ], [
+            'username.required' => 'Nama Harus Diisi',
+            'gender.required'   => 'Jenis Kelamin Harus Diisi',
+            'phone.required'    => 'Hp Harus Diisi',
+            'address.required'  => 'Alamat Harus Diisi',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => $validator->errors()
+            ]);
+        }
+
     }
 }

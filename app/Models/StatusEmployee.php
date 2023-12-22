@@ -16,4 +16,9 @@ class StatusEmployee extends Model
     {
         return $this->morphTo();
     }
+
+    public function profileEmployee()
+    {
+        return $this->hasMany(ProfileEmployee::class, 'status_id');
+    }
 }

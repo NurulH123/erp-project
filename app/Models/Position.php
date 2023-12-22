@@ -16,4 +16,9 @@ class Position extends Model
     {
         return $this->morphTo();
     }
+
+    public function profileEmployee()
+    {
+        return $this->hasOne(ProfileEmployee::class);
+    }
 }
