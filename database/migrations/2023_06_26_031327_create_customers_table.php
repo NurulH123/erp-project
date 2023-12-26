@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('phone');
             $table->text('address');
+            $table->boolean('is_active')->default(true);
             $table->morphs('customerable');
             $table->timestamps();
         });

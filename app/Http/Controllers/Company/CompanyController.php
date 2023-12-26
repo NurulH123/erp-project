@@ -42,7 +42,7 @@ class CompanyController extends Controller
             'name'  => 'required|min:3',
             'category' => 'required',
             'address' => 'required',
-            'phone' =>' required|unique',
+            'phone' =>' required|unique:companies,phone',
         ],[
             'name.required' => 'Nama Harus Diisi',
             'address.required' => 'Alamat Harus Diisi',

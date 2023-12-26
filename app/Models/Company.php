@@ -50,4 +50,9 @@ class Company extends Model
     {
         return $this->morphMany(Vendor::class, 'vendorable');
     }
+
+    public function customer()
+    {
+        return $this->morphMany(Customer::class, 'customerable');
+    }
 }

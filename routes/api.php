@@ -139,12 +139,14 @@ Route::middleware('auth:sanctum')->group(function() {
                 Route::get('/{vendor}/change-status', [VendorController::class, 'changeStatus']);
         });
     
-        Route::prefix('customer')->group(function() {
-            Route::get('index', [CustomerController::class, 'indexCustomer']);
-            Route::post('create', [CustomerController::class, 'createCustomer']);
-            Route::post('delete/{id}', [CustomerController::class, 'deleteCustomer']);
-            Route::post('one/{id}', [CustomerController::class, 'oneCustomer']);
-            Route::post('search', [CustomerController::class, 'searchCustomer']);
+        Route::group(
+            ['prefix' => 'customer'],
+            function() {
+                Route::get('/', [CustomerController::class, 'index']);
+                Route::get('/{customer}', [CustomerController::class, 'show']);
+                Route::post('/', [CustomerController::class, 'create']);
+                Route::patch('/{customer}', [CustomerController::class, 'update']);
+                Route::get('/{customer}/change-status', [CustomerController::class, 'changeStatus']);
         });
     
         Route::prefix('product', function() {

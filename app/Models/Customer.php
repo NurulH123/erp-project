@@ -9,12 +9,10 @@ class Customer extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'phone',
-        'second_phone',
-        'email',
-        'surename',
-        'first_name',
-        'last_name',
-    ];
+    protected $guarded = ['id'];
+
+    public function customer()
+    {
+        return $this->morphTo();
+    }
 }

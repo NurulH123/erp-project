@@ -2,103 +2,106 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Address;
-use Illuminate\Http\Request;
 use App\Models\Customer;
-use Illuminate\Support\Str;
-use Throwable;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CustomerController extends Controller
 {
-    public function indexCustomer()
+    public function index()
     {
+        $user = auth()->user();
+        $company = $user->company;
 
-        $data = Customer::OrderBy('id', 'desc')->get();
-
-        return response()->json(['message' => 'customer berhasil ditampilkan', 'data' => $data], 200);
+        return response()->json([
+            'status' => 'success',
+            'data' => $company->customer,
+        ]);
     }
 
-    public function oneCustomer($id)
+    public function show(Customer $customer)
     {
-        $data = Customer::where('id', $id)->first();
-
-        return response()->json(['message' => 'success', 'data' => $data], 200);
+        return response()->json([
+            'status' => 'success',
+            'data' => $customer,
+        ]);
     }
 
-    public function createCustomer(Request $request)
+    public function create(Request $request)
     {
-
-        $data = $request->validate([
-            'first_name' => 'required|max:255',
-            'phone' => 'required',
+        $user = auth()->user();
+        $validator = Validator::make($request->all(), [
+            'name'  => 'required',
+            'phone' => 'required|unique:vendors,phone',
+            'address' => 'required'
+        ],[
+            'name.required' => 'Nama Harus Diisi',
+            'phone.required' => 'Telepon Harus Diisi',
+            'phone.unique' => 'Nomor Telepon Sudah Ada',
+            'address.required' => 'Alamat Harus Diisi', 
         ]);
 
-        if ($request->last_name) {
-            $data['last_name'] = $request->last_name;
-        } else {
-            $data['last_name'] = $request->district;
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => $validator->errors()
+            ], 442);
         }
 
-        if (substr($request->phone, 0, 2) === "08") {
-            // Menghapus angka 0 pertama dan menggantinya dengan "62"
-            $data['phone'] = "62" . substr($request->phone, 1);
-        } else {
-            $data['phone'] = $request->phone;
-        }
+        $data = $request->all();
+        $customer = $user->company->customer()->create($data);
 
-        if ($request->email) {
-            $data['email'] = $request->email;
-        } else {
-            $data['email'] = $data['phone'] . "@makenliving.my.id";
-        }
-
-
-        $data['surename'] = $request->first_name . ' ' . $request->last_name;
-
-        if ($request->second_phone) {
-
-            if (substr($request->second_phone, 0, 2) === "08") {
-                // Menghapus angka 0 pertama dan menggantinya dengan "62"
-                $data['second_phone'] = "62" . substr($request->second_phone, 1);
-            } else {
-                $data['phone'] = $request->second_phone;
-            }
-
-        } else {
-            $data['second_phone'] = $data['phone'];
-        }
-
-        $customer = Customer::create($data);
-
-        return $customer;
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Data Telah Ditambahkan',
+            'data' => $customer,
+        ]);
     }
 
-    public function updateCustomer(Request $request, $id)
+    public function update(Request $request, Customer $customer)
     {
-        //////////////////////////////////////////////
-    }
+        
+        $validator = Validator::make($request->all(), [
+            'name'  => 'required',
+            'phone' => 'required|unique:customers,phone',
+            'address' => 'required'
+        ],[
+            'name.required' => 'Nama Harus Diisi',
+            'phone.required' => 'Telepon Harus Diisi',
+            'phone.unique' => 'Nomor Telepon Sudah Ada',
+            'address.required' => 'Alamat Harus Diisi', 
+        ]);
 
-    public function deleteCustomer(Request $request, $id)
-    {
-        $customer = Customer::where('id', $id)->first();
-
-        if (!$customer) {
-            return response()->json(['message' => 'customer belum terdaftar'], 403);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => $validator->errors()
+            ], 442);
         }
 
-        Address::where('customer_id', $customer->id)->delete();
+        $data = $request->all();
+        $customer->update($data);
 
-        $customer = Customer::destroy($id);
+        $updCustomer = Customer::find($customer->id);
 
-        return response()->json(['message' => 'customer berhasil dihapus'], 200);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Data Telah Diubah',
+            'data' => $updCustomer,
+        ]);
     }
 
-    public function searchCustomer(Request $request)
+    public function changeStatus(Customer $customer)
     {
-        $customer = Customer::where('surename', 'like', '%' . $request->customer . '%')->get();
+        $status = $customer->is_active;
 
-        return response()->json(['data' => $customer], 200);
+        $customer->update(['is_active' => !$status]);
+        $IStatus = $status ? 'Aktif' : 'Tidak Aktif';
 
+        return response()->json([
+            'status' => 'success', 
+            'is_status' => $status,
+            'message' => 'Vendor '.$IStatus
+        ]);
     }
-
 }

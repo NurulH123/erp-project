@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('phone')->unique();
             $table->text('address');
-            $table->string('industry')->nuullable();
+            $table->string('industry')->nullable();
             $table->boolean('is_active')->default(true)->comment('active|inactive');
             $table->morphs('vendorable');
             $table->timestamps();

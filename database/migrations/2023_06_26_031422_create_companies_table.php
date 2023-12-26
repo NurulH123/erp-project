@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('phone')->unique();
             $table->string('email')->unique()->nullable();
             $table->boolean('status')->default(true)->comment('active|inactive');
+            $table->string('logo')->nullable();
             $table->timestamps();
         });
     }
