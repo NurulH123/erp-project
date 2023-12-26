@@ -7,6 +7,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\VendorController;
 use App\Http\Controllers\StatusEmployeeController;
 use App\Http\Controllers\Auth\PermissionController;
 use App\Http\Controllers\BarcodeController;
@@ -126,6 +127,16 @@ Route::middleware('auth:sanctum')->group(function() {
                 Route::post('/', [StatusEmployeeController::class, 'create']);
                 Route::patch('{status}/update', [StatusEmployeeController::class, 'update']);
                 Route::get('/{employeeStatus}/change-status', [StatusEmployeeController::class, 'changeStatus']);
+        });
+
+        Route::group(
+            ['prefix' => 'vendor'],
+            function() {
+                Route::get('/', [VendorController::class, 'index']);
+                Route::get('/{vendor}', [VendorController::class, 'show']);
+                Route::post('/', [VendorController::class, 'create']);
+                Route::patch('{vendor}/', [VendorController::class, 'update']);
+                Route::get('/{vendor}/change-status', [VendorController::class, 'changeStatus']);
         });
     
         Route::prefix('customer')->group(function() {

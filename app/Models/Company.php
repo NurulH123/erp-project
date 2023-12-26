@@ -45,4 +45,9 @@ class Company extends Model
     {
         return $this->belongsToMany(Permission::class, 'company_permissions');
     }
+
+    public function vendor()
+    {
+        return $this->morphMany(Vendor::class, 'vendorable');
+    }
 }
