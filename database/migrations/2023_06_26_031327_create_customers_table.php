@@ -13,12 +13,10 @@ return new class extends Migration
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('phone');
-            $table->bigInteger('second_phone');
-            $table->string('email');
-            $table->string('surename');
-            $table->string('first_name');
-            $table->string('last_name')->nullable();
+            $table->string('name');
+            $table->string('phone');
+            $table->text('address');
+            $table->morphs('customerable');
             $table->timestamps();
         });
     }
