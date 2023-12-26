@@ -19,7 +19,7 @@ return new class extends Migration
             $table->enum('gender', ['perempuan', 'laki-laki']);
             $table->string('phone')->unique();
             $table->text('address');
-            $table->string('photo');
+            $table->string('photo')->nullable();
             $table->date('join')->nullable();
             $table->date('resaign')->nullable();
             $table->timestamps();

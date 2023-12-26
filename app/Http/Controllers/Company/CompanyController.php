@@ -20,12 +20,20 @@ class CompanyController extends Controller
     public function index()
     {
         // Private
+        $user = auth()->user();
+
+        return response()->json(['status' => 'success', 'data' => $user->company->permissions]);
+    }
+
+    public function listAll()
+    {
+        // Private
         $companies = Company::all();
 
         return response()->json(['status' => 'success', 'data' => $companies]);
     }
 
-    public function create(CompanyRequest $request)
+    public function create(Request $request)
     {
         $user = auth()->user();
         
@@ -34,11 +42,12 @@ class CompanyController extends Controller
             'name'  => 'required|min:3',
             'category' => 'required',
             'address' => 'required',
-            'phone' =>' required',
+            'phone' =>' required|unique',
         ],[
             'name.required' => 'Nama Harus Diisi',
             'address.required' => 'Alamat Harus Diisi',
             'phone.required' => 'Telepon Harus Diisi',
+            'phone.unique' => 'Maaf, Nomor Telepon Sudah Ada',
             'category.required' => 'Kategori Harus Diisi',
             'name.min' => 'Minimal 3 Karakter',
         ]);

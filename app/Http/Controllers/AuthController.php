@@ -20,7 +20,7 @@ class AuthController extends Controller
                     $request->all(),
                     [
                         'username' => 'required|max:255',
-                        'email' => 'required|email|unique:users',
+                        'email' => 'required|email|unique:users,email',
                         'password' => 'required|confirmed',
                     ],
                     [

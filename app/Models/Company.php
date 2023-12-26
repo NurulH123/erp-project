@@ -40,4 +40,9 @@ class Company extends Model
     {
         return $this->morphMany(StatusEmployee::class, 'statusable');
     }
+
+    public function permission()
+    {
+        return $this->belongsToMany(Permission::class, 'company_permissions');
+    }
 }

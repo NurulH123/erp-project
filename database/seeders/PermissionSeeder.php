@@ -26,15 +26,15 @@ class PermissionSeeder extends Seeder
         ];
 
         foreach ($permissions as $parent => $children) {
-            $parent = Permission::create([
+            $permissionGroup = Permission::create([
                 'name' => $parent,
                 'caption' => Str::snake($parent)
             ]);
 
             foreach ($children as $child) {
-                $parent = Permission::create([
+                Permission::create([
                     'name' => $child,
-                    'permission_group_id' => $parent->id,
+                    'permission_group_id' => $permissionGroup->id,
                     'caption' => Str::snake($child)
                 ]);
             }

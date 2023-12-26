@@ -16,4 +16,9 @@ class Permission extends Model
     {
         return $this->hasMany(Permission::class, 'permission_group_id', 'id');
     }
+
+    public function company()
+    {
+        return $this->belongsToMany(Company::class, 'company_permissions');
+    }
 }

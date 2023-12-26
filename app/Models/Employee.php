@@ -20,4 +20,9 @@ class Employee extends Model
     {
         return $this->hasOne(ProfileEmployee::class, 'employee_id');
     }
+
+    // public function adminEmployee()
+    // {
+    //     return $this->hasOne(AdminEmployee::class, 'employee_id');
+    // }
 }

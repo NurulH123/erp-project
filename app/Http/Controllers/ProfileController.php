@@ -19,8 +19,6 @@ class ProfileController extends Controller
     {
         $user = $request->user();
         $profile = User::where('code', $user->code)->first();
-        // dd($profile);
-        // $profile = ;
 
         if ($profile->email != $request->email) {
             $data = $request->validate([

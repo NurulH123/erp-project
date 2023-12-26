@@ -79,9 +79,9 @@ Menghapus role
 
 
 ========================================================================
-|=========================== PROFILE EMMPLOYEE ========================|
+|=========================== PROFILE + EMPLOYEE ========================|
 ========================================================================
-
+# GET ALL DATA EMPLOYEE
 Route : {{ $host }}/profile
 @method:POST
 @body : code -> berisi code user
@@ -90,16 +90,52 @@ Mengambil detail data profile user
 
 ***********************************
 
+# CREATE DATA EMPLOYEE + PROFILE
+Route :
+{{ $host }}/employee
+@method : POST
+@body : - username              - is_admin (optional)
+        - email                 - password (jika is_admin = true)
+
+        // PROFILE
+        - gender                - address
+        - position_id           - phone
+        - status_employee_id    - join (ooptional)
+        - photo (optional)      - resaign (optional)
+
+
+***********************************
+
+# UPDATE DATA EMPLOYEE + PROFILE
 Route :
 {{ $host }}/update
 @method : PATCH
-@body : - username
-        - email
-        - first_name
-        - last_name
-        - image
-        - code
+@body : - username              - is_admin (optional)
+        - email                 - password (jika is_admin = true)
 
+        // PROFILE
+        - gender                - address
+        - position_id           - phone
+        - status_employee_id    - join (ooptional)
+        - photo (optional)      - resaign (optional)
+
+***********************************
+
+# CHANGE STATUS ACTIVE EMPLOYEE
+Route :
+{{ $host }}/{employe}/change/status
+@method : GET
+
+Mengubah status aktif karyawan
+
+***********************************
+
+# CHANGE STATUS ADMIN EMPLOYEE
+Route :
+{{ $host }}/{employe}/change/admin
+@method : POST
+
+Mengubah status admin karyawan
 ===================================================================
 |=========================== POSITION ============================|
 ===================================================================

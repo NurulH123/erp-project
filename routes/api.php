@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OrderController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SendingController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Company\CompanyController;
+use App\Http\Controllers\Company\CompanyPermissionController;
 use App\Http\Controllers\Company\EmployeeController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DasboardController;
@@ -41,17 +43,43 @@ Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function() {
-    Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+    Route::get('/me', function() {
+        $user = User::with('company')
+                ->where('id',  auth()->id())
+                ->first(['id', 'username', 'email', 'status', 'is_owner']);
+
+        return response()->json(['data' => $user]);
+    });
+
+    Route::post('logout', [AuthController::class, 'logout']);
 
     Route::group(
         ['prefix' => 'company'],
         function() {
             Route::get('/', [CompanyController::class, 'index']);
+            Route::get('/list', [CompanyController::class, 'listAll']);
             Route::post('/', [CompanyController::class, 'create']);
             Route::patch('/{id}', [CompanyController::class, 'update']);
             Route::delete('/{company}', [CompanyController::class, 'destroy']);
             Route::patch('/{id}/change-status', [CompanyController::class, 'changeStatus']);
-        });
+    });
+
+    Route::group(
+        ['prefix' => 'company/permission'],
+        function() {
+            Route::post('/add', [CompanyPermissionController::class, 'addCompanyPermissionTo']);
+            Route::patch('/update', [CompanyPermissionController::class, 'updateCompanyPermission']);
+        }
+    );
+
+    Route::group(
+        ['prefix' => 'permission'],
+        function() {
+            Route::get('/', [PermissionController::class, 'index']);
+            Route::post('/', [PermissionController::class, 'create']);
+            Route::patch('{permission}/update', [PermissionController::class, 'update']);
+            Route::get('/{permission}/change-status', [PermissionController::class, 'changeStatus'])->name('permission.change-status');
+    });
 
     Route::middleware('hasCompany')->group(function() {
         Route::prefix('position')->group(function() {
@@ -74,7 +102,11 @@ Route::middleware('auth:sanctum')->group(function() {
             ['prefix' => 'employee'],
             function()  {
                 Route::get('/', [EmployeeController::class, 'index']);
+                Route::get('/{id}', [EmployeeController::class, 'show']);
                 Route::post('/', [EmployeeController::class, 'create']);
+                Route::patch('/{employee}', [EmployeeController::class, 'update']);
+                Route::get('/{employee}/change/status', [EmployeeController::class, 'changeStatus']);
+                Route::post('/{employee}/change/admin', [EmployeeController::class, 'changeAdmin']);
             }
         );
     
@@ -85,15 +117,6 @@ Route::middleware('auth:sanctum')->group(function() {
                 Route::post('/', [RoleController::class, 'create']);
                 Route::patch('{role}/update', [RoleController::class, 'update']);
                 Route::get('/{role}/change-status', [RoleController::class, 'changeStatus'])->name('role.change-status');
-        });
-    
-        Route::group(
-            ['prefix' => 'permission'],
-            function() {
-                Route::get('/', [PermissionController::class, 'index']);
-                Route::post('/', [PermissionController::class, 'create']);
-                Route::patch('{permission}/update', [PermissionController::class, 'update']);
-                Route::get('/{permission}/change-status', [PermissionController::class, 'changeStatus'])->name('permission.change-status');
         });
     
         Route::group(
