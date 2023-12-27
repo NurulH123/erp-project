@@ -105,12 +105,14 @@ class EmployeeController extends Controller
         if ($request->is_admin) {
             $dataEmployee = $request->only('username', 'is_admin', 'email');
             $dataUser = $request->only('username', 'email', 'password');
+
+            $dataUser['is_owner'] = false;
             $dataUser['password'] = bcrypt($request->password);
 
-            $newUser = User::create($dataUser); // Menambahkan data user
+            $newUser = User::create($dataUser); // Menambahkan data us er
             $adminEmployee = $newUser->adminEmployee()->create(['code' => $code]);// Menambahkan data user
             
-            if (!emptyArray($request->roles)) {
+            if (!empty($request->roles)) {
                 $adminEmployee->roles()->attach($request->roles);
             }
         }

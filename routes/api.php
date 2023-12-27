@@ -17,6 +17,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SendingController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Company\CompanyController;
+use App\Http\Controllers\Company\BranchCompanyController;
 use App\Http\Controllers\Company\CompanyPermissionController;
 use App\Http\Controllers\Company\EmployeeController;
 use App\Http\Controllers\CustomerController;
@@ -148,6 +149,16 @@ Route::middleware('auth:sanctum')->group(function() {
                 Route::patch('/{customer}', [CustomerController::class, 'update']);
                 Route::get('/{customer}/change-status', [CustomerController::class, 'changeStatus']);
         });
+
+        Route::group(
+            ['prefix' => 'branch'],
+            function() {
+                Route::get('/', [BranchCompanyController::class, 'index']);
+                Route::get('/{branch}', [BranchCompanyController::class, 'show']);
+                Route::post('/', [BranchCompanyController::class, 'create']);
+                Route::patch('/{branch}', [BranchCompanyController::class, 'update']);
+                Route::get('/{branch}/change-status', [BranchCompanyController::class, 'changeStatus']);
+        });    
     
         Route::prefix('product', function() {
             Route::get('index', [ProductController::class, 'indexProduct']);

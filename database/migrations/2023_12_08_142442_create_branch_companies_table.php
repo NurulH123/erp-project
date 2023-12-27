@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('branch_companies', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('company_id')->constrained('companies')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('name');
             $table->string('category');
             $table->text('address');
-            $table->string('phone')->unique();
+            $table->string('phone')->unique()->nullable();
             $table->string('email')->unique();
             $table->boolean('status')->default(true)->comment('active|inactive');
             $table->timestamps();
