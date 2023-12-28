@@ -13,7 +13,7 @@ class Company extends Model
 
     public function branch()
     {   
-        return $this->hasMany(BranchCompany::class);
+        return $this->hasMany(BranchCompany::class, 'company_id');
     }
 
     public function employee()      

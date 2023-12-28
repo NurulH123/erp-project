@@ -10,11 +10,12 @@ class BranchCompany extends Model
 {
     use HasFactory;
 
+    protected $table = 'branch_companies';
     protected $guarded = ['id'];
 
     public function company()
     {
-        return $this->belongsTo(Company::class);
+        return $this->belongsTo(Company::class, 'company_id');
     }
 
     public function employee()

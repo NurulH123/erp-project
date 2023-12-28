@@ -15,16 +15,16 @@ return new class extends Migration
             $table->id();
             $table->foreignId('company_id')->constrained('companies')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('name');
-            $table->string('category');
+            $table->string('category')->nullable();
             $table->text('address');
             $table->string('phone')->unique()->nullable();
-            $table->string('email')->unique();
+            $table->string('email')->unique()->nullable();
             $table->boolean('status')->default(true)->comment('active|inactive');
             $table->timestamps();
         });
     }
 
-    /**
+    /**\
      * Reverse the migrations.
      */
     public function down(): void

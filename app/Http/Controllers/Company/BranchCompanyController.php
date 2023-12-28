@@ -14,9 +14,8 @@ class BranchCompanyController extends Controller
 
     {
         $company = Company::find(1);
-        // $user = auth()->user();
-        // $branch = $user->company->branch;
-        dd($branch);
+        $user = auth()->user();
+        $branch = $user->company->branch;
 
         return response()->json([
             'status' => 'success',
@@ -39,7 +38,7 @@ class BranchCompanyController extends Controller
         $validator = Validator::make($request->all(), [
             'name'      => 'required',
             'address'   => 'required',
-            'email'     => 'required|unique:branch_companies,email',
+            'email'     => 'required|sometimes|unique:branch_companies,email',
             'phone'     => 'required|sometimes|unique:branch_companies,phone',
         ], [
             'name.required'      => 'Nama Harus Diisi',
@@ -75,8 +74,8 @@ class BranchCompanyController extends Controller
         $validator = Validator::make($request->all(), [
             'name'      => 'required',
             'address'   => 'required',
-            'email'     => 'required|unique:branch_companies,email',
-            'phone'     => 'required|unique:branch_companies,phone',
+            'email'     => 'required|sometimes|unique:branch_companies,email,'.$branch->id,
+            'phone'     => 'required|sometimes|unique:branch_companies,phone,'.$branch->id,
         ], [
             'name.required'      => 'Nama Harus Diisi',
             'address.required'   => 'Alamat Harus Diisi',
@@ -95,7 +94,7 @@ class BranchCompanyController extends Controller
 
         $data = $request->all();
 
-        $user->company->branch->update($data);
+        $user->company->branch()->update($data);
         $branch = BranchCompany::find($branch->id);
 
         return response()->json([
@@ -107,15 +106,15 @@ class BranchCompanyController extends Controller
 
     public function changeStatus(BranchCompany $branch)
     {
-        $status = $branch->is_status;
+        $status = $branch->status;
 
-        $branch->update(['is_active' => !$status]);
+        $branch->update(['status' => !$status]);
         $statusText = $status ? 'Aktif' : 'Tidak Aktif';
 
         return response()->json([
             'status' => 'success', 
             'is_status' => $status,
-            'message' => 'Vendor '.$statusText
+            'message' => 'Branch '.$statusText
         ]);
     }
 }

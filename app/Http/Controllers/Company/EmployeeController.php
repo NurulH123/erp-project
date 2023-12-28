@@ -8,6 +8,7 @@ use App\Models\Employee;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\AdminEmployee;
+use App\Models\Position;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -52,6 +53,8 @@ class EmployeeController extends Controller
         $rules =  [
             'username'  => 'required',
             'email'     => 'required|email|unique:employees,email',
+            'email'     => 'required|email|unique:users,email',
+            'is_admin'  => 'required|in:0,1',
             'gender'    => 'required',
             'phone'     => 'required|unique:profile_employees,phone',
             'address'   => 'required',
@@ -59,6 +62,8 @@ class EmployeeController extends Controller
 
         $messages = [
             'username.required' => 'Nama Harus Diisi',
+            'is_admin.required' => 'Is Admin Harus Diisi',
+            'is_admin.in'       => 'Is Admin Harus Bernilai 1 atau 0',
             'email.required'    => 'Email Harus Diisi',
             'email.unique'      => 'Maaf, Email Sudah Terdaftar',
             'email.email'       => 'Format Email Tidak Sesuai',
@@ -67,6 +72,16 @@ class EmployeeController extends Controller
             'phone.unique'      => 'Maaf, Nomor Hp Sudah Terdaftar',
             'address.required'  => 'Alamat Harus Diisi',
         ];
+
+        $position = Position::find($request->position_id);
+        $statusEmployee = Position::find($request->status_employee_id);
+
+        if (is_null($position) || is_null($statusEmployee)) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Terdapat Kesalahan Posisi atau Status Karyawan',
+            ], 442);
+        }
 
         if ($request->is_admin) {
             // Rules user register
@@ -98,14 +113,15 @@ class EmployeeController extends Controller
         $userInputer = (string)substr($numUser, 1);
 
         $code =  $userInputer.'-'.$uniqIDCompany.'-'.date('Ymd').'-'.$uniqEmployee;
-        $dataEmployee = $request->only('username', 'email');
+        $dataEmployee = $request->only('username', 'email', 'is_admin');
         $dataEmployee['code'] = $code;
 
+        $employee = $company->employee()->create($dataEmployee);
+        
         // Process inputing data employee
         if ($request->is_admin) {
-            $dataEmployee = $request->only('username', 'is_admin', 'email');
             $dataUser = $request->only('username', 'email', 'password');
-
+            
             $dataUser['is_owner'] = false;
             $dataUser['password'] = bcrypt($request->password);
 
@@ -116,8 +132,6 @@ class EmployeeController extends Controller
                 $adminEmployee->roles()->attach($request->roles);
             }
         }
-
-        $employee = $company->employee()->create($dataEmployee);
 
         // Process inputing profile
         $dataProfile = $request->all();
