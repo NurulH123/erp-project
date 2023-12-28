@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Company;
 
 use App\Models\User;
 use App\Models\Company;
+use App\Models\Position;
 use App\Models\Employee;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Models\AdminEmployee;
-use App\Models\Position;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -21,7 +21,7 @@ class EmployeeController extends Controller
         $IdEmployee = array_values($pluck);
         $employees = Employee::with('profile')
                         ->whereIn('id', $IdEmployee)
-                        ->get(['id', 'code', 'username', 'email', 'is_admin', 'status']);
+                        ->get(['id', 'code', 'username', 'email', 'password', 'is_admin', 'status']);
 
         return response()->json([
             'status' => 'success', 
@@ -115,8 +115,7 @@ class EmployeeController extends Controller
         $code =  $userInputer.'-'.$uniqIDCompany.'-'.date('Ymd').'-'.$uniqEmployee;
         $dataEmployee = $request->only('username', 'email', 'is_admin');
         $dataEmployee['code'] = $code;
-
-        $employee = $company->employee()->create($dataEmployee);
+        
         
         // Process inputing data employee
         if ($request->is_admin) {
@@ -124,13 +123,17 @@ class EmployeeController extends Controller
             
             $dataUser['is_owner'] = false;
             $dataUser['password'] = bcrypt($request->password);
+            $dataEmployee['password'] = $request->password;
 
+            $employee = $company->employee()->create($dataEmployee);
             $newUser = User::create($dataUser); // Menambahkan data us er
             $adminEmployee = $newUser->adminEmployee()->create(['code' => $code]);// Menambahkan data user
             
             if (!empty($request->roles)) {
                 $adminEmployee->roles()->attach($request->roles);
             }
+        } else {
+            $employee = $company->employee()->create($dataEmployee);
         }
 
         // Process inputing profile

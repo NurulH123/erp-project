@@ -22,6 +22,8 @@ class AuthController extends Controller
                         'username' => 'required|max:255',
                         'email' => 'required|email|unique:users,email',
                         'password' => 'required|confirmed',
+                        'gender' => 'required|in:Laki-laki,Perempuan',
+                        'phone' => 'required|unique:profiles',
                     ],
                     [
                         'username.required' => 'Nama Harus Diisi',
@@ -71,37 +73,77 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $data = $request->validate([
-            'email' => 'email|required',
-            'password' => 'required'
+        
+        $validator = Validator::make($request->all(), [
+            'email'     => 'required',
+            'password'  => 'required',
+        ], [
+            'email.required'    => 'Email Harus Diisi',
+            'email.unique'      => 'Email Sudah Terdaftar',
+            'password.required' => 'Password Harus Diisi',
         ]);
 
         if (User::where('email', $request->email)->first() == null) {
             return response(['message' => 'Email belum terdaftar'], 404);
         }
 
-        if (!auth()->attempt($data)) {
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => $validator->errors(),
+            ], 442);
+        }
+
+        if (!auth()->attempt($validator->getData())) {
             return response(['message' => 'password atau email yang anda masukkan tidak sesuai'], 404);
         }
 
-        $user = User::with('company')
-                ->where('email', $request->email)
+        $user = User::where('email', $request->email)
                 ->first(['id', 'username', 'email', 'status', 'is_owner']);
+
+        $data = $this->checkLoginEmployee($user);
 
         $token = auth()->user()->createToken('api')->plainTextToken;
 
         return response()->json([
             'status' => 'success',
-            'data' => $user,
+            'data' => $data,
             'token' => $token
         ], 200);
 
 
     }
 
+    public function me()
+    {
+        $user = User::where('id',  auth()->id())
+                ->first(['id', 'username', 'email', 'status', 'is_owner']);
+
+        $data = $this->checkLoginEmployee($user);
+
+        return response()->json(['data' => $data]);
+    }
+
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
         return response()->json(["status" => "success", 'message' => 'Logged Out'], 200);
+    }
+
+    private function checkLoginEmployee($user)
+    {
+        $company = is_null($user->company) ? 
+                    null : collect($user->company)->toArray();
+                    
+        if (!$user['is_owner']) {
+            $code = $user->adminEmployee->code;
+            $employee = Employee::where('code', $code)->first();
+            $company = collect($employee->company)->toArray();
+        }
+
+        $data = collect($user)->toArray();
+        $data['company'] = $company;
+
+        return $data;
     }
 }

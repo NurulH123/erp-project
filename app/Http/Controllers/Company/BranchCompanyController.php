@@ -7,6 +7,7 @@ use App\Models\BranchCompany;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class BranchCompanyController extends Controller
 {
@@ -74,8 +75,9 @@ class BranchCompanyController extends Controller
         $validator = Validator::make($request->all(), [
             'name'      => 'required',
             'address'   => 'required',
-            'email'     => 'required|sometimes|unique:branch_companies,email,'.$branch->id,
-            'phone'     => 'required|sometimes|unique:branch_companies,phone,'.$branch->id,
+            'email'     => 'sometimes',
+            'phone'     => 'soometimes',
+            Rule::unique('branch_companies')->ignore($branch),
         ], [
             'name.required'      => 'Nama Harus Diisi',
             'address.required'   => 'Alamat Harus Diisi',

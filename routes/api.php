@@ -45,13 +45,7 @@ Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function() {
-    Route::get('/me', function() {
-        $user = User::with('company')
-                ->where('id',  auth()->id())
-                ->first(['id', 'username', 'email', 'status', 'is_owner']);
-
-        return response()->json(['data' => $user]);
-    });
+    Route::get('/me', [AuthController::class, 'me']);
 
     Route::post('logout', [AuthController::class, 'logout']);
 
@@ -156,7 +150,7 @@ Route::middleware('auth:sanctum')->group(function() {
                 Route::get('/', [BranchCompanyController::class, 'index']);
                 Route::get('/{branch}', [BranchCompanyController::class, 'show']);
                 Route::post('/', [BranchCompanyController::class, 'create']);
-                Route::patch('/{branch}', [BranchCompanyController::class, 'update']);
+                Route::patch('/{branch}/update', [BranchCompanyController::class, 'update']);
                 Route::get('/{branch}/change-status', [BranchCompanyController::class, 'changeStatus']);
         });    
     

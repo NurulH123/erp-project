@@ -13,7 +13,7 @@ class Employee extends Model
 
     public function company()
     {
-        return $this->morphTo();
+        return $this->morphTo('employiable');
     }
 
     public function profile()
