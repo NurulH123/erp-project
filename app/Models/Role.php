@@ -10,12 +10,11 @@ class Role extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
-
     protected $hidden = ['created_at', 'updated_at'];   
 
     public function permission()
     {
-        return $this->belongsToMany(PermissionRole::class,'permission_roles');
+        return $this->belongsToMany(Permission::class,'permission_roles');
     }
 
     public function user()

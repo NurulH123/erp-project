@@ -12,6 +12,11 @@ class Permission extends Model
     protected $guarded = ['id'];
     protected $hidden = ['created_at', 'updated_at'];
 
+    public function role()
+    {
+        return $this->belongsToMany(Role::class,'permission_roles');
+    }
+
     public function children()
     {
         return $this->hasMany(Permission::class, 'permission_group_id', 'id');

@@ -8,6 +8,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\VendorController;
+use App\Http\Controllers\PermissionRoleController;
 use App\Http\Controllers\StatusEmployeeController;
 use App\Http\Controllers\Auth\PermissionController;
 use App\Http\Controllers\BarcodeController;
@@ -114,6 +115,14 @@ Route::middleware('auth:sanctum')->group(function() {
                 Route::patch('{role}/update', [RoleController::class, 'update']);
                 Route::get('/{role}/change-status', [RoleController::class, 'changeStatus'])->name('role.change-status');
         });
+
+        Route::group(
+            ['prefix' => 'role/{role}/permission'],
+            function() {
+                Route::post('/', [PermissionRoleController::class, 'givePermissionTo']);
+                Route::patch('/', [PermissionRoleController::class, 'updateRolePermission']);
+            }
+        );
     
         Route::group(
             ['prefix' => 'status-employee'],

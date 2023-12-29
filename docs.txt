@@ -230,3 +230,45 @@ Route : {{ $host }}/company/{id}
 @param : id -> ID dari perusahaan
 
 Hapus data perusahaan berdasarkan id  perusahaan
+
+
+=====================================================================
+|============================ ROLE PERMISSION ======================|
+=====================================================================
+# MENAMBAH PERMISSION KE ROLE
+
+Route : {{ $host }}/role/{id}/permission
+@param : id -> id dari role
+@method:POST
+
+Menambahkan permission ke role
+
+****************************************
+
+# UPDATE PERMISSION ROLE
+
+Route : {{ $host }}/role/{id}/permission
+@method:PATCH
+@param : id -> id dari role
+@body : - permission_id -> type array : kumpulan dari id permission 
+
+Mengupdate permission role
+=====================================================================
+|========================== COMPANY PERMISSION =====================|
+=====================================================================
+# MENAMBAH PERMISSION KE COMPANY
+
+Route : {{ $host }}/company/permission
+@method:POST
+
+Menambahkan permission peruuahaan
+
+****************************************
+
+# UPDATE PERMISSION COMPANY
+
+Route : {{ $host }}/coompany/permission/update
+@method : PATCH
+@body : - permission_id -> type array : kumpulan dari id permission         
+
+Mengupdate permission company
