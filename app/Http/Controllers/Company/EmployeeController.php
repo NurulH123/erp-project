@@ -9,6 +9,7 @@ use App\Models\Employee;
 use Illuminate\Http\Request;
 use App\Models\AdminEmployee;
 use App\Http\Controllers\Controller;
+use App\Models\ProfileEmployee;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -115,7 +116,16 @@ class EmployeeController extends Controller
         $code =  $userInputer.'-'.$uniqIDCompany.'-'.date('Ymd').'-'.$uniqEmployee;
         $dataEmployee = $request->only('username', 'email', 'is_admin');
         $dataEmployee['code'] = $code;
-        
+
+        $dataProfile = $request->all();
+
+        if ($request->hasFile('photo')) {
+            $file = $request->file('photo');
+            $filename = date('Ymd').'.'.$file->getClientOriginalExtension();
+            $file->move('uploads/photo', $filename);
+
+            $dataProfile['photo'] = $filename;
+        }
         
         // Process inputing data employee
         if ($request->is_admin) {
@@ -137,7 +147,6 @@ class EmployeeController extends Controller
         }
 
         // Process inputing profile
-        $dataProfile = $request->all();
 
         $employee->profile()->create($dataProfile);
 
@@ -193,6 +202,20 @@ class EmployeeController extends Controller
 
         // Process inputing profile
         $dataProfile = $request->except('username', 'is_admin', 'email');
+
+        if ($request->hasFile('photo')) {
+            $photo = $employee->profile->photo;
+            
+            if (!is_null($photo)) {
+                unlink('uploads/phhoto/'.$photo);
+            }
+
+            $file = $request->file('photo');
+            $filename = date('Ymd').'.'.$file->getClientOriginalExtension();
+            $file->move('uploads/photo', $filename);
+
+            $dataProfile['photo'] = $filename;
+        }
 
         $employee->update($dataEmployee);
         $employee->profile()->update($dataProfile);

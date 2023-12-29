@@ -63,7 +63,7 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::group(
         ['prefix' => 'company/permission'],
         function() {
-            Route::post('/add', [CompanyPermissionController::class, 'addCompanyPermissionTo']);
+            Route::post('/', [CompanyPermissionController::class, 'addPermissionTo']);
             Route::patch('/update', [CompanyPermissionController::class, 'updateCompanyPermission']);
         }
     );

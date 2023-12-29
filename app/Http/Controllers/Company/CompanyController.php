@@ -10,19 +10,13 @@ use Illuminate\Support\Facades\Validator;
 
 class CompanyController extends Controller
 {
-    private $user, $company;
-
-    public function __construct()
-    {
-        $this->user = auth()->user();
-    }
-
     public function index()
     {
         // Private
         $user = auth()->user();
+        $company = Company::with('permission.children')->where('id', $user->company->id)->first();
 
-        return response()->json(['status' => 'success', 'data' => $user->company->permissions]);
+        return response()->json(['status' => 'success', 'data' => $company]);
     }
 
     public function listAll()
