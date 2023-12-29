@@ -22,8 +22,8 @@ class AuthController extends Controller
                         'username' => 'required|max:255',
                         'email' => 'required|email|unique:users,email',
                         'password' => 'required|confirmed',
-                        'gender' => 'required|in:Laki-laki,Perempuan',
-                        'phone' => 'required|unique:profiles',
+                        // 'gender' => 'required|in:Laki-laki,Perempuan',
+                        // 'phone' => 'required|unique:profiles',
                     ],
                     [
                         'username.required' => 'Nama Harus Diisi',

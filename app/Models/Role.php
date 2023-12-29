@@ -13,6 +13,11 @@ class Role extends Model
 
     protected $hidden = ['created_at', 'updated_at'];   
 
+    public function permission()
+    {
+        return $this->belongsToMany(PermissionRole::class,'permission_roles');
+    }
+
     public function user()
     {
         return $this->hasMany(User::class);
