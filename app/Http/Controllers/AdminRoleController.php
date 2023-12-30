@@ -32,7 +32,7 @@ class AdminRoleController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Role Berhaasil Ditambahkan'
+            'message' => 'Role Berhasil Ditambahkan'
         ]);
     }
 
