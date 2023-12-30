@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('employee_roles', function (Blueprint $table) {
+        Schema::create('admin_employee_roles', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('role_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('admin_employee_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->boolean('status');
+            $table->foreignId('role_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->boolean('status')->default(true)->comment('Active|Inactive');
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('employee_roles');
+        Schema::dropIfExists('admin_employee_roles');
     }
 };

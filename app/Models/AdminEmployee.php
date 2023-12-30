@@ -13,6 +13,12 @@ class AdminEmployee extends Model
 
     public function roles()
     {
-        return $this->belongsToMany(Role::class, 'employee_roles', 'admin_employee_id', 'role_id');
+        return $this->belongsToMany(Role::class, 'admin_employee_roles')
+                    ->withPivot('id','status','admin_employee_id',  'role_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

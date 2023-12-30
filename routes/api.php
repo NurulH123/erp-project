@@ -10,6 +10,7 @@ use App\Http\Controllers\AddressController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\PermissionRoleController;
 use App\Http\Controllers\StatusEmployeeController;
+use App\Http\Controllers\AdminRoleController;
 use App\Http\Controllers\Auth\PermissionController;
 use App\Http\Controllers\BarcodeController;
 use App\Http\Controllers\PaymentController;
@@ -104,6 +105,14 @@ Route::middleware('auth:sanctum')->group(function() {
                 Route::patch('/{employee}', [EmployeeController::class, 'update']);
                 Route::get('/{employee}/change/status', [EmployeeController::class, 'changeStatus']);
                 Route::post('/{employee}/change/admin', [EmployeeController::class, 'changeAdmin']);
+            }
+        );
+
+        Route::group(
+            ['prefix' => 'employee/{employee}/role'],
+            function() {
+                Route::post('/add', [AdminRoleController::class, 'addRoleToAdmin']);
+                Route::post('/status/change', [AdminRoleController::class, 'changeStatus']);
             }
         );
     
