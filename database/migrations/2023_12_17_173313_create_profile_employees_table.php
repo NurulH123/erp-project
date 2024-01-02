@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('profile_employees', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('employee_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignId('position_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('employee_id')->nullable()->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('position_id')->nullable()->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('status_employee_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->enum('gender', ['perempuan', 'laki-laki']);
             $table->string('phone')->unique();

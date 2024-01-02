@@ -118,6 +118,8 @@ class EmployeeController extends Controller
         $dataEmployee['code'] = $code;
 
         $dataProfile = $request->all();
+        $dataProfile['join'] = isset($request->join) ? date('Y-m-d', strtotime($request->join)) : null;
+        $dataProfile['resaign'] = isset($request->resaign) ? date('Y-m-d', strtotime($request->resaign)) : null;
 
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
@@ -147,7 +149,6 @@ class EmployeeController extends Controller
         }
 
         // Process inputing profile
-
         $employee->profile()->create($dataProfile);
 
         return response()->json([
@@ -202,7 +203,9 @@ class EmployeeController extends Controller
 
         // Process inputing profile
         $dataProfile = $request->except('username', 'is_admin', 'email');
-
+        $dataProfile['join'] = isset($request->join) ? date('Y-m-d', strtotime($request->join)) : null;
+        $dataProfile['resaign'] = isset($request->resaign) ? date('Y-m-d', strtotime($request->resaign)) : null;
+        
         if ($request->hasFile('photo')) {
             $photo = $employee->profile->photo;
             

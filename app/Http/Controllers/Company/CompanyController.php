@@ -56,13 +56,16 @@ class CompanyController extends Controller
         // create coompany
         $company = $user->company()->create($request->all()); 
 
-        if (!$user->adminEmployee) {
-            // create admin employee
+        // if (!$user->adminEmployee) {
+            // create employee
             $company->employee()->create([
                 'username' => $user->username,
+                'email' => $user->email,
+                'is_admin'  => true,
                 'code' => $user->adminEmployee->code, 
             ]);
-        }
+        // }
+
 
         // response
         return response()->json([

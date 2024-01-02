@@ -22,8 +22,6 @@ class AuthController extends Controller
                         'username' => 'required|max:255',
                         'email' => 'required|email|unique:users,email',
                         'password' => 'required|confirmed',
-                        // 'gender' => 'required|in:Laki-laki,Perempuan',
-                        // 'phone' => 'required|unique:profiles',
                     ],
                     [
                         'username.required' => 'Nama Harus Diisi',
@@ -55,7 +53,7 @@ class AuthController extends Controller
 
             $code = '00-'.date("Ymd").'-'.$uniqCode;
             
-            // Tambah Admin Owner
+            // Tambah Admin Employee
             $user->adminEmployee()->create(['code' => $code]);
 
             $token = $user->createToken('api')->plainTextToken;
