@@ -43,7 +43,6 @@ class RoleController extends Controller
 
     public function update(Request $request,Role $role)
     {
-        $user = auth()->user();
         $validator = Validator::make($request->all(),['name' => 'required'],['name.required' => 'Nama Harus Diisi']);
     
         if ($validator->fails()) {
@@ -53,7 +52,7 @@ class RoleController extends Controller
         $data = $request->all();
         $data['caption'] = Str::snake($request->name);
 
-        $user->company->roles()->update($data);
+        $role->update($data);
         $role = Role::findOrFail($role->id);
 
         return response()->json([
