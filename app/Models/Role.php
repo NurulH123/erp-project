@@ -14,17 +14,12 @@ class Role extends Model
 
     public function permission()
     {
-        return $this->belongsToMany(Permission::class,'permission_roles', 'permission_id', 'role_id');
+        return $this->belongsToMany(Permission::class,'permission_roles');
     }
 
     public function admin()
     {
         return $this->belongsToMany(AdminEmployee::class, 'admin_employee_roles')->withPivot('status');
-    }
-
-    public function user()
-    {
-        return $this->hasMany(User::class);
     }
 
     public function roleable()

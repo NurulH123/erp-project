@@ -51,6 +51,9 @@ Route::middleware('auth:sanctum')->group(function() {
 
     Route::post('logout', [AuthController::class, 'logout']);
 
+    // ========================================================================
+    // |============================ COMPANY =================================|
+    // ========================================================================
     Route::group(
         ['prefix' => 'company'],
         function() {
@@ -62,6 +65,9 @@ Route::middleware('auth:sanctum')->group(function() {
             Route::patch('/{id}/change-status', [CompanyController::class, 'changeStatus']);
     });
 
+    // ========================================================================
+    // |======================== COMPANY PERMISSION ==========================|
+    // ========================================================================
     Route::group(
         ['prefix' => 'company/permission'],
         function() {
@@ -70,6 +76,9 @@ Route::middleware('auth:sanctum')->group(function() {
         }
     );
 
+    // ========================================================================
+    // |=============================== PERMISSION ===========================|
+    // ========================================================================
     Route::group(
         ['prefix' => 'permission'],
         function() {
@@ -80,6 +89,9 @@ Route::middleware('auth:sanctum')->group(function() {
     });
 
     Route::middleware('hasCompany')->group(function() {
+    // ========================================================================
+    // |=============================== POSITION =============================|
+    // ========================================================================
         Route::prefix('position')->group(function() {
             Route::get('/', [PositionController::class, 'index']);
             Route::post('/', [PositionController::class, 'create']);
@@ -87,6 +99,9 @@ Route::middleware('auth:sanctum')->group(function() {
             Route::get('{position}/status/change', [PositionController::class, 'changeStatus'])->name('position.change-status');
         });
     
+    // ========================================================================
+    // |=============================== PROFILE ==============================|
+    // ========================================================================
         Route::prefix('profile')->group(function() {
             Route::post('/', [ProfileController::class, 'index']);
             Route::patch('update', [ProfileController::class, 'update']);
@@ -96,6 +111,9 @@ Route::middleware('auth:sanctum')->group(function() {
             Route::post('index_users', [ProfileController::class, 'all']);
         });
     
+    // ========================================================================
+    // |=============================== EMPLOYEE =============================|
+    // ========================================================================
         Route::group(
             ['prefix' => 'employee'],
             function()  {
@@ -108,6 +126,9 @@ Route::middleware('auth:sanctum')->group(function() {
             }
         );
 
+    // ========================================================================
+    // |========================= ROLE USER EMPLOYEE =========================|
+    // ========================================================================
         Route::group(
             ['prefix' => 'employee/{employee}/role'],
             function() {
@@ -116,6 +137,9 @@ Route::middleware('auth:sanctum')->group(function() {
             }
         );
     
+    // ========================================================================
+    // |================================== ROLE ==============================|
+    // ========================================================================
         Route::group(
             ['prefix' => 'role'],
             function() {
@@ -125,6 +149,9 @@ Route::middleware('auth:sanctum')->group(function() {
                 Route::get('/{role}/change-status', [RoleController::class, 'changeStatus'])->name('role.change-status');
         });
 
+    // ========================================================================
+    // |=========================== ROLE PERMISSION ==========================|
+    // ========================================================================
         Route::group(
             ['prefix' => 'role/{role}/permission'],
             function() {
@@ -133,6 +160,9 @@ Route::middleware('auth:sanctum')->group(function() {
             }
         );
     
+    // ========================================================================
+    // |=========================== STATUS EMPLOYEE ==========================|
+    // ========================================================================
         Route::group(
             ['prefix' => 'status-employee'],
             function() {
@@ -142,6 +172,9 @@ Route::middleware('auth:sanctum')->group(function() {
                 Route::get('/{employeeStatus}/change-status', [StatusEmployeeController::class, 'changeStatus']);
         });
 
+    // ========================================================================
+    // |================================ VENDOR ==============================|
+    // ========================================================================
         Route::group(
             ['prefix' => 'vendor'],
             function() {
@@ -152,6 +185,9 @@ Route::middleware('auth:sanctum')->group(function() {
                 Route::get('/{vendor}/change-status', [VendorController::class, 'changeStatus']);
         });
     
+    // ========================================================================
+    // |=============================== CUSTOMER =============================|
+    // ========================================================================
         Route::group(
             ['prefix' => 'customer'],
             function() {
@@ -162,6 +198,9 @@ Route::middleware('auth:sanctum')->group(function() {
                 Route::get('/{customer}/change-status', [CustomerController::class, 'changeStatus']);
         });
 
+    // ========================================================================
+    // |=============================== BRANCH ===============================|
+    // ========================================================================
         Route::group(
             ['prefix' => 'branch'],
             function() {

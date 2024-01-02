@@ -12,8 +12,7 @@ class PermissionController extends Controller
 {
     public function index()
     {
-        $permissions = Permission::all()
-                        ->groupBy('permission_group_id');
+        $permissions = Permission::with('children')->whereNull('permission_group_id')->get();
 
         return response()->json([
             'data'  => $permissions

@@ -116,8 +116,15 @@ class AuthController extends Controller
     {
         $user = User::where('id',  auth()->id())
                 ->first(['id', 'username', 'email', 'status', 'is_owner']);
+        $collRoles = collect($user->adminEmployee->roles)->pluck('id', 'name')->toArray();
+        $idRoles = array_values($collRoles);
+        
+        $roles = Role::with('permission:id,name,caption,status')
+                    ->whereIn('id', $idRoles)
+                    ->get(['id','name','caption','code','status']);
 
         $data = $this->checkLoginEmployee($user);
+        $data['role'] = $roles;
 
         return response()->json(['data' => $data]);
     }
@@ -139,7 +146,7 @@ class AuthController extends Controller
             $company = collect($employee->company)->toArray();
         }
 
-        $data = collect($user)->toArray();
+        $data = collect($user)->except('admin_employee')->toArray();
         $data['company'] = $company;
 
         return $data;
