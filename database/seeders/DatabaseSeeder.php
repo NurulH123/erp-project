@@ -53,35 +53,6 @@ class DatabaseSeeder extends Seeder
             'user_id'   => $user2->id,
             'code'      => $code2,
         ]);
-
-        Payment::create([
-            'method' => 'Bank BCA'
-        ]);
-        Payment::create([
-            'method' => 'Bank BRI'
-        ]);
-        Payment::create([
-            'method' => 'Bank BNI'
-        ]);
-        Payment::create([
-            'method' => 'Bank Mandiri'
-        ]);
-
-        Sending::create([
-            'sender' => 'Free Shipping',
-        ]);
-        Sending::create([
-            'sender' => 'Gosend-Gojek',
-        ]);
-        Sending::create([
-            'sender' => 'SiCepat Express',
-        ]);
-        Sending::create([
-            'sender' => 'SiCepat (cargo)',
-        ]);
-        Sending::create([
-            'sender' => 'SiCepat (reguler)',
-        ]);
     }
 
     protected function createCode($user)

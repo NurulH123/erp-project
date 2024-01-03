@@ -82,9 +82,8 @@ class PositionController extends Controller
 
     public function changeStatus(Position $position)
     {
-        $user = auth()->user();
         $status = !$position->status;
-        $user->company->positions()->update(['status' => $status]);
+        $position->update(['status' => $status]);
 
         $updPosition = Position::findOrFail($position->id);
 

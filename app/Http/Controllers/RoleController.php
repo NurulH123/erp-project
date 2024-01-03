@@ -74,10 +74,9 @@ class RoleController extends Controller
 
     public function changeStatus(Role $role)
     {
-        $user = auth()->user();
         $status = !$role->status;
         $statusText = $status ? 'aktifkan' :  'non aktifkan';
-        $user->company->roles()->update(['status' => $status]);
+        $role->update(['status' => $status]);
 
         $role = Role::find($role->id);
 

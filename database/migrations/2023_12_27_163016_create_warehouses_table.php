@@ -13,7 +13,10 @@ return new class extends Migration
     {
         Schema::create('warehouses', function (Blueprint $table) {
             $table->id();
-            
+            $table->foreignId('company_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->string('name');
+            $table->text('address');
+            $table->boolean('status')->default(true)->comment('Active|Inactive');
             $table->timestamps();
         });
     }

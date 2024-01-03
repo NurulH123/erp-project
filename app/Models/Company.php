@@ -55,4 +55,14 @@ class Company extends Model
     {
         return $this->morphMany(Customer::class, 'customerable');
     }
+
+    public function units()
+    {
+        return $this->hasMany(Unit::class);
+    }
+
+    public function categories()
+    {
+        return $this->hasMany(Category::class);
+    }
 }

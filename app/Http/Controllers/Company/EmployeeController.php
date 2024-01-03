@@ -234,24 +234,6 @@ class EmployeeController extends Controller
         ], 200);
     }
 
-    // /**
-    //  *  Route ini hanya utk testing
-    //  */
-    // public function destroy(Employee $employee)
-    // {
-    //     try {
-    //         if ($employee->delete()) {
-    //             return response()->json([
-    //                 'status' => 'success',
-    //                 'message' => 'Data Telah Dihapus'
-    //             ]);
-    //         }
-    //     } catch (\Throwable $th) {
-    //         throw $th->getMessage();
-    //     }
-        
-    // }
-
     public function changeAdmin(Request $request, Employee $employee)
     {
         $user = auth()->user();

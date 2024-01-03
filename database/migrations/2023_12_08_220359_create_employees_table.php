@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('username');
             $table->string('email')->unique();
             $table->string('password')->nullable();
-            $table->boolean('is_admin')->default(false);
+            $table->boolean('is_admin');
             $table->boolean('status')->default(true)->comment('active|inactive');
             $table->morphs('employiable');
             $table->timestamps();

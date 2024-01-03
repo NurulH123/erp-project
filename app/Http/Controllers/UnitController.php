@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
+use App\Models\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class CategoryController extends Controller
+class UnitController extends Controller
 {
     public function index()
     {
         $user = auth()->user();
-        $categories = $user->company->categories;
+        $units = $user->company->units;
 
         return response()->json([
             'status' => 'success',
-            'data' => $categories,
+            'data' => $units,
         ]);
     }
 
@@ -40,26 +40,27 @@ class CategoryController extends Controller
         }
 
         $data = $request->only('name', 'code');
-        $categories = $company->categories()->create($data);
+        $unit = $company->units()->create($data);
 
         return response()->json([
             'status' => 'success',
             'message' => 'Data Berhasil ditambahkan',
-            'data'  => $categories,
+            'data'  => $unit,
         ]);
     }
 
-    public function show(Category $category) 
+    public function show(Unit $unit) 
     {
         return response()->json([
             'status' => 'success',
-            'data' => $category,
+            'data' => $unit,
         ]);
     }
 
-    public function update(Request $request, Category $category)
+    public function update(Request $request, Unit $unit)
     {
         $user = auth()->user();
+        $company = $user->company;
 
         $validator = Validator::make($request->all(), [
             'name'  => 'required',
@@ -77,27 +78,27 @@ class CategoryController extends Controller
         }
 
         $data = $request->only('name', 'code');
-        $category->update($data);
+        $unit->update($data);
 
-        $updCategory = Category::find($category->id);
+        $updUnit = Unit::find($unit->id);
 
         return response()->json([
             'status' => 'success',
             'message' => 'Data Berhasil Diubah',
-            'data'  => $updCategory,
+            'data'  => $updUnit,
         ]);
     }
 
-    public function changeStatus(Category $category)
+    public function changeStatus(Unit $unit)
     {
-        $status = !$category->status;
+        $status = !$unit->status;
         $statusText = $status ? 'Diaktifkan' : 'Dinonaktifkan';
 
-        $category->update(['status' => $status]);
+        $unit->update(['status' => $status]);
 
         return response()->json([
             'status' => 'success',
-            'message' => $category->name.' '.$statusText
+            'message' => $unit->name.' '.$statusText
         ]);
     }
 }
