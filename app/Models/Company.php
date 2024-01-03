@@ -61,8 +61,8 @@ class Company extends Model
         return $this->hasMany(Unit::class);
     }
 
-    public function categories()
+    public function productCategories()
     {
-        return $this->hasMany(Category::class);
+        return $this->hasMany(CategoryProduct::class);
     }
 }

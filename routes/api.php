@@ -1,37 +1,23 @@
 <?php
 
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\OrderController;
 use App\Http\Controllers\RoleController;
-use App\Http\Controllers\CouponController;
-use App\Http\Controllers\AddressController;
+use App\Http\Controllers\UnitController;
 use App\Http\Controllers\VendorController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\AdminRoleController;
 use App\Http\Controllers\PermissionRoleController;
 use App\Http\Controllers\StatusEmployeeController;
-use App\Http\Controllers\AdminRoleController;
 use App\Http\Controllers\Auth\PermissionController;
-use App\Http\Controllers\BarcodeController;
-use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\SendingController;
-use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Company\CompanyController;
+use App\Http\Controllers\CategoryProductController;
+use App\Http\Controllers\Company\EmployeeController;
+use App\Http\Controllers\Company\PositionController;
 use App\Http\Controllers\Company\BranchCompanyController;
 use App\Http\Controllers\Company\CompanyPermissionController;
-use App\Http\Controllers\Company\EmployeeController;
-use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\DasboardController;
-use App\Http\Controllers\DataLeadController;
-use App\Http\Controllers\ExportDataController;
-use App\Http\Controllers\HistoryController;
-use App\Http\Controllers\OrderPhotoController;
-use App\Http\Controllers\RajaOngkirController;
-use App\Http\Controllers\ReturnOrderController;
-use App\Http\Controllers\Company\PositionController;
-use App\Http\Controllers\UnitController;
 
 /*
 |--------------------------------------------------------------------------
@@ -231,17 +217,12 @@ Route::middleware('auth:sanctum')->group(function() {
         });
     
         Route::prefix('category')->group(function() {
-            Route::get('/', [CategoryController::class, 'index']);
-            Route::post('/', [CategoryController::class, 'store']);
-            Route::post('/{category}', [CategoryController::class, 'show']);
-            Route::patch('/{category}', [CategoryController::class, 'update']);
-            Route::get('/{category}/change-status', [CategoryController::class, 'changeStatus']);
+            Route::get('/', [CategoryProductController::class, 'index']);
+            Route::post('/', [CategoryProductController::class, 'store']);
+            Route::post('/{category}', [CategoryProductController::class, 'show']);
+            Route::patch('/{category}', [CategoryProductController::class, 'update']);
+            Route::get('/{category}/change-status', [CategoryProductController::class, 'changeStatus']);
         });
         
     });
-    
-//aldimas
-// Route::post('order_report',[OrderReportController::class,'order_report']);
-// Route::get('cor',[ExportDataController::class,'cor']);
-
 });

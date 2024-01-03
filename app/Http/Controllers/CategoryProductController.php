@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
+use App\Models\CategoryProduct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class CategoryController extends Controller
+class CategoryProductController extends Controller
 {
     public function index()
     {
         $user = auth()->user();
-        $categories = $user->company->categories;
+        $productCategories = $user->company->productCategories;
 
         return response()->json([
             'status' => 'success',
-            'data' => $categories,
+            'data' => $productCategories,
         ]);
     }
 
@@ -40,16 +40,16 @@ class CategoryController extends Controller
         }
 
         $data = $request->only('name', 'code');
-        $categories = $company->categories()->create($data);
+        $productCategories = $company->productCategories()->create($data);
 
         return response()->json([
             'status' => 'success',
             'message' => 'Data Berhasil ditambahkan',
-            'data'  => $categories,
+            'data'  => $productCategories,
         ]);
     }
 
-    public function show(Category $category) 
+    public function show(CategoryProduct $category) 
     {
         return response()->json([
             'status' => 'success',
@@ -57,7 +57,7 @@ class CategoryController extends Controller
         ]);
     }
 
-    public function update(Request $request, Category $category)
+    public function update(Request $request, CategoryProduct $category)
     {
         $user = auth()->user();
 
@@ -79,7 +79,7 @@ class CategoryController extends Controller
         $data = $request->only('name', 'code');
         $category->update($data);
 
-        $updCategory = Category::find($category->id);
+        $updCategory = CategoryProduct::find($category->id);
 
         return response()->json([
             'status' => 'success',
@@ -88,7 +88,7 @@ class CategoryController extends Controller
         ]);
     }
 
-    public function changeStatus(Category $category)
+    public function changeStatus(CategoryProduct $category)
     {
         $status = !$category->status;
         $statusText = $status ? 'Diaktifkan' : 'Dinonaktifkan';
