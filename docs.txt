@@ -253,6 +253,7 @@ Route : {{ $host }}/role/{id}/permission
 @body : - permission_id -> type array : kumpulan dari id permission 
 
 Mengupdate permission role
+
 =====================================================================
 |========================== COMPANY PERMISSION =====================|
 =====================================================================
@@ -260,8 +261,9 @@ Mengupdate permission role
 
 Route : {{ $host }}/company/permission
 @method:POST
+@body : permission_id -> dlm bentuk array
 
-Menambahkan permission peruuahaan
+Menambahkan permission company
 
 ****************************************
 
@@ -272,3 +274,26 @@ Route : {{ $host }}/coompany/permission/update
 @body : - permission_id -> type array : kumpulan dari id permission         
 
 Mengupdate permission company
+
+=====================================================================
+|============================ EMPLOYEE ROLE ========================|
+=====================================================================
+# MENAMBAH EMPLOYEE KE ROLE
+
+Route : {{ $host }}/employee/{id}/add
+@param : id -> id dari employee
+@method:POST
+@body : role_id -> dlm bentuk array
+
+Menambahkan role ke employee
+
+****************************************
+
+# UPDATE PERMISSION ROLE
+
+Route : {{ $host }}/employee/{id}/employee
+@method:PATCH
+@param : id -> id dari employee
+@body : - role_id -> type array : kumpulan dari id permission 
+
+Mengupdate employee role
