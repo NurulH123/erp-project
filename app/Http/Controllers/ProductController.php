@@ -3,259 +3,121 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use App\Models\ProductCategory;
 use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
-    public function indexProduct()
+    public function index()
     {
-        $product = Product::with('category')->OrderBy('id', 'desc')->get();
+        $user = auth()->user();
+        $products = $user->company->products;
 
-        $data = [];
-        foreach ($product as $prod) {
-            $prod['item_id'] = "item[$prod->id][product_id]";
-            $prod['item_quantity'] = "item[$prod->id][quantity]";
-
-            $data[] = $prod;
-        }
-
-        return response()->json(['message' => 'product berhasil ditambahkan', 'data' => $product], 200);
+        return response()->json([
+            'status' => 'success', 
+            'data' => $products
+        ]);
 
     }
 
-    public function addProduct()
+    public function show(Product $product)
     {
-        $product = Product::where('product_status', 'enabled')->with('category')->get();
-
-        $data = [];
-        foreach ($product as $prod) {
-            $prod['item_id'] = "item[$prod->id][product_id]";
-            $prod['item_quantity'] = "item[$prod->id][quantity]";
-
-            $data[] = $prod;
-        }
-
-        return response()->json(['message' => 'product berhasil ditambahkan', 'data' => $product], 200);
-
+        return response()->json([
+            'status' => 'success',
+            'data' => $product
+        ]);
     }
 
-    public function oneProduct($id)
+    public function store(Request $request)
     {
-        $product = Product::where('id', $id)->first();
+        $user = auth()->user();
 
-        // Product
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'unit_id' => 'required',
+            'price' => 'required',
+            'category_product_id' => 'required',
+            'code_product' => 'required',
+        ]);
 
-        $category = ProductCategory::where('product_id', $product->id)->with('category')->get();
-
-        $category_out = [];
-        foreach ($category as $frame) {
-            $category_in['product_id'] = $frame->category->id;
-            $category_in['name'] = $frame->category->name;
-            $category_in['quantity'] = $frame->quantity;
-            $category_in['item_id'] = "item[" . $frame->category->id . "][category_id]";
-            $category_in['item_quantity'] = "item[" . $frame->category->id . "][quantity]";
-
-            $category_out[] = $category_in;
-        }
-
-        $product['category'] = $category_out;
-
-        return response()->json(['message' => 'success', 'data' => $product], 200);
-
-    }
-
-    public function createProduct(Request $request)
-    {
-        if ($request->file('image')) {
-            $data = $request->validate([
-                'name' => 'required|max:255',
-                'price' => 'required',
-                'model' => 'required',
-                'quantity' => 'required',
-                'product_status' => 'required',
-                'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            ]);
-
-            if ($request->file('image')->isValid()) {
-
-                $photoPath = $request->file('image')->store('product_photos', 'public');
-
-                $data['image'] = $photoPath;
-            }
-        } else {
-            $data = $request->validate([
-                'name' => 'required|max:255',
-                'model' => 'required',
-                'price' => 'required',
-                'quantity' => 'required',
-                'product_status' => 'required',
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => $validator->errors()
             ]);
         }
 
+        $data = $request->all();
 
-        $tag = strtolower($request->name);
-        $data['tag'] = $tag;
+        if ($request->hasFile('photo')) {
+            $file = $request->file('photo');
+            $filename = date('Ymd').'.'.$file->getClientOriginalExtension();
+            $file->move('uploads/photo/product', $filename);
 
-        if ($request->description) {
-            $data['description'] = $request->description;
+            $data['photo'] = 'uploads/photo/product/'.$filename;
         }
 
-        if ($request->weight) {
-            $data['weight'] = $request->weight;
-        }
+        $product = $user->company->products()->create($data);
 
-        if ($request->weight_class) {
-            $data['weight_class'] = $request->weight_class;
-        }
-
-        if ($request->minimum_quantity) {
-            $data['minimum_quantity'] = $request->minimum_quantity;
-        }
-
-        $product = Product::create($data);
-
-        $product_id = $product->id;
-
-        $frame['product_id'] = $product_id;
-
-        $categories = $request->category;
-        foreach ($categories as $category) {
-            $frame['category_id'] = $category['category_id'];
-            $frame['quantity'] = $category['quantity'];
-
-            ProductCategory::create($frame);
-        }
-
-        return response()->json(['message' => 'product berhasil ditambahkan', 'data' => $product], 200);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Data Berhasil Ditambahkan',
+            'data' => $product,
+        ]);
     }
-
-    public function updateProduct(Request $request, $id)
+    
+    public function update(Request $request, Product $product)
     {
-        $product = Product::where('id', $id)->first();
+        // $validator = Validator::make($request->all(), [
+        //     'name' => 'required',
+        //     'unit_id' => 'required',
+        //     'price' => 'required',
+        //     'category_id' => 'required',
+        // ]);
 
-        if (!$product) {
-            return response()->json(['message' => 'product belum ditambahkan'], 403);
-        }
+        // if ($validator->fails()) {
+        //     return response()->json([
+        //         'status' => 'failed',
+        //         'message' => $validator->errors()
+        //     ]);
+        // }
 
-        if (!$request->file('image')) {
-            if ($request->image != null) {
-                $data = $request->validate([
-                    'name' => 'required|max:255',
-                    'model' => 'required',
-                    'price' => 'required',
-                    'quantity' => 'required',
-                    'product_status' => 'required',
-                    'image' => 'required',
-                ]);
+        $data = $request->all();
 
-            } else {
-
-                $data = $request->validate([
-                    'name' => 'required|max:255',
-                    'model' => 'required',
-                    'price' => 'required',
-                    'quantity' => 'required',
-                    'product_status' => 'required',
-                ]);
-
-                $data['image'] = null;
-
+        if ($request->hasFile('photo')) {
+            if (!is_null($product->photo)) {
+                unlink('uploads/photo/product/'.$product->photo);
             }
 
-        } elseif ($request->file('image')) {
-            $data = $request->validate([
-                'name' => 'required|max:255',
-                'model' => 'required',
-                'price' => 'required',
-                'quantity' => 'required',
-                'product_status' => 'required',
-                'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            $file = $request->file('photo');
+            $filename = date('Ymd').'.'.$file->getClientOriginalExtension();
+            $file->move('uploads/photo/product', $filename);
 
-            ]);
-
-            if ($request->file('image')->isValid()) {
-
-                $photoPath = $request->file('image')->store('product_photos', 'public');
-
-                $data['image'] = $photoPath;
-            }
-        }
-
-        if ($request->tag) {
-            $data['tag'] = $request->tag;
-        }
-
-        if ($request->description) {
-            $data['description'] = $request->description;
-        }
-
-        if ($request->minimum_quantity) {
-            $data['minimum_quantity'] = $request->minimum_quantity;
-        }
-
-        if ($request->weight) {
-            $data['weight'] = $request->weight;
-        }
-
-        if ($request->weight_class) {
-            $data['weight_class'] = $request->weight_class;
+            $data['photo'] = 'uploads/photo/product/'.$filename;
         }
 
         $product->update($data);
+        $product = Product::find($product->id);
 
-        $product_id = $product->id;
-
-        $frame['product_id'] = $product_id;
-
-        $categories = $request->category;
-
-        $deleteProductCategory = ProductCategory::where('product_id', $product_id)->delete();
-
-        foreach ($categories as $category) {
-            $frame['category_id'] = $category['category_id'];
-            $frame['quantity'] = $category['quantity'];
-
-            ProductCategory::create($frame);
-        }
-
-        return response()->json(['message' => 'product berhasil diperbaharui', 'data' => $product], 200);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Data Berhasil Diubah',
+            'data' => $product,
+        ]);
     }
 
-    public function deleteProduct(Request $request, $id)
+    public function changeStatus(Product $product)
     {
+        $status  = !$product->status;
+        $statusText = $status ? 'Diaktifkan' : 'Dinonaktifkan';
 
-        $product = Product::where('id', $id)->first();
+        $product->update(['status' => $status]);
 
-        if (!$product) {
-            return response()->json(['message' => 'product belum terdaftar'], 403);
-        }
-
-        ProductCategory::where('product_id', $product->id)->delete();
-
-        if ($product->image != null) {
-            if (Storage::disk('public')->exists($product->image)) {
-                // Hapus foto dari penyimpanan
-                Storage::disk('public')->delete($product->image);
-
-            }
-        }
-
-        $product = Product::destroy($id);
-
-        return response()->json(['message' => 'product berhasil dihapus'], 200);
-    }
-
-
-    public function searchProduct(Request $request)
-    {
-
-        $product = Product::where('name', 'like', '%' . $request->product . '%')->get();
-
-        return response()->json(['data' => $product], 200);
-
+        return response()->json([
+            'status' => 'success',
+            'message' => $product->name.' '.$statusText,
+        ]);
     }
 }

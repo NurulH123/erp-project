@@ -124,7 +124,7 @@ class EmployeeController extends Controller
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
             $filename = date('Ymd').'.'.$file->getClientOriginalExtension();
-            $file->move('uploads/photo', $filename);
+            $file->move('uploads/photo/profile', $filename);
 
             $dataProfile['photo'] = $filename;
         }
@@ -164,28 +164,13 @@ class EmployeeController extends Controller
         $rules =  [
             'username'  => 'required',
             'email'     => 'required',
-            'gender'    => 'required',
-            'phone'     => 'required',
-            'address'   => 'required',
         ];
 
         $messages = [
             'username.required' => 'Nama Harus Diisi',
             'email.required'    => 'Email Harus Diisi',
             'email.email'       => 'Format Email Tidak Sesuai',
-            'gender.required'   => 'Jenis Kelamin Harus Diisi',
-            'phone.required'    => 'Hp Harus Diisi',
-            'address.required'  => 'Alamat Harus Diisi',
         ];
-
-        if ($request->is_admin) {
-            // Rules user register
-            $rules['password'] = 'required|confirmed';
-
-            // Message user register
-            $messages['password.required'] = 'Password Harus Diisi';
-            $messages['password.confirmed'] = 'Konfirmasi Password Tidak Sesuai';
-        }
 
         $validator = Validator::make($request->all(), $rules, $messages);
 
@@ -196,10 +181,9 @@ class EmployeeController extends Controller
             ]);
         }
 
-        $dataEmployee = $request->only('username', 'email');
-        if ($request->is_admin) {
-            $dataEmployee['is_admin'] = $request->is_admin; 
-        }
+        // Disini tidak bisa mengupdate is_admin
+        // is_admin hanya bisa diupdate melalui method changeAdmin()  
+        $dataEmployee = $request->only('username', 'email'); 
 
         // Process inputing profile
         $dataProfile = $request->except('username', 'is_admin', 'email');
@@ -210,19 +194,25 @@ class EmployeeController extends Controller
             $photo = $employee->profile->photo;
             
             if (!is_null($photo)) {
-                unlink('uploads/phhoto/'.$photo);
+                unlink('uploads/photo/profile'.$photo);
             }
 
             $file = $request->file('photo');
             $filename = date('Ymd').'.'.$file->getClientOriginalExtension();
-            $file->move('uploads/photo', $filename);
+            $file->move('uploads/photo/profile', $filename);
 
-            $dataProfile['photo'] = $filename;
+            $dataProfile['photo'] = 'uploads/photo/profile/'.$filename;
         }
 
         $employee->update($dataEmployee);
         $employee->profile()->update($dataProfile);
 
+        if ($employee->is_admin) {
+            $admin = AdminEmployee::where('code', $employee->code)->first();
+            $admin->user()->update($dataEmployee);
+        }
+
+        // dd('keluar');
         $updEmployee = Employee::with('profile')
                         ->where('id', $employee->id)
                         ->first(['id', 'code', 'username', 'email', 'is_admin', 'status']);
@@ -238,38 +228,43 @@ class EmployeeController extends Controller
     {
         $user = auth()->user();
         $isAdmin = !$employee->is_admin;
-        $admin = $isAdmin ? 'Admin' : 'Bukan Admin';
+        $adminText = $isAdmin ? 'Admin' : 'Bukan Admin';
 
         // Process inputing data employee
         if ($isAdmin) {
             $validator = Validator::make($request->all(), 
-                    ['password' => 'required'],
-                    ['password.required' =>  'Password Harus Diisi']
+                    ['password' => 'required|confirmed'],
+                    [
+                        'password.required' =>  'Password Harus Diisi',
+                        'password.confirmed' =>  'Konfirmasi Password Tidak Sesuai',
+                    ]
             );
 
             if ($validator->fails()) {
                 return response()->json(['status' => 'failed', 'message' => $validator->errors()], 442);
             }
 
-            $password = $request->password; 
             $dataUser = [
-                'username' => $employee->username,
-                'is_admin' => $isAdmin,
-                'password' => bcrypt($password),
+                'username'  => $employee->username,
+                'email'     => $employee->email,
+                'is_owner'  => false,
+                'password'  => bcrypt($request->password),
             ];
 
             $user = User::create($dataUser); // Menambahkan data user
             $adminEmployee = $user->adminEmployee()->create(['code' => $employee->code]);// Menambahkan data user
 
         } else {
-            $adminEmployee = AdminEmployee::where('code', $employee->code)->first();
+            $adminEmployee = AdminEmployee::where('code', $employee->code)->first();   
             $adminEmployee->user()->delete();
             $adminEmployee->delete();
         }
 
+        $employee->update(['is_admin' => $isAdmin]);
+
         return response()->json([
             'status' => 'success',
-            'meessage' => 'Data Berhasil Diubah Menjadi '.$admin,
+            'meessage' => 'Data Berhasil Diubah Menjadi '.$adminText,
         ]);
     }
 
@@ -282,7 +277,7 @@ class EmployeeController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Status Karyawan '.$employee->username.' '.$statusText,
+            'message' => 'Status '.$employee->username.' '.$statusText,
         ]);
     }
 }

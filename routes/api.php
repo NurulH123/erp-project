@@ -76,10 +76,13 @@ Route::middleware('auth:sanctum')->group(function() {
     });
 
     Route::middleware('hasCompany')->group(function() {
+
     // ========================================================================
     // |=============================== POSITION =============================|
     // ========================================================================
-        Route::prefix('position')->group(function() {
+        Route::group(
+            ['prefix' => 'position'],
+            function() {
             Route::get('/', [PositionController::class, 'index']);
             Route::post('/', [PositionController::class, 'create']);
             Route::patch('{position}/update', [PositionController::class, 'update']);
@@ -196,33 +199,37 @@ Route::middleware('auth:sanctum')->group(function() {
                 Route::post('/', [BranchCompanyController::class, 'create']);
                 Route::patch('/{branch}/update', [BranchCompanyController::class, 'update']);
                 Route::get('/{branch}/change-status', [BranchCompanyController::class, 'changeStatus']);
-        });    
-    
-        Route::prefix('product', function() {
-            Route::get('index', [ProductController::class, 'indexProduct']);
-            Route::get('add', [ProductController::class, 'addProduct']);
-            Route::post('create', [ProductController::class, 'createProduct']);
-            Route::post('update/{id}', [ProductController::class, 'updateProduct']);
-            Route::post('delete/{id}', [ProductController::class, 'deleteProduct']);
-            Route::post('one/{id}', [ProductController::class, 'oneProduct']);
-            Route::post('search', [ProductController::class, 'searchProduct']);
         });
     
-        Route::prefix('unit')->group(function() {
-            Route::get('/', [UnitController::class, 'index']);
-            Route::post('/', [UnitController::class, 'store']);
-            Route::post('/{unit}', [UnitController::class, 'show']);
-            Route::patch('/{unit}', [UnitController::class, 'update']);
-            Route::get('/{unit}/change-status', [UnitController::class, 'changeStatus']);
+        Route::group(
+            ['prefix' => 'unit'],
+            function() {
+                Route::get('/', [UnitController::class, 'index']);
+                Route::post('/', [UnitController::class, 'store']);
+                Route::post('/{unit}', [UnitController::class, 'show']);
+                Route::patch('/{unit}', [UnitController::class, 'update']);
+                Route::get('/{unit}/change-status', [UnitController::class, 'changeStatus']);
         });
     
-        Route::prefix('category')->group(function() {
-            Route::get('/', [CategoryProductController::class, 'index']);
-            Route::post('/', [CategoryProductController::class, 'store']);
-            Route::post('/{category}', [CategoryProductController::class, 'show']);
-            Route::patch('/{category}', [CategoryProductController::class, 'update']);
-            Route::get('/{category}/change-status', [CategoryProductController::class, 'changeStatus']);
+        Route::group(
+            ['prefix' => 'category'],
+            function() {
+                Route::get('/', [CategoryProductController::class, 'index']);
+                Route::post('/', [CategoryProductController::class, 'store']);
+                Route::post('/{category}', [CategoryProductController::class, 'show']);
+                Route::patch('/{category}', [CategoryProductController::class, 'update']);
+                Route::get('/{category}/change-status', [CategoryProductController::class, 'changeStatus']);
         });
         
+        Route::group(
+            ['prefix' => 'product'],
+            function() {
+                Route::get('/', [ProductController::class, 'index']);
+                Route::get('/{product}', [ProductController::class, 'show']);
+                Route::post('/', [ProductController::class, 'store']);
+                Route::patch('/{product}', [ProductController::class, 'update']);
+                Route::get('/{product}/change-status', [ProductController::class, 'changeStatus']);
+        });
+
     });
 });
