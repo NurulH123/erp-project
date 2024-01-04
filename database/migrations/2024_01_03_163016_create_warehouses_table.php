@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('company_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('name');
-            $table->text('address');
+            $table->text('location');
             $table->boolean('status')->default(true)->comment('Active|Inactive');
             $table->timestamps();
         });

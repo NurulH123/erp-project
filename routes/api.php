@@ -18,6 +18,7 @@ use App\Http\Controllers\Company\EmployeeController;
 use App\Http\Controllers\Company\PositionController;
 use App\Http\Controllers\Company\BranchCompanyController;
 use App\Http\Controllers\Company\CompanyPermissionController;
+use App\Http\Controllers\WarehouseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -229,6 +230,16 @@ Route::middleware('auth:sanctum')->group(function() {
                 Route::post('/', [ProductController::class, 'store']);
                 Route::patch('/{product}', [ProductController::class, 'update']);
                 Route::get('/{product}/change-status', [ProductController::class, 'changeStatus']);
+        });
+
+        Route::group(
+            ['prefix' => 'warehouse'],
+            function() {
+                Route::get('/', [WarehouseController::class, 'index']);
+                Route::get('/{warehouse}', [WarehouseController::class, 'show']);
+                Route::post('/', [WarehouseController::class, 'store']);
+                Route::patch('/{warehouse}', [WarehouseController::class, 'update']);
+                Route::get('/{warehouse}/change-status', [WarehouseController::class, 'changeStatus']);
         });
 
     });

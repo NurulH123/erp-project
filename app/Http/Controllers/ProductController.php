@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use App\Models\Category;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -70,20 +68,6 @@ class ProductController extends Controller
     
     public function update(Request $request, Product $product)
     {
-        // $validator = Validator::make($request->all(), [
-        //     'name' => 'required',
-        //     'unit_id' => 'required',
-        //     'price' => 'required',
-        //     'category_id' => 'required',
-        // ]);
-
-        // if ($validator->fails()) {
-        //     return response()->json([
-        //         'status' => 'failed',
-        //         'message' => $validator->errors()
-        //     ]);
-        // }
-
         $data = $request->all();
 
         if ($request->hasFile('photo')) {
