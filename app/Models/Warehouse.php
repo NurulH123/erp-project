@@ -16,4 +16,10 @@ class Warehouse extends Model
     {
         return $this->belongsTo(Company::class);
     }
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'product_warehouses')
+                ->withPivot('stock', 'id');
+    }
 }
