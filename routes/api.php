@@ -18,6 +18,7 @@ use App\Http\Controllers\Company\EmployeeController;
 use App\Http\Controllers\Company\PositionController;
 use App\Http\Controllers\Company\BranchCompanyController;
 use App\Http\Controllers\Company\CompanyPermissionController;
+use App\Http\Controllers\ProductWarehouseController;
 use App\Http\Controllers\WarehouseController;
 
 /*
@@ -241,6 +242,15 @@ Route::middleware('auth:sanctum')->group(function() {
                 Route::patch('/{warehouse}', [WarehouseController::class, 'update']);
                 Route::get('/{warehouse}/change-status', [WarehouseController::class, 'changeStatus']);
         });
+
+        Route::group(
+            ['prefix' => 'warehouse'],
+            function() {
+                Route::get('/product/data', [ProductWarehouseController::class, 'dataProductWarehouse']);
+                Route::post('/{warehouse}/product/attach', [ProductWarehouseController::class, 'addProductTo']);
+                Route::delete('/{warehouse}/product/detach', [ProductWarehouseController::class, 'deleteProductIn']);
+        });
+
 
     });
 });

@@ -13,9 +13,16 @@ class ProductController extends Controller
         $user = auth()->user();
         $products = $user->company->products;
 
+        $productWarehouse = $products->each(function($item) {
+            $product = Product::with('warehouses')->find($item->id);
+            $item->warehouse = $product->warehouses;
+
+            return $item;
+        });
+
         return response()->json([
             'status' => 'success', 
-            'data' => $products
+            'data' => $productWarehouse
         ]);
 
     }

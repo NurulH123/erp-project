@@ -5,20 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Unit extends Model
+class ProductWarehouse extends Model
 {
     use HasFactory;
 
     protected $guarded = ['id'];
     protected $hidden = ['created_at', 'updated_at'];
 
-    public function company()
+    public function product()
     {
-        return $this->belongsTo(Company::class);
+        return $this->belongsTo(Product::class);
     }
 
-    public function products()
+    public function warehouse()
     {
-        return $this->hasMany(Product::class);
+        return $this->belongsTo(Warehouse::class);
     }
 }
