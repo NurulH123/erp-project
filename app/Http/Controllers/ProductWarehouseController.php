@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CategoryProduct;
-use App\Models\Product;
-use App\Models\ProductWarehouse;
-use App\Models\Unit;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
+use App\Models\ProductWarehouse;
 use Illuminate\Support\Facades\Validator;
 
 class ProductWarehouseController extends Controller
