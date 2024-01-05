@@ -297,3 +297,54 @@ Route : {{ $host }}/employee/{id}/employee
 @body : - role_id -> type array : kumpulan dari id permission 
 
 Mengupdate employee role
+
+=====================================================================
+|========================== PRODUCT WAREHOUSE ======================|
+=====================================================================
+# LIST DATA PRODUCT WAREHOUSE
+
+Route : {{ $host }}/warehouse/product/data
+@method:GET
+
+Menampilkan semua data produk berserta gudang tempat penyimpanannya
+
+****************************************
+
+# ADD PRODUCT WAREHOUSE
+
+Route : {{ $host }}/warehouse/{id}/product/attach
+@method:POST
+@param : id -> id dari warehouse yg diinginkkan
+@body : - id (warehouse yg dipilih)
+        - stock
+        - product_id
+# contoh format data yg harus dikirim
+{
+  "product_stock": {
+        "2": {
+          "stock": 100,
+          "product_id": 2
+        },
+        "1": {
+          "stock": 50,
+          "product_id": 3
+        }
+  }
+}
+
+Menambahkan stok kegudang atau memindahkan produk dari gudang yg satu ke gudang yg lain.
+****************************************
+
+# DELETE PRODUCT WAREHOUSE
+
+Route : {{ $host }}/warehouse/{id}/product/dettach
+@method:DELETE
+@param : id -> id dari warehouse yg diinginkkan
+@body : - product_id
+
+# Contoh format 
+{
+  "product_id": [2]
+}
+
+Menghapus produk yg ada digudang tertentu
