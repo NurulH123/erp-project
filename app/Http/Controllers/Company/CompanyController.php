@@ -14,7 +14,8 @@ class CompanyController extends Controller
     {
         // Private
         $user = auth()->user();
-        $company = Company::with('permission.children')->where('id', $user->company->id)->first();
+        $company = Company::with('permission')->where('id', $user->company->id)->first();
+        // dd
 
         return response()->json(['status' => 'success', 'data' => $company]);
     }

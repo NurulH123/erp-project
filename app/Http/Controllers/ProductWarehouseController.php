@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use App\Models\ProductWarehouse;
@@ -19,6 +20,47 @@ class ProductWarehouseController extends Controller
         ]);
     }
 
+    public function addProductWarehouse(Request $request, Warehouse $warehouse)
+    {
+        $validator = Validator::make($request->all(), 
+            ['product_stock' => 'required'],
+            ['product_stock.required' => 'Product Harus Diisi'] 
+        );
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => $validator->errors()
+            ]);
+        }
+
+        $product_stock = $request->product_stock;
+
+        // Proses penambahan produk ke gudang 
+        $product_stock->each(function($item) use($warehouse) {
+
+            $product = $warehouse->products->where('id', $item['product_id'])->first();
+
+            // Proses penambahan stock
+            if (!is_null($product)) {
+                $stockPrevInWarehouse = $product->pivot->stock;
+
+                // Proses penambahan stock ketika sebelumnya, digudang sudah ada stock
+                $currentStock = $stockPrevInWarehouse + $item['stock'];
+
+                $warehouse->products()->updateExistingPivot($item['product_id'], ['stock' => $currentStock]);
+            } else {
+                // Proses penambahan stock ketika sebelumnya, belum ada stock digudang
+                $warehouse->products()->attach([$item['product_id'] => ['stock' => $item['stock']]]);
+            }
+        });
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Produk Telah Ditambahkan',
+        ]);
+    }
+
     public function addProductTo(Request $request, Warehouse $warehouse)
     {
         $validator = Validator::make($request->all(), 
@@ -31,9 +73,9 @@ class ProductWarehouseController extends Controller
         $products_stock = collect($request->product_stock);
 
         // Proses pemindahan produk dari satu gudang ke gudang yg lain 
-        $products_stock->each(function($item, $warehouse_id) use($warehouse) {
+        $products_stock->each(function($item) use($warehouse) {
 
-            $prevWarehouse = Warehouse::find($warehouse_id);
+            $prevWarehouse = Warehouse::find($item['warehouse_id']); // warehouse yg ingin dipindahhkan produknya ke warehouse lain
             $product = $prevWarehouse->products->where('id', $item['product_id'])->first();
             $stockInPrevWarehouse = $product->pivot->stock;
 
@@ -45,9 +87,10 @@ class ProductWarehouseController extends Controller
             
             // Proses penambahan stock
             if (!is_null($product)) {
-                $stockPrevious = $product->pivot->stock;
+                $stockPrevInWarehouse = $product->pivot->stock;
+
                 // Proses penambahan stock ketika sebelumnya, digudang sudah ada stock
-                $currentStock = $stockPrevious + $item['stock'];
+                $currentStock = $stockPrevInWarehouse + $item['stock'];
 
                 $warehouse->products()->updateExistingPivot($item['product_id'], ['stock' => $currentStock]);
             } else {
@@ -62,7 +105,7 @@ class ProductWarehouseController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Data Telah Ditambahkan'
+            'message' => 'Product Telah Dipindahkan ke '.$warehouse->name
         ]);
     }
 

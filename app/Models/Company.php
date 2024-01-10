@@ -75,4 +75,9 @@ class Company extends Model
     {
         return $this->hasMany(Warehouse::class);
     }
+
+    public function transactionPo()
+    {
+        return $this->hasMany(PurchasingOrder::class);
+    }
 }

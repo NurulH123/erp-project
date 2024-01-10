@@ -12,6 +12,7 @@ use App\Http\Controllers\AdminRoleController;
 use App\Http\Controllers\PermissionRoleController;
 use App\Http\Controllers\StatusEmployeeController;
 use App\Http\Controllers\Auth\PermissionController;
+use App\Http\Controllers\BomController;
 use App\Http\Controllers\Company\CompanyController;
 use App\Http\Controllers\CategoryProductController;
 use App\Http\Controllers\Company\EmployeeController;
@@ -241,14 +242,17 @@ Route::middleware('auth:sanctum')->group(function() {
                 Route::post('/', [WarehouseController::class, 'store']);
                 Route::patch('/{warehouse}', [WarehouseController::class, 'update']);
                 Route::get('/{warehouse}/change-status', [WarehouseController::class, 'changeStatus']);
+                
+                Route::get('/product/data', [ProductWarehouseController::class, 'dataProductWarehouse']);
+                Route::post('/{warehouse}/add', [ProductWarehouseController::class, 'addProductWarehouse']);
+                Route::post('/{warehouse}/product/attach', [ProductWarehouseController::class, 'addProductTo']);
+                Route::delete('/{warehouse}/product/detach', [ProductWarehouseController::class, 'deleteProductIn']);
         });
 
         Route::group(
-            ['prefix' => 'warehouse'],
+            ['prefix' => 'bom'],
             function() {
-                Route::get('/product/data', [ProductWarehouseController::class, 'dataProductWarehouse']);
-                Route::post('/{warehouse}/product/attach', [ProductWarehouseController::class, 'addProductTo']);
-                Route::delete('/{warehouse}/product/detach', [ProductWarehouseController::class, 'deleteProductIn']);
+                Route::post('/{product}/add', [BomController::class, 'addBom']);
         });
 
 

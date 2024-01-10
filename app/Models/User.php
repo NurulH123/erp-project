@@ -39,11 +39,6 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function sales()
-    {
-        return $this->hasMany(Order::class);
-    }
-
     public function company()
     {
         return $this->hasOne(Company::class);

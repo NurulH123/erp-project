@@ -332,6 +332,9 @@ Route : {{ $host }}/warehouse/{id}/product/attach
   }
 }
 
+Note : key 2 dan 1 adalah id dari warehouse yg mau dipindahkan
+        produknya ke warehouse lain.
+
 Menambahkan stok kegudang atau memindahkan produk dari gudang yg satu ke gudang yg lain.
 ****************************************
 

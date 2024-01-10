@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('purchasing_orders', function (Blueprint $table) {
             $table->id();
+            $table->string('code_transaction');
+            $table->foreignId('company_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->string('code_empployee');
+            $table->foreignId('vendor_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->date('date_transaction');
+            $table->integer('pay')->nullable();
             $table->timestamps();
         });
     }
