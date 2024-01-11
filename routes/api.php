@@ -21,6 +21,7 @@ use App\Http\Controllers\Company\BranchCompanyController;
 use App\Http\Controllers\Company\CompanyPermissionController;
 use App\Http\Controllers\ProductWarehouseController;
 use App\Http\Controllers\WarehouseController;
+use App\Http\Controllers\WorkOrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -255,6 +256,10 @@ Route::middleware('auth:sanctum')->group(function() {
                 Route::post('/{product}/add', [BomController::class, 'addBom']);
         });
 
-
+        Route::group(
+            ['prefix' => 'work-order'],
+            function() {
+                Route::post('/{warehouse}', [WorkOrderController::class, 'addWorkOrder']);
+        });
     });
 });

@@ -24,7 +24,7 @@ class ProductWarehouseController extends Controller
     {
         $validator = Validator::make($request->all(), 
             ['product_stock' => 'required'],
-            ['product_stock.required' => 'Product Harus Diisi'] 
+            ['product_stock.required' => 'Product Harus Diisi']
         );
 
         if ($validator->fails()) {
@@ -34,7 +34,7 @@ class ProductWarehouseController extends Controller
             ]);
         }
 
-        $product_stock = $request->product_stock;
+        $product_stock = collect($request->product_stock);
 
         // Proses penambahan produk ke gudang 
         $product_stock->each(function($item) use($warehouse) {

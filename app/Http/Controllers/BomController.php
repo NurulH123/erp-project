@@ -10,7 +10,7 @@ class BomController extends Controller
 {
     public function addBom(Request $request, Product $product)
     {
-        $validator =  Validator::make($request->all(), 
+        $validator =  Validator::make($request->all(),
             ['material_need' => 'required'],
             ['material_need.required' => 'Bahan-bahan harus diisi']
         );
