@@ -6,7 +6,6 @@ use App\Models\Product;
 use App\Models\Warehouse;
 use App\Models\WorkOrder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class WorkOrderController extends Controller
 {

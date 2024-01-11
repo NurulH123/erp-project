@@ -253,6 +253,7 @@ Route::middleware('auth:sanctum')->group(function() {
         Route::group(
             ['prefix' => 'bom'],
             function() {
+                Route::get('/', [BomController::class, 'dataProdukBom']);
                 Route::post('/{product}/add', [BomController::class, 'addBom']);
         });
 

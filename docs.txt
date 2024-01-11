@@ -28,6 +28,13 @@ Route : {{ $host }}/logout
 
 Logout user
 
+************************************
+
+
+
+
+
+
 ==============================================================
 |============================ ROLES =========================|
 ==============================================================
@@ -38,7 +45,7 @@ Route : {{ $host }}/role
 
 Mengambil semua data role
 
-***********************************
+************************************
 # MENAMBAH ROLE
 
 Route :  {{ $host }}/role
@@ -48,7 +55,7 @@ Route :  {{ $host }}/role
 
 Menambahkan role
 
-***********************************
+************************************
 # UPDATE ROLE
 
 Route :  {{ $host }}/{id}
@@ -59,7 +66,7 @@ Route :  {{ $host }}/{id}
 
 Menambahkan role
 
-***********************************
+************************************
 # HAPUS ROLE
 
 Route :  {{ $host }}/{id}
@@ -68,7 +75,7 @@ Route :  {{ $host }}/{id}
 
 Menghapus role
 
-***********************************
+************************************
 # UBAH STATUS ROLE
 
 Route :  {{ $host }}/{id}/change-status
@@ -76,6 +83,13 @@ Route :  {{ $host }}/{id}/change-status
 @param : id -> id dari role
 
 Menghapus role
+
+************************************
+
+
+
+
+
 
 
 ========================================================================
@@ -136,6 +150,14 @@ Route :
 @method : POST
 
 Mengubah status admin karyawan
+
+***********************************
+
+
+
+
+
+
 ===================================================================
 |=========================== POSITION ============================|
 ===================================================================
@@ -176,6 +198,12 @@ Route : {{ $host }}/{id}/status/change
 @param : id -> id dari position
 
 Ubah status posisi/jabatan menjadi true atau false
+
+****************************************
+
+
+
+
 
 =====================================================================
 |================================ COMPANY ==========================|
@@ -231,6 +259,11 @@ Route : {{ $host }}/company/{id}
 
 Hapus data perusahaan berdasarkan id  perusahaan
 
+****************************************
+
+
+
+
 
 =====================================================================
 |============================ ROLE PERMISSION ======================|
@@ -254,6 +287,12 @@ Route : {{ $host }}/role/{id}/permission
 
 Mengupdate permission role
 
+****************************************
+
+
+
+
+
 =====================================================================
 |========================== COMPANY PERMISSION =====================|
 =====================================================================
@@ -274,6 +313,12 @@ Route : {{ $host }}/coompany/permission/update
 @body : - permission_id -> type array : kumpulan dari id permission         
 
 Mengupdate permission company
+
+****************************************
+
+
+
+
 
 =====================================================================
 |============================ EMPLOYEE ROLE ========================|
@@ -298,6 +343,12 @@ Route : {{ $host }}/employee/{id}/employee
 
 Mengupdate employee role
 
+****************************************
+
+
+
+
+
 =====================================================================
 |========================== PRODUCT WAREHOUSE ======================|
 =====================================================================
@@ -309,33 +360,49 @@ Route : {{ $host }}/warehouse/product/data
 Menampilkan semua data produk berserta gudang tempat penyimpanannya
 
 ****************************************
+# ADD PRODUCT TO WAREHOUSE
 
-# ADD PRODUCT WAREHOUSE
+Route : {{ $host }}/warehouse/{ID}/add
+@method: POST
+@param : ID -> id dari warehouse
+@body : - product_id
+        - stock
+@type : MULTI ARRAY
+# contoh format data yg harus dikirimkan
+"product_stock": {
+        "0": {
+                "stock": 100,
+                "product_id": 2
+        }
+}
 
-Route : {{ $host }}/warehouse/{id}/product/attach
+Route ini berfungsi utk menambahkan produk ke gudang yg diinginkkan,
+dengan menambahkan mengirimkan data iid produk dan stok produk 
+
+****************************************
+
+# ADD PRODUCT FROM WAREHOUSE TO WAREHOUSE
+
+Route : {{ $host }}/warehouse/{ID}/product/attach
 @method:POST
-@param : id -> id dari warehouse yg diinginkkan
+@param : ID -> id dari warehouse yg diinginkkan
 @body : - id (warehouse yg dipilih)
         - stock
         - product_id
 # contoh format data yg harus dikirim
 {
   "product_stock": {
-        "2": {
-          "stock": 100,
-          "product_id": 2
-        },
-        "1": {
-          "stock": 50,
-          "product_id": 3
+        "0": {
+                "stock": 20,
+                "product_id": 3,
+                "warehouse_id": 1
         }
   }
 }
 
-Note : key 2 dan 1 adalah id dari warehouse yg mau dipindahkan
-        produknya ke warehouse lain.
+Memindahkan produk dari gudang yg satu ke gudang yg lain, dg mengirimkan data produk id, 
+stok produk dan id dari gudang tempat produk yg akan dipindahkan
 
-Menambahkan stok kegudang atau memindahkan produk dari gudang yg satu ke gudang yg lain.
 ****************************************
 
 # DELETE PRODUCT WAREHOUSE
@@ -351,3 +418,72 @@ Route : {{ $host }}/warehouse/{id}/product/dettach
 }
 
 Menghapus produk yg ada digudang tertentu
+
+
+
+
+
+======================================================================
+|========================== BEHANCE OF MATERIAL =====================|
+======================================================================
+# ADD BOM
+
+Route : {{ $host }}/bom/{ID}/add
+@method: POST
+@param: ID -> adalah id dari produk yg akan dibuat
+@body:  - material_id
+        - need 
+@type: MULTI  ARRAY
+
+# contoh format data yg harus dikirim
+{
+  "material_need": {
+    "0":{
+      "material_id":4,
+      "need": 30
+    },
+    "1":{
+      "material_id":5,
+      "need": 1
+    }
+  }
+}
+
+Menambahkan material atau bahan - bahan yg diperlukan dalam 
+memproduksi suatu barang
+
+****************************************
+
+
+
+
+
+
+==============================================================
+|========================== WORKK ORDER =====================|
+==============================================================
+# ADD WORK ORDER
+
+Route : {{ $host }}/work-order/{ID}
+@method: POST
+@param: ID  ->  adalah id dari warehouse yg akan digunakan 
+                utk menyimpan produk hasil dari work order
+
+@body:  - product_id
+        - production (jumlah produksi barang) 
+@type: MULTI  ARRAY
+
+# contoh format data yg harus dikirim
+{
+  "good_productions": {
+    "0": {
+      "product_id": 11,
+      "production": 10
+    }
+  }
+}
+
+Memproduksi suatu barang berdasarkan id produk dari  
+data produk yg sudah memiliki behance of material
+
+****************************************

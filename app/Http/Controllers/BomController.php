@@ -2,12 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Bom;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class BomController extends Controller
 {
+    public function dataProdukBom()
+    {
+        $products = Product::with('materials')->whereHas('materials')->get();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $products
+        ]);
+    }
+
     public function addBom(Request $request, Product $product)
     {
         $validator =  Validator::make($request->all(),
