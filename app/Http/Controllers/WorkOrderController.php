@@ -33,7 +33,7 @@ class WorkOrderController extends Controller
             $stocksMaterial = [];
 
             foreach ($materials as $material) {
-                $findMaterialInWarehouse = $warehouse->products->find($material->id);
+                $findMaterialInWarehouse = $warehouse->products()->find($material->id);
                 
                 if (!is_null($findMaterialInWarehouse)) {
                     $stockInWarehouse = $findMaterialInWarehouse->pivot->stock; // Stok digudang saat ini

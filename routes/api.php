@@ -22,6 +22,8 @@ use App\Http\Controllers\Company\CompanyPermissionController;
 use App\Http\Controllers\ProductWarehouseController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\WorkOrderController;
+use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\PurchasingOrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -261,6 +263,23 @@ Route::middleware('auth:sanctum')->group(function() {
             ['prefix' => 'work-order'],
             function() {
                 Route::post('/{warehouse}', [WorkOrderController::class, 'addWorkOrder']);
+        });
+
+        Route::group(
+            ['prefix' => 'po'],
+            function() {
+                Route::get('/', [PurchasingOrderController::class, 'index']);
+                Route::post('/', [PurchasingOrderController::class, 'store']);
+                Route::post('/{purchase}/show', [PurchasingOrderController::class, 'show']);
+                // Route::patch('/{purchase}', [PurchasingOrderController::class, 'createInvoice']);
+                Route::delete('/{purchase}', [PurchasingOrderController::class, 'destroy']);
+        });
+
+        Route::group(
+            ['prefix' => 'invoice'],
+            function() {
+                Route::get('/{purchase}', [InvoiceController::class, 'detailInvoice']);
+                Route::patch('/{purchase}', [InvoiceController::class, 'createInvoice']);
         });
     });
 });

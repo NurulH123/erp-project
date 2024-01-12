@@ -42,7 +42,7 @@ class BomController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Material Produk Telahh Ditambahkan'
+            'message' => 'Material Produk Telah Ditambahkan'
         ]);
     }
 }

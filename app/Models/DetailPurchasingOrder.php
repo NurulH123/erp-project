@@ -15,4 +15,9 @@ class DetailPurchasingOrder extends Model
     {
         return $this->belongsTo(PurchasingOrder::class);
     }
+
+    public function invoice()
+    {
+        return $this->hasOne(Invoice::class);
+    }
 }

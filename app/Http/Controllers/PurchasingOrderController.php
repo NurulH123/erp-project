@@ -2,24 +2,47 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DetailPurchasingOrder;
+use App\Models\Warehouse;
 use Illuminate\Http\Request;
+use App\Models\PurchasingOrder;
 use Illuminate\Support\Facades\Validator;
 
 class PurchasingOrderController extends Controller
 {
-    public function store(Request $request)
+    public function index()
     {
         $user = auth()->user();
-        $company = $user->company;
+        $transactionPo = $user->company->transactionPo;
 
-        $validator = Validator::make($request->all(), [
-            'vendor_id' => 'required',
-            'date_transaction' => 'required',
-            'detail_po' => 'required'
-        ], [
-            'vendor_id.required' => 'Nama Vendor Harus Diisi',
-            'date_transaction.required' => 'Tanggal Transaksi Harus Diisi',
-            'detail_po.required' => 'Detail Transaksi Harus Diisi',
+        return response()->json([
+            'status' => 'success',
+            'data' => $transactionPo
+        ]);
+    }
+
+    public function show($id)
+    {
+        $purchaseOrder = PurchasingOrder::with('details')->find($id);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $purchaseOrder
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        $data = $request->all();
+        $data['po'] = $request->po ?? '';
+        $data['detail_po'] = $request->detail_po ?? '';
+
+        $validator = Validator::make($data, [
+                'po' => 'required',
+                'detail_po' => 'required',
+            ],[
+                'po.required' => 'PO Harus Diisi',
+                'detail_po.required' => 'Detail PO Harus Diisi',
         ]);
 
         if ($validator->fails()) {
@@ -29,21 +52,39 @@ class PurchasingOrderController extends Controller
             ]);
         }
 
-        $dataTransaction = $request->only('vendor_id', 'date_transaction');
-        $dataTransaction['code_transaction'] = $user->id.'-'.date('YmdHis');
-        $dataTransaction['code_employee'] = $user->adminEmployee->code;
+        $dataPo = $data['po'];
+        $detailPO = collect($data['detail_po']);
+        
+        $warehouse = Warehouse::find($dataPo['warehouse_id']);
 
-        // Penambahan transaksi produk
-        $transactionPo = $company->transactionPo()->create($dataTransaction); 
+        $user = auth()->user();
+        $company = $user->company;
+        $dataPo['code_employee'] = $user->adminEmployee->code;
+        $dataPo['code_transaction'] = date('YmdHis');
+        $dataPo['date_transaction'] = date('Y-m-d', strtotime($dataPo['date_transaction']));
 
-        // Penambahan detail dari transaction product
-        $request->detail_po->each(function($item) use($transactionPo) {
-            $transactionPo->details()->create($item);
+        // Create transaksi po
+        $transactionPo = $company->transactionPo()->create($dataPo);
+
+        // Create detail transaksi  po
+        $detailPO->each(function($detail) use($transactionPo) {
+            $transactionPo->details()->create($detail);
         });
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Data Berhasil Ditambahkan'
+            'message' => 'Data Transaksi PO Berhasil Ditambahkan'
+        ]);
+    }
+
+    public function destroy(PurchasingOrder $purchase)
+    {
+        $purchase->delete();
+        $purchase->invoice()->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Data Transaksi PO Telah Dihapus'
         ]);
     }
 }

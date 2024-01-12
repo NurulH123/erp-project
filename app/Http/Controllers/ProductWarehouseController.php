@@ -39,7 +39,8 @@ class ProductWarehouseController extends Controller
         // Proses penambahan produk ke gudang 
         $product_stock->each(function($item) use($warehouse) {
 
-            $product = $warehouse->products->where('id', $item['product_id'])->first();
+            // $product = $warehouse->products->where('id', $item['product_id'])->first();
+            $product = $warehouse->products->find($item['product_id']);
 
             // Proses penambahan stock
             if (!is_null($product)) {
@@ -76,10 +77,10 @@ class ProductWarehouseController extends Controller
         $products_stock->each(function($item) use($warehouse) {
 
             $prevWarehouse = Warehouse::find($item['warehouse_id']); // warehouse yg ingin dipindahhkan produknya ke warehouse lain
-            $product = $prevWarehouse->products->where('id', $item['product_id'])->first();
+            $product = $prevWarehouse->products->find($item['product_id']);
             $stockInPrevWarehouse = $product->pivot->stock;
 
-            $product = $warehouse->products->where('id', $item['product_id'])->first();
+            $product = $warehouse->products->find($item['product_id']);
 
             // Proses pengurangan produk sebelumnya dan validasi
             $productReduction = $stockInPrevWarehouse - $item['stock'];

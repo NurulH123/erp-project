@@ -15,10 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('code_transaction');
             $table->foreignId('company_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->string('code_empployee');
+            $table->foreignId('warehouse_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->string('code_employee');
             $table->foreignId('vendor_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->date('date_transaction');
-            $table->integer('pay')->nullable();
+            $table->enum('status', ['order', 'pending','completed'])->default('order');
+            $table->text('desc')->nullable();
+            $table->integer('total_pay')->nullable();
             $table->timestamps();
         });
     }
