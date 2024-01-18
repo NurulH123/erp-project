@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Invoice;
 use App\Models\DetailPurchasingOrder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,6 +24,6 @@ class PurchasingOrder extends Model
 
     public function invoices()
     {
-        return $this->hasManyThrough(Invoice::class, DetailPurchasingOrder::class);
+        return $this->hasManyThrough(InvoicePurchaseOrder::class, DetailPurchasingOrder::class);
     }
 }

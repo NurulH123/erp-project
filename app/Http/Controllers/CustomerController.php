@@ -32,12 +32,9 @@ class CustomerController extends Controller
         $user = auth()->user();
         $validator = Validator::make($request->all(), [
             'name'  => 'required',
-            'phone' => 'required|unique:vendors,phone',
             'address' => 'required'
         ],[
             'name.required' => 'Nama Harus Diisi',
-            'phone.required' => 'Telepon Harus Diisi',
-            'phone.unique' => 'Nomor Telepon Sudah Ada',
             'address.required' => 'Alamat Harus Diisi', 
         ]);
 
@@ -63,12 +60,9 @@ class CustomerController extends Controller
         
         $validator = Validator::make($request->all(), [
             'name'  => 'required',
-            'phone' => 'required|unique:customers,phone',
             'address' => 'required'
         ],[
             'name.required' => 'Nama Harus Diisi',
-            'phone.required' => 'Telepon Harus Diisi',
-            'phone.unique' => 'Nomor Telepon Sudah Ada',
             'address.required' => 'Alamat Harus Diisi', 
         ]);
 

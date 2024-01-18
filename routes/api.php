@@ -13,12 +13,14 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\AdminRoleController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\WorkOrderController;
+use App\Http\Controllers\SalesOrderController;
 use App\Http\Controllers\PermissionRoleController;
 use App\Http\Controllers\StatusEmployeeController;
 use App\Http\Controllers\Auth\PermissionController;
 use App\Http\Controllers\Company\CompanyController;
 use App\Http\Controllers\CategoryProductController;
 use App\Http\Controllers\PurchasingOrderController;
+use App\Http\Controllers\DetailSalesOrderController;
 use App\Http\Controllers\Company\EmployeeController;
 use App\Http\Controllers\ProductWarehouseController;
 use App\Http\Controllers\Company\PositionController;
@@ -195,6 +197,9 @@ Route::middleware('auth:sanctum')->group(function() {
                 Route::get('/{branch}/change-status', [BranchCompanyController::class, 'changeStatus']);
         });
     
+    // =======================================================================
+    // |================================ UNITS ==============================|
+    // =======================================================================
         Route::group(
             ['prefix' => 'unit'],
             function() {
@@ -205,6 +210,9 @@ Route::middleware('auth:sanctum')->group(function() {
                 Route::get('/{unit}/change-status', [UnitController::class, 'changeStatus']);
         });
     
+    // =========================================================================
+    // |================================ CATEGORY =============================|
+    // =========================================================================
         Route::group(
             ['prefix' => 'category'],
             function() {
@@ -215,6 +223,9 @@ Route::middleware('auth:sanctum')->group(function() {
                 Route::get('/{category}/change-status', [CategoryProductController::class, 'changeStatus']);
         });
         
+    // ========================================================================
+    // |================================ PRODUCT =============================|
+    // ========================================================================
         Route::group(
             ['prefix' => 'product'],
             function() {
@@ -225,6 +236,9 @@ Route::middleware('auth:sanctum')->group(function() {
                 Route::get('/{product}/change-status', [ProductController::class, 'changeStatus']);
         });
 
+    // =========================================================================
+    // |================================ WAREHOUSE ============================|
+    // =========================================================================
         Route::group(
             ['prefix' => 'warehouse'],
             function() {
@@ -240,6 +254,9 @@ Route::middleware('auth:sanctum')->group(function() {
                 Route::delete('/{warehouse}/product/detach', [ProductWarehouseController::class, 'deleteProductIn']);
         });
 
+    // ========================================================================
+    // |================================== BOM ===============================|
+    // ========================================================================
         Route::group(
             ['prefix' => 'bom'],
             function() {
@@ -247,12 +264,18 @@ Route::middleware('auth:sanctum')->group(function() {
                 Route::post('/{product}/add', [BomController::class, 'addBom']);
         });
 
+    // ===========================================================================
+    // |================================ WORK ORDER =============================|
+    // ===========================================================================
         Route::group(
             ['prefix' => 'work-order'],
             function() {
                 Route::post('/{warehouse}', [WorkOrderController::class, 'addWorkOrder']);
         });
 
+    // ================================================================================
+    // |================================ PURCHASE ORDER ==============================|
+    // ================================================================================
         Route::group(
             ['prefix' => 'po'],
             function() {
@@ -263,11 +286,24 @@ Route::middleware('auth:sanctum')->group(function() {
                 Route::delete('/{purchase}', [PurchasingOrderController::class, 'destroy']);
         });
 
+    // ============================================================================
+    // |================================ INVOICE PO ==============================|
+    // ============================================================================
         Route::group(
-            ['prefix' => 'invoice'],
+            ['prefix' => 'invoice/po'],
             function() {
                 Route::get('/{purchase}', [InvoiceController::class, 'detailInvoice']);
                 Route::patch('/{purchase}', [InvoiceController::class, 'createInvoice']);
         });
+    });
+
+    // =============================================================================
+    // |================================ SALES ORDER ==============================|
+    // =============================================================================
+    Route::group(
+        ['prefix' => 'po/so'],
+        function() {
+            Route::get('/', [SalesOrderController::class, 'index']);
+            Route::post('/', [SalesOrderController::class, 'store']);
     });
 });

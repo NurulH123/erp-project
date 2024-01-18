@@ -80,4 +80,9 @@ class Company extends Model
     {
         return $this->hasMany(PurchasingOrder::class);
     }
+
+    public function transactionSo()
+    {
+        return $this->hasMany(SalesOrder::class);
+    }
 }

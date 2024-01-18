@@ -5,14 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Invoice extends Model
+class DetailSalesOrder extends Model
 {
     use HasFactory;
 
     protected $guarded = ['id'];
 
-    public function detail()
-    {
-        return $this->belongsTo(DetailPurchasingOrder::class);
-    }
+    public function 
 }

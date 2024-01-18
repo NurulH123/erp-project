@@ -63,15 +63,6 @@ class RoleController extends Controller
 
     }
 
-    // public function destroy(Role $role)
-    // {
-    //     if (!$role->delete()) {
-    //         return response()->json(['message' => 'Terjadi kesalahan. Coba cek lagi']);
-    //     }
-
-    //     return 'Data Berhasil Dihapus';
-    // }
-
     public function changeStatus(Role $role)
     {
         $status = !$role->status;
