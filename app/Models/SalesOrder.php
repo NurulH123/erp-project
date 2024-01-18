@@ -21,6 +21,11 @@ class SalesOrder extends Model
         return $this->hasMany(InvoiceSalesOrder::class);
     }
 
+    public function warehouse()
+    {
+        return $this->belongsTo(Warehouse::class);
+    }
+
     public function company()
     {
         return $this->belongsTo(Company::class);

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('sales_order_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('detail_sales_order_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->integer('price');
-            $table->boolean('is_completed')->default(false);
+            $table->boolean('is_completed')->default(true);
             $table->integer('pay');
             $table->timestamps();
         });

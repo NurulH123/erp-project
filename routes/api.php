@@ -282,7 +282,6 @@ Route::middleware('auth:sanctum')->group(function() {
                 Route::get('/', [PurchasingOrderController::class, 'index']);
                 Route::post('/', [PurchasingOrderController::class, 'store']);
                 Route::post('/{purchase}/show', [PurchasingOrderController::class, 'show']);
-                // Route::patch('/{purchase}', [PurchasingOrderController::class, 'createInvoice']);
                 Route::delete('/{purchase}', [PurchasingOrderController::class, 'destroy']);
         });
 
@@ -301,9 +300,11 @@ Route::middleware('auth:sanctum')->group(function() {
     // |================================ SALES ORDER ==============================|
     // =============================================================================
     Route::group(
-        ['prefix' => 'po/so'],
+        ['prefix' => 'so'],
         function() {
             Route::get('/', [SalesOrderController::class, 'index']);
+            Route::get('/{salesOrder}', [SalesOrderController::class, 'show']);
             Route::post('/', [SalesOrderController::class, 'store']);
+            Route::patch('/{salesOrder}', [SalesOrderController::class, 'update']);
     });
 });
