@@ -12,59 +12,52 @@ class AuthController extends Controller
 {
     public function register(Request $request)
     {
-        if (User::where("email", $request->email)->count() > 0) {
-            return response()->json(["message" => "Email sudah digunakan"], 403);
-        } else {
-            try {
-                $validator =  Validator::make(
-                    $request->all(),
-                    [
-                        'username' => 'required|max:255',
-                        'email' => 'required|email|unique:users,email',
-                        'password' => 'required|confirmed',
-                    ],
-                    [
-                        'username.required' => 'Nama Harus Diisi',
-                        'email.required' => 'Email Harus Diisi',
-                        'email.email' => 'Format Email Tidak Sesuai',
-                        'email.unique' => 'Email Sudah Digunakan',
-                        'password.required' => 'Password Harus Diisi',
-                        'password.confirmed' => 'Konfirmasi Password Tidak Tepat',
-                    ]
-                ); 
-                
-                if ($validator->fails()) {
-                    return response()->json([
-                        'status' => 'failed',
-                        'message' => $validator->errors()
-                    ], 442);
-                }
-            } catch (\Throwable $th) {
-                return $th->getMessage();
-            }
-            $data = $validator->getData();
-            $data['password'] = bcrypt($request->password);
-            
-            $user = User::create($data);
-
-            // create code
-            $number = 1000000 + $user->id;
-            $uniqCode = (string)substr($number, 1);
-
-            $code = '00-'.date("Ymd").'-'.$uniqCode;
-            
-            // Tambah Admin Employee
-            $user->adminEmployee()->create(['code' => $code]);
-
-            $token = $user->createToken('api')->plainTextToken;
-
+        $validator =  Validator::make(
+            $request->all(),
+            [
+                'username' => 'required|max:255',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|confirmed',
+            ],
+            [
+                'username.required' => 'Nama Harus Diisi',
+                'email.required' => 'Email Harus Diisi',
+                'email.email' => 'Format Email Tidak Sesuai',
+                'email.unique' => 'Email Sudah Digunakan',
+                'password.required' => 'Password Harus Diisi',
+                'password.confirmed' => 'Konfirmasi Password Tidak Tepat',
+            ]
+        ); 
+        
+        if ($validator->fails()) {
             return response()->json([
-                'status' => 'success',
-                'message' => 'Berhasil menambahkan akun', 
-                'user' => $user, 
-                'token' => $token
-            ], 200);
+                'status' => 'failed',
+                'message' => $validator->errors()
+            ], 442);
         }
+
+        $data = $validator->getData();
+        $data['password'] = bcrypt($request->password);
+        
+        $user = User::create($data);
+
+        // create code
+        $number = 1000000 + $user->id;
+        $uniqCode = (string)substr($number, 1);
+
+        $code = '00-'.date("Ymd").'-'.$uniqCode;
+        
+        // Tambah Admin Employee
+        $user->adminEmployee()->create(['code' => $code]);
+
+        $token = $user->createToken('api')->plainTextToken;
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Berhasil menambahkan akun',
+            'user' => $user,
+            'token' => $token
+        ], 200);
 
     }
 
@@ -98,6 +91,8 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)
                 ->first(['id', 'username', 'email', 'status', 'is_owner']);
+        $profile = $user->adminEmployee->employee->profile;
+        $user->profile = $profile;
 
         $data = $this->checkLoginEmployee($user);
 
@@ -108,14 +103,15 @@ class AuthController extends Controller
             'data' => $data,
             'token' => $token
         ], 200);
-
-
     }
 
     public function me()
     {
         $user = User::where('id',  auth()->id())
                 ->first(['id', 'username', 'email', 'status', 'is_owner']);
+        $profile = $user->adminEmployee->employee->profile;
+        $user->profile = $profile;
+        
         $collRoles = collect($user->adminEmployee->roles)->pluck('id', 'name')->toArray();
         $idRoles = array_values($collRoles);
         

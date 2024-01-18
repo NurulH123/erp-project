@@ -17,12 +17,14 @@ class EmployeeController extends Controller
 {
     public function index()
     {
+        $sort = request('sort') ?? 5;
+
         $user = User::find(Auth::id());
         $pluck = collect($user->company->employee)->pluck('id', 'username')->toArray();
         $IdEmployee = array_values($pluck);
         $employees = Employee::with('profile')
                         ->whereIn('id', $IdEmployee)
-                        ->get(['id', 'code', 'username', 'email', 'password', 'is_admin', 'status']);
+                        ->paginate($sort);
 
         return response()->json([
             'status' => 'success', 

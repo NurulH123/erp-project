@@ -1,29 +1,29 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BomController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\AdminRoleController;
+use App\Http\Controllers\WarehouseController;
+use App\Http\Controllers\WorkOrderController;
 use App\Http\Controllers\PermissionRoleController;
 use App\Http\Controllers\StatusEmployeeController;
 use App\Http\Controllers\Auth\PermissionController;
-use App\Http\Controllers\BomController;
 use App\Http\Controllers\Company\CompanyController;
 use App\Http\Controllers\CategoryProductController;
+use App\Http\Controllers\PurchasingOrderController;
 use App\Http\Controllers\Company\EmployeeController;
+use App\Http\Controllers\ProductWarehouseController;
 use App\Http\Controllers\Company\PositionController;
 use App\Http\Controllers\Company\BranchCompanyController;
 use App\Http\Controllers\Company\CompanyPermissionController;
-use App\Http\Controllers\ProductWarehouseController;
-use App\Http\Controllers\WarehouseController;
-use App\Http\Controllers\WorkOrderController;
-use App\Http\Controllers\InvoiceController;
-use App\Http\Controllers\PurchasingOrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -93,18 +93,6 @@ Route::middleware('auth:sanctum')->group(function() {
             Route::post('/', [PositionController::class, 'create']);
             Route::patch('{position}/update', [PositionController::class, 'update']);
             Route::get('{position}/status/change', [PositionController::class, 'changeStatus'])->name('position.change-status');
-        });
-    
-    // ========================================================================
-    // |=============================== PROFILE ==============================|
-    // ========================================================================
-        Route::prefix('profile')->group(function() {
-            Route::post('/', [ProfileController::class, 'index']);
-            Route::patch('update', [ProfileController::class, 'update']);
-            Route::post('one_user/{id}', [ProfileController::class, 'oneProfile']);
-            Route::post('update_user/{id}', [ProfileController::class, 'updateUser']);
-            Route::post('delete_user/{id}', [ProfileController::class, 'delete']);
-            Route::post('index_users', [ProfileController::class, 'all']);
         });
     
     // ========================================================================

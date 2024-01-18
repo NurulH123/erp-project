@@ -96,11 +96,13 @@ Menghapus role
 |=========================== PROFILE + EMPLOYEE ========================|
 ========================================================================
 # GET ALL DATA EMPLOYEE
-Route : {{ $host }}/profile
+Route : {{ $host }}/employee?sort=4&page=1
 @method:POST
 @body : code -> berisi code user
+@params = - sort (default = 5)
+          - page -> page dari data yg ditampilkan
 
-Mengambil detail data profile user
+Mengambil detail data employee berdasarkan page dan sort
 
 ***********************************
 

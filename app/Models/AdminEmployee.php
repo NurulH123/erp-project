@@ -21,4 +21,9 @@ class AdminEmployee extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function employee()
+    {
+        return $this->hasOne(Employee::class, 'code', 'code');
+    }
 }

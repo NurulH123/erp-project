@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\PurchasingOrder;
 use App\Models\DetailPurchasingOrder;
-use App\Models\Warehouse;
 use Illuminate\Support\Facades\Validator;
 
 class InvoiceController extends Controller
