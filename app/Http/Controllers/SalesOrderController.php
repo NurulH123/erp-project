@@ -109,7 +109,6 @@ class SalesOrderController extends Controller
             ]);
         }
 
-
         $data = $request->so;
         $dataSo = collect($data)->except('detail_so')->toArray();
 
@@ -121,6 +120,7 @@ class SalesOrderController extends Controller
         $salesOrder->update($dataSo);
 
         // Update detail transaksi
+        $newDetails = [];
         $details = $data['detail_so'];
 
         foreach ($details as $item) {
@@ -145,11 +145,20 @@ class SalesOrderController extends Controller
             $detail =DetailSalesOrder::find($item['detail_id']);
             $detail->update($validator->getData());
 
+            $newDetail = collect(DetailSalesOrder::find($item['detail_id']))
+                            ->only('id', 'product_id', 'quantity')
+                            ->toArray();
+
+            array_push($newDetails, $newDetail);
         }
+
+        $data = SalesOrder::find($salesOrder->id)->toArray();
+        $data['details'] = $newDetails;
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Data Transaksi Berhasil Diubah'
+            'message' => 'Data Transaksi Berhasil Diubah',
+            'data' => $data
         ]);
     }
 }

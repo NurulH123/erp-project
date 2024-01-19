@@ -62,7 +62,7 @@ class VendorController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name'  => 'required',
-            'phone' => 'required|unique:vendors,phone',
+            'phone' => 'required|unique:vendors,id,'.$vendor->id,
             'address' => 'required'
         ],[
             'name.required' => 'Nama Harus Diisi',

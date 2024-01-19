@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('price');
             $table->boolean('is_completed')->default(true);
             $table->integer('pay');
+            $table->text('desc');
             $table->timestamps();
         });
     }

@@ -70,13 +70,11 @@ class BranchCompanyController extends Controller
 
     public function update(Request $request, BranchCompany $branch)
     {
-        $user = auth()->user(); 
-
         $validator = Validator::make($request->all(), [
             'name'      => 'required',
             'address'   => 'required',
-            'email'     => 'sometimes',
-            'phone'     => 'soometimes',
+            'email'     => 'sometimes|required|email|unique:branch_companies,id,'.$branch->id,
+            'phone'     => 'sometimes|required|unique:branch_companies,id,'.$branch->id,
             Rule::unique('branch_companies')->ignore($branch),
         ], [
             'name.required'      => 'Nama Harus Diisi',
@@ -96,7 +94,7 @@ class BranchCompanyController extends Controller
 
         $data = $request->all();
 
-        $user->company->branch()->update($data);
+        $branch->update($data);
         $branch = BranchCompany::find($branch->id);
 
         return response()->json([

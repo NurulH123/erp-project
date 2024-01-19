@@ -6,9 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\VendorController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\AdminRoleController;
 use App\Http\Controllers\WarehouseController;
@@ -24,6 +22,8 @@ use App\Http\Controllers\DetailSalesOrderController;
 use App\Http\Controllers\Company\EmployeeController;
 use App\Http\Controllers\ProductWarehouseController;
 use App\Http\Controllers\Company\PositionController;
+use App\Http\Controllers\InvoiceSalesOrderController;
+use App\Http\Controllers\InvoicePurchaseOrderController;
 use App\Http\Controllers\Company\BranchCompanyController;
 use App\Http\Controllers\Company\CompanyPermissionController;
 
@@ -291,8 +291,8 @@ Route::middleware('auth:sanctum')->group(function() {
         Route::group(
             ['prefix' => 'invoice/po'],
             function() {
-                Route::get('/{purchase}', [InvoiceController::class, 'detailInvoice']);
-                Route::patch('/{purchase}', [InvoiceController::class, 'createInvoice']);
+                Route::get('/{purchase}', [InvoicePurchaseOrderController::class, 'detailInvoice']);
+                Route::patch('/{purchase}', [InvoicePurchaseOrderController::class, 'createInvoice']);
         });
     });
 
@@ -306,5 +306,14 @@ Route::middleware('auth:sanctum')->group(function() {
             Route::get('/{salesOrder}/show', [SalesOrderController::class, 'show']);
             Route::post('/', [SalesOrderController::class, 'store']);
             Route::patch('/{salesOrder}', [SalesOrderController::class, 'update']);
+    });
+
+    // =====================================================================================
+    // |================================ INVOICE SALES ORDER ==============================|
+    // =====================================================================================
+    Route::group(
+        ['prefix' => 'invoice/so'],
+        function() {
+            Route::post('/{salesOrder}', [InvoiceSalesOrderController::class, 'createInvoice']);
     });
 });
