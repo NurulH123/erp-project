@@ -72,7 +72,26 @@ class SalesOrderController extends Controller
         $details = $dataSo['detail_so'];
 
         foreach ($details as $item) {
-            $detail = collect($transaction->details()->create($item)); // create detail
+            $product = Product::find($item['product_id']);
+            $productInWarehouse = $transaction->warehouse->products->find($item['product_id']);
+
+            // validasi ketersediaan produk digudang 
+            if (is_null($productInWarehouse)) return response()->json([
+                'status' => 'failed',
+                'message' => 'Produk '.$product->name. ' Tidak Tersedia Di '.$transaction->warehouse->name
+            ]);
+
+            $stockProduct  = $productInWarehouse->pivot->stock;
+            $currentStock = $stockProduct - $item['quantity'];
+
+            // validasi stok digudang
+            if ($currentStock < 0) return response()->json([
+                'status' => 'failed',
+                'messsage' => 'Stok '.$productInWarehouse->name.' Tidak Cukup',
+            ]);
+
+             // create detail 
+            $detail = collect($transaction->details()->create($item));
             array_push(
                 $newDetails, 
                 $detail
@@ -140,6 +159,24 @@ class SalesOrderController extends Controller
                     'message' => $validator->errors()
                 ]);
             }
+
+            $product = Product::find($item['product_id']);
+            $productInWarehouse = $salesOrder->warehouse->products->find($item['product_id']);
+
+            // validasi ketersediaan produk digudang 
+            if (is_null($productInWarehouse)) return response()->json([
+                'status' => 'failed',
+                'message' => 'Produk '.$product->name. ' Tidak Tersedia Di '.$salesOrder->warehouse->name
+            ]);
+
+            $stockProduct  = $productInWarehouse->pivot->stock;
+            $currentStock = $stockProduct - $item['quantity'];
+
+            // validasi stok digudang
+            if ($currentStock < 0) return response()->json([
+                'status' => 'failed',
+                'messsage' => 'Stok '.$productInWarehouse->name.' Tidak Cukup',
+            ]);
 
             // proses update detail transaksi
             $detail =DetailSalesOrder::find($item['detail_id']);

@@ -45,4 +45,9 @@ class Product extends Model
         return $this->belongsToMany($this, 'boms', 'product_id',  'material_id')
                 ->withPivot('need');
     }
+
+    public function detail_so()
+    {
+        return $this->hasMany(DetailSalesOrder::class);
+    }
 }

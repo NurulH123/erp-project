@@ -281,7 +281,7 @@ Route::middleware('auth:sanctum')->group(function() {
             function() {
                 Route::get('/', [PurchasingOrderController::class, 'index']);
                 Route::post('/', [PurchasingOrderController::class, 'store']);
-                Route::post('/{purchase}/show', [PurchasingOrderController::class, 'show']);
+                Route::get('/{purchase}/show', [PurchasingOrderController::class, 'show']);
                 Route::delete('/{purchase}', [PurchasingOrderController::class, 'destroy']);
         });
 

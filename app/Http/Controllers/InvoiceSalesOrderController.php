@@ -42,14 +42,9 @@ class InvoiceSalesOrderController extends Controller
 
             // Proses create invoice dan update stok digudang  
             $productInWarehouse = $salesOrder->warehouse->products->find($detail->product_id);
+
             $stockProduct  = $productInWarehouse->pivot->stock;
             $currentStock = $stockProduct - $order;
-
-            if ($currentStock < 0) return response()->json([
-                'status' => 'failed',
-                'messsage' => 'Stok '.$productInWarehouse->name.' Tidak Cukup',
-            ]);
-
             
             $salesOrder->invoices()->create($invoice); // create invoice
             $salesOrder->warehouse->products()
@@ -58,6 +53,9 @@ class InvoiceSalesOrderController extends Controller
                             ['stock' => $currentStock]
                         ); // updating stok
         }
+
+        $totalPay = collect($invoices)->sum('pay');
+        $salesOrder->update([['total_pay' => $totalPay]]);
 
         return response()->json([
             'status' => 'failed',

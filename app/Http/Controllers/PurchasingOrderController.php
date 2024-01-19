@@ -67,13 +67,23 @@ class PurchasingOrderController extends Controller
         $transactionPo = $company->transactionPo()->create($dataPo);
 
         // Create detail transaksi  po
-        $detailPO->each(function($detail) use($transactionPo) {
-            $transactionPo->details()->create($detail);
-        });
+        $newDetail = [];
+        foreach ($detailPO as $detail) {
+            $createDetail = $transactionPo->details()->create($detail);
+            $dataDetail = collect($createDetail)
+                            ->only('id', 'product_id', 'order')
+                            ->toArray();
+
+            array_push($newDetail, $dataDetail);
+        }
+
+        $data = $transactionPo->toArray();
+        $data['details'] = $newDetail;
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Data Transaksi PO Berhasil Ditambahkan'
+            'message' => 'Data Transaksi PO Berhasil Ditambahkan',
+            'data' => $data
         ]);
     }
 
