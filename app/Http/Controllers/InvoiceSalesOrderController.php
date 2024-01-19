@@ -35,13 +35,13 @@ class InvoiceSalesOrderController extends Controller
                 'pay.required' => 'Total Pembayaran Harus Diisi',
             ]);
 
-            $detailId = $invoice['detail_id'];
+            $detailId = $invoice['detail_sales_order_id'];
 
             $detail = DetailSalesOrder::find($detailId);
             $order = $detail->quantity;
 
             // Proses create invoice dan update stok digudang  
-            $productInWarehouse = $salesOrder->warehouse->products->find($detail[['product_id']]);
+            $productInWarehouse = $salesOrder->warehouse->products->find($detail->product_id);
             $stockProduct  = $productInWarehouse->pivot->stock;
             $currentStock = $stockProduct - $order;
 
@@ -50,9 +50,13 @@ class InvoiceSalesOrderController extends Controller
                 'messsage' => 'Stok '.$productInWarehouse->name.' Tidak Cukup',
             ]);
 
-            $salesOrder->invoices()->create($invoice);
+            
+            $salesOrder->invoices()->create($invoice); // create invoice
             $salesOrder->warehouse->products()
-                        ->updateExistingPivot($detail->product_id, ['stock' => $currentStock]);
+                        ->updateExistingPivot(
+                            $detail->product_id, 
+                            ['stock' => $currentStock]
+                        ); // updating stok
         }
 
         return response()->json([
