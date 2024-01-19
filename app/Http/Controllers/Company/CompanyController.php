@@ -15,7 +15,6 @@ class CompanyController extends Controller
         // Private
         $user = auth()->user();
         $company = Company::with('permission')->where('id', $user->company->id)->first();
-        // dd
 
         return response()->json(['status' => 'success', 'data' => $company]);
     }
@@ -81,7 +80,16 @@ class CompanyController extends Controller
         $user = auth()->user();
         $data = $request->all();
 
-        $updCompany = $user->company->update($data);
+        if ($request->hasFile('logo')) {
+            $file = $request->file('logo');
+            $filename = date('Ymd').'.'.$file->getClientOriginalExtension();
+            $file->move('uploads/logo/company', $filename);
+
+            $data['logo'] = $filename;
+        }
+
+        $updCompany = $company->update($data);
+        
         if ($updCompany) {
             return response()->json([
                 'status' => 'success',

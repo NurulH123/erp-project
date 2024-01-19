@@ -55,7 +55,7 @@ Route::middleware('auth:sanctum')->group(function() {
             Route::get('/', [CompanyController::class, 'index']);
             Route::get('/list', [CompanyController::class, 'listAll']);
             Route::post('/', [CompanyController::class, 'create']);
-            Route::patch('/{id}', [CompanyController::class, 'update']);
+            Route::patch('/{company}', [CompanyController::class, 'update']);
             Route::delete('/{company}', [CompanyController::class, 'destroy']);
             Route::patch('/{id}/change-status', [CompanyController::class, 'changeStatus']);
     });
@@ -303,7 +303,7 @@ Route::middleware('auth:sanctum')->group(function() {
         ['prefix' => 'so'],
         function() {
             Route::get('/', [SalesOrderController::class, 'index']);
-            Route::get('/{salesOrder}', [SalesOrderController::class, 'show']);
+            Route::get('/{salesOrder}/show', [SalesOrderController::class, 'show']);
             Route::post('/', [SalesOrderController::class, 'store']);
             Route::patch('/{salesOrder}', [SalesOrderController::class, 'update']);
     });

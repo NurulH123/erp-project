@@ -11,5 +11,8 @@ class DetailSalesOrder extends Model
 
     protected $guarded = ['id'];
 
-    public function 
+    public function so()
+    {
+        return $this->belongsTo(SalesOrder::class);
+    }
 }

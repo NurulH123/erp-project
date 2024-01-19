@@ -61,33 +61,34 @@ class SalesOrderController extends Controller
 
         // Create transaksi sales order
         $dataSo = $request->so;
-        $dataSo['code'] = date('YmdHis');
+        $dataSo['code_employee'] = $user->adminEmployee->code;
+        $dataSo['code_transaction'] = date('YmdHis');
+        $dataSo['date_transaction'] = date('Y-m-d', strtotime($dataSo['date_transaction']));
         
         $transaction = $company->transactionSo()->create($dataSo);
 
-        // proses create detail transaksi & update stok produk
-        $details = $request->detail_so;
-        foreach ($details as $detail) {
-            // $productWarehouse = $transaction->warehouse->products->find($detail['product_id']);
-            // $stockInWarehouse = $productWarehouse->pivot->stock;
-            // $currentStock = $stockInWarehouse - $detail['quantity'];
+        // proses create detail transaksi
+        $newDetails = [];
+        $details = $dataSo['detail_so'];
 
-            // // validasi stok produk digudang
-            // if ($currentStock < 0) return response()->json([
-            //     'status' => 'failed',
-            //     'message' => 'Stok '.$productWarehouse->name.' Tidak Mencukupi'
-            // ]);
-
-            $transaction->details()->create($detail); // create detail
-            // $transaction->warehouse->products()->updateExistingPivot(
-            //     $detail['product_id'], 
-            //     ['stock' => $currentStock]
-            // ); // update stok produk gudang
+        foreach ($details as $item) {
+            $detail = collect($transaction->details()->create($item)); // create detail
+            array_push(
+                $newDetails, 
+                $detail
+                    ->except('created_at', 'updated_at', 'sales_order_id')
+                    ->toArray()
+            );
         }
+
+        // Membuat data baru
+        $data = $transaction->toArray();
+        $data['details'] = $newDetails;
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Data Transaksi Telah Tersimpan'
+            'message' => 'Data Transaksi Telah Tersimpan',
+            'data' => $data
         ]);
     }
 
@@ -98,8 +99,7 @@ class SalesOrderController extends Controller
     public function update(Request $request, SalesOrder $salesOrder)
     {
         $validator = Validator::make($request->all(), [
-            'so' => 'required',
-            'detail_so' => 'required'
+            'so' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -109,31 +109,42 @@ class SalesOrderController extends Controller
             ]);
         }
 
+
+        $data = $request->so;
+        $dataSo = collect($data)->except('detail_so')->toArray();
+
+        if (isset($dataSo['date_transaction'])) {
+            $dataSo['date_transaction'] = date('Y-m-d', strtotime($dataSo['date_transaction']));
+        }
+
         // Update transaksi sales order
-        $salesOrder->update($request->so);
+        $salesOrder->update($dataSo);
 
         // Update detail transaksi
-        $details = $request->detail_so;
+        $details = $data['detail_so'];
 
-        foreach ($details as $detail) {
-            $currentProductId = $detail['current_product_id'];
-            $prevProductId = $detail['prev_product_id'];
+        foreach ($details as $item) {
+            $validator = Validator::make($item, [
+                'detail_id' => 'required',
+                'product_id' => 'required',
+                'quantity' => 'required',
+            ], [
+                'detail_id.required' => 'Id Detail Harus Diisi',
+                'product_id.required' => 'Produk Harus Diisi',
+                'quantity.required' => 'Jumlah Produk Harus Diisi'
+            ]);
 
-            $prevDetailProduct = DetailSalesOrder::where('product_id', $prevProductId)->first();
-
-            if ($currentProductId == $prevProductId) {
-                if (isset($detail['quantity'])) {
-                    $prevDetailProduct->update(['quantity' => $detail['quantity']]);
-                }
-            } else {
-                $prevDetailProduct->delete(); // Hapus detail product sebelumnya
-                
-                // create detail baru
-                $salesOrder->details()->create([
-                    'product_id' => $currentProductId, 
-                    'quantity' => $detail['quantity']
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => $validator->errors()
                 ]);
             }
+
+            // proses update detail transaksi
+            $detail =DetailSalesOrder::find($item['detail_id']);
+            $detail->update($validator->getData());
+
         }
 
         return response()->json([
