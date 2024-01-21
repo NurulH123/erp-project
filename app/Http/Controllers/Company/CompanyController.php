@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\Company;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\CompanyRequest;
 use App\Models\Company;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
 class CompanyController extends Controller
@@ -22,9 +21,9 @@ class CompanyController extends Controller
     public function listAll()
     {
         // Private
-        $companies = Company::all();
+        // $companies = Company::all();
 
-        return response()->json(['status' => 'success', 'data' => $companies]);
+        // return response()->json(['status' => 'success', 'data' => $companies]);
     }
 
     public function create(Request $request)
@@ -53,18 +52,26 @@ class CompanyController extends Controller
             ], 442);
         }
 
-        // create coompany
-        $company = $user->company()->create($request->all()); 
+        $data = $request->all();
 
-        // if (!$user->adminEmployee) {
-            // create employee
-            $company->employee()->create([
-                'username' => $user->username,
-                'email' => $user->email,
-                'is_admin'  => true,
-                'code' => $user->adminEmployee->code, 
-            ]);
-        // }
+        if ($request->hasFile('logo')) {
+            $file = $request->file('logo');
+            $filename = date('YmdHis').'.'.$file->getClientOriginalExtension();
+            $file->move('uploads/logo/company', $filename);
+
+            $data['logo'] = 'uploads/logo/company/'.$filename;
+        }
+
+        // create coompany
+        $company = $user->company()->create($data); 
+
+        // create employee
+        $company->employee()->create([
+            'username' => $user->username,
+            'email' => $user->email,
+            'is_admin'  => true,
+            'code' => $user->adminEmployee->code, 
+        ]);
 
 
         // response
@@ -81,11 +88,16 @@ class CompanyController extends Controller
         $data = $request->all();
 
         if ($request->hasFile('logo')) {
+
+            if (!is_null($company->logo)) {
+                unlink($company->logo);
+            }
+
             $file = $request->file('logo');
-            $filename = date('Ymd').'.'.$file->getClientOriginalExtension();
+            $filename = date('YmdHis').'.'.$file->getClientOriginalExtension();
             $file->move('uploads/logo/company', $filename);
 
-            $data['logo'] = $filename;
+            $data['logo'] =  'uploads/logo/company/'.$filename;
         }
 
         $updCompany = $company->update($data);

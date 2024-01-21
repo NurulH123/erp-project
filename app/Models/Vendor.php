@@ -11,8 +11,8 @@ class Vendor extends Model
 
     protected $guarded = ['id'];
 
-    public function company()
+    public function vendorable()
     {
-        return $this->morphTo(Company::class, 'vendorable');
+        return $this->morphTo();
     }
 }

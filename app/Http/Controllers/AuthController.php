@@ -91,7 +91,14 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)
                 ->first(['id', 'username', 'email', 'status', 'is_owner']);
-        $profile = $user->adminEmployee->employee->profile;
+
+        $profile = null;
+        $employee = $user->adminEmployee->employee;
+
+        if (!is_null($employee)) {
+            $profile = $user->adminEmployee->employee->profile;
+        }
+        
         $user->profile = $profile;
 
         $data = $this->checkLoginEmployee($user);
@@ -109,7 +116,14 @@ class AuthController extends Controller
     {
         $user = User::where('id',  auth()->id())
                 ->first(['id', 'username', 'email', 'status', 'is_owner']);
-        $profile = $user->adminEmployee->employee->profile;
+
+        $profile = null;
+        $employee = $user->adminEmployee->employee;
+
+        if (!is_null($employee)) {
+            $profile = $user->adminEmployee->employee->profile;
+        }
+
         $user->profile = $profile;
         
         $collRoles = collect($user->adminEmployee->roles)->pluck('id', 'name')->toArray();

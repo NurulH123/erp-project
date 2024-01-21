@@ -11,7 +11,7 @@ class Customer extends Model
 
     protected $guarded = ['id'];
 
-    public function customer()
+    public function customerable()
     {
         return $this->morphTo();
     }

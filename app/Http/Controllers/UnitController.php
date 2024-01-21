@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Unit;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -10,8 +11,13 @@ class UnitController extends Controller
 {
     public function index()
     {
-        $user = auth()->user();
-        $units = $user->company->units;
+        $sort = request('sort');
+        $units = Unit::whereHas('company', function(Builder $query) {
+            $user = auth()->user();
+            $companyId = $user->company->id;
+
+            $query->where('id', $companyId);
+        })->paginate($sort);
 
         return response()->json([
             'status' => 'success',

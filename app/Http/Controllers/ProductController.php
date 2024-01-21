@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -10,19 +11,19 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $user = auth()->user();
-        $products = $user->company->products;
+        $sort = request('sort') ?? 5;
+        $products = Product::whereHas('company', function(Builder $query) {
+            $user = auth()->user();
+            $companyId = $user->company->id;
 
-        $productWarehouse = $products->each(function($item) {
-            $product = Product::with('warehouses')->find($item->id);
-            $item->warehouse = $product->warehouses;
-
-            return $item;
-        });
+            $query->where('id', $companyId);
+        })
+        ->with('warehouses')
+        ->paginate($sort)->toArray();
 
         return response()->json([
             'status' => 'success', 
-            'data' => $productWarehouse
+            'data' => $products
         ]);
 
     }
@@ -58,7 +59,7 @@ class ProductController extends Controller
 
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
-            $filename = date('Ymd').'.'.$file->getClientOriginalExtension();
+            $filename = date('YmdHis').'.'.$file->getClientOriginalExtension();
             $file->move('uploads/photo/product', $filename);
 
             $data['photo'] = 'uploads/photo/product/'.$filename;
@@ -79,11 +80,11 @@ class ProductController extends Controller
 
         if ($request->hasFile('photo')) {
             if (!is_null($product->photo)) {
-                unlink('uploads/photo/product/'.$product->photo);
+                unlink($product->photo);
             }
 
             $file = $request->file('photo');
-            $filename = date('Ymd').'.'.$file->getClientOriginalExtension();
+            $filename = date('YmdHis').'.'.$file->getClientOriginalExtension();
             $file->move('uploads/photo/product', $filename);
 
             $data['photo'] = 'uploads/photo/product/'.$filename;

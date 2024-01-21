@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Warehouse;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -10,8 +11,13 @@ class WarehouseController extends Controller
 {
     public function index()
     {
-        $user = auth()->user();
-        $warehouses = $user->company->warehouses;
+        $sort =  request('sort') ?? 5;
+
+        $warehouses = Warehouse::whereHas('company', function(Builder $query) {
+            $user = auth()->user();
+            $companyId = $user->company->id;
+            $query->where('id', $companyId);
+        })->paginate($sort);
 
         return response()->json([
             'status' => 'success', 

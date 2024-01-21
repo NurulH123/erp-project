@@ -2,16 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CategoryProduct;
 use Illuminate\Http\Request;
+use App\Models\CategoryProduct;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
 
 class CategoryProductController extends Controller
 {
     public function index()
     {
-        $user = auth()->user();
-        $productCategories = $user->company->productCategories;
+        $sort = request('sort');
+        $productCategories = CategoryProduct::whereHas('company', function(Builder $query) {
+            $user = auth()->user();
+            $companyId = $user->company->id;
+
+            $query->where('id', $companyId);
+        })->paginate($sort);
 
         return response()->json([
             'status' => 'success',

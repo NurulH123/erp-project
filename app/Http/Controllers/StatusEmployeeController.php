@@ -5,14 +5,20 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\StatusEmployee;
 use Illuminate\Database\Console\Migrations\StatusCommand;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
 
 class StatusEmployeeController extends Controller
 {
     public function index()
     {
-        $user = auth()->user();
-        $empoyeeStatus = $user->company->employeeStatus;
+        $sort = request('sort');
+        $empoyeeStatus = StatusEmployee::whereHas('statusable', function(Builder $query) {
+            $user = auth()->user();
+            $companyId = $user->company->id;
+
+            $query->where('id', $companyId);
+        })->paginate($sort);
 
         return response()->json([
             'status' => 'success',

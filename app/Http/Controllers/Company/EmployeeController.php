@@ -125,10 +125,10 @@ class EmployeeController extends Controller
 
         if ($request->hasFile('photo')) {
             $file = $request->file('photo');
-            $filename = date('Ymd').'.'.$file->getClientOriginalExtension();
+            $filename = date('YmdHis').'.'.$file->getClientOriginalExtension();
             $file->move('uploads/photo/profile', $filename);
 
-            $dataProfile['photo'] = $filename;
+            $dataProfile['photo'] = 'uploads/photo/profile/'.$filename;
         }
         
         // Process inputing data employee
@@ -196,11 +196,11 @@ class EmployeeController extends Controller
             $photo = $employee->profile->photo;
             
             if (!is_null($photo)) {
-                unlink('uploads/photo/profile'.$photo);
+                unlink($photo);
             }
 
             $file = $request->file('photo');
-            $filename = date('Ymd').'.'.$file->getClientOriginalExtension();
+            $filename = date('YmdHis').'.'.$file->getClientOriginalExtension();
             $file->move('uploads/photo/profile', $filename);
 
             $dataProfile['photo'] = 'uploads/photo/profile/'.$filename;

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Role;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -11,8 +12,13 @@ class RoleController extends Controller
 {
     public function index()
     {
-        $user = auth()->user();
-        $roles = $user->company->roles;
+        $sort = request('sort');
+        $roles = Role::whereHas('company', function(Builder $query) {
+            $user = auth()->user();
+            $companyId = $user->company->id;
+
+            $query->where('id', $companyId);
+        })->paginate($sort);
 
         return response()->json([
             'status' => 'success', 
