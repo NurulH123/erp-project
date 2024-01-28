@@ -37,24 +37,38 @@ class SalesOrderController extends Controller
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->so, [
-            'customer_id' => 'required',
-            'warehouse_id' => 'required',
-            'date_transaction' => 'required',
-            'detail_so' => 'required',
-        ], [
-            'customer_id.required' => 'Customer Harus Diisi',
-            'warehouse_id.required' => 'Gudang Harus Diisi',
-            'date_transaction.required' => 'Tgl Transaksi Harus Diisi',
-            'detail_so.required' => 'Detail Harus Diisi'
-        ]);
+        $datas  = $request->all();
+        foreach ($datas as $key => $data) {
+            $rules = [
+                'warehouse_id' => 'required',
+                'date_transaction' => 'required',
+            ];
+            $message = [
+                'warehouse_id.required' => 'Customer Harus Diisi',
+                'date_transaction.required' => 'Tanggal Transaksi Harus Diisi'
+            ];
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'failed',
-                'message' => $validator->errors()
-            ]);
+            if ($key == 'so') {
+                if (isset($data['customer_id'])) {
+                    $rules['customer_id'] = 'required';
+                    $message['customer_id.required'] = 'Customer Harus Diisi';
+                }
+
+                $validator = Validator::make($data, $rules, $message);
+            }
+
+            if ($key == 'detail_so') {
+
+            }
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => $validator->errors()
+                ]);
+            }
         }
+
 
         $user = auth()->user();
         $company = $user->company;

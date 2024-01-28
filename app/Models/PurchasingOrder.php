@@ -26,4 +26,9 @@ class PurchasingOrder extends Model
     {
         return $this->hasManyThrough(InvoicePurchaseOrder::class, DetailPurchasingOrder::class);
     }
+    
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
 }

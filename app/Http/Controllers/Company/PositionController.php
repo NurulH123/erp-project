@@ -27,6 +27,14 @@ class PositionController extends Controller
         ]);
     }
 
+    public function show(Position $position)
+    {
+        return response()->json([
+            'status' => 'success',
+            'data' => $position
+        ]);
+    }
+
     public function create(Request $request)
     {
         $user = auth()->user();

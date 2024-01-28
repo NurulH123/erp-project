@@ -92,6 +92,7 @@ Route::middleware('auth:sanctum')->group(function() {
             ['prefix' => 'position'],
             function() {
             Route::get('/', [PositionController::class, 'index']);
+            Route::get('/{position}/show', [PositionController::class, 'show']);
             Route::post('/', [PositionController::class, 'create']);
             Route::patch('{position}/update', [PositionController::class, 'update']);
             Route::get('{position}/status/change', [PositionController::class, 'changeStatus'])->name('position.change-status');
@@ -130,6 +131,7 @@ Route::middleware('auth:sanctum')->group(function() {
             ['prefix' => 'role'],
             function() {
                 Route::get('/', [RoleController::class, 'index']);
+                Route::get('/{role}/show', [RoleController::class, 'show']);
                 Route::post('/', [RoleController::class, 'create']);
                 Route::patch('{role}/update', [RoleController::class, 'update']);
                 Route::get('/{role}/change-status', [RoleController::class, 'changeStatus'])->name('role.change-status');
@@ -153,6 +155,7 @@ Route::middleware('auth:sanctum')->group(function() {
             ['prefix' => 'status-employee'],
             function() {
                 Route::get('/', [StatusEmployeeController::class, 'index']);
+                Route::get('/{status}/show', [StatusEmployeeController::class, 'show']);
                 Route::post('/', [StatusEmployeeController::class, 'create']);
                 Route::patch('{status}/update', [StatusEmployeeController::class, 'update']);
                 Route::get('/{employeeStatus}/change-status', [StatusEmployeeController::class, 'changeStatus']);

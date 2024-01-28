@@ -19,7 +19,7 @@ class WorkOrderController extends Controller
                 return response()->json([
                     'status' => 'failed',
                     'message' => 'Produk atau Stok Tidak Boleh Kosong'
-                ]);
+                ], 501);
             }
 
             $product = Product::find($item['product_id']);
@@ -50,7 +50,10 @@ class WorkOrderController extends Controller
 
                 } else {
                     // Validasi jika barang material tidak ada digudang
-                    return response()->json(['status' => 'failed', 'message' => 'Bahan Material '.$material->name.' Tidak Ada Di '.$warehouse->name]);
+                    return response()->json([
+                        'status' => 'failed', 
+                        'message' => 'Bahan Material '.$material->name.' Tidak Ada Di '.$warehouse->name
+                    ], 501);
                 }
             }
 

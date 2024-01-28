@@ -12,12 +12,9 @@ class ProductController extends Controller
     public function index()
     {
         $sort = request('sort') ?? 5;
-        $products = Product::whereHas('company', function(Builder $query) {
-            $user = auth()->user();
-            $companyId = $user->company->id;
+        $user = auth()->user();
 
-            $query->where('id', $companyId);
-        })
+        $products = Product::where('company_id', $user->company->id)
         ->with('warehouses')
         ->paginate($sort)->toArray();
 
@@ -30,6 +27,10 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
+        $product = Product::with('warehouses')
+                    ->where('id', $product->id)
+                    ->first();
+                    
         return response()->json([
             'status' => 'success',
             'data' => $product

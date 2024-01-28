@@ -6,18 +6,24 @@ use App\Models\DetailPurchasingOrder;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use App\Models\PurchasingOrder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
 
 class PurchasingOrderController extends Controller
 {
     public function index()
     {
+        $sort = request('sort') ?? 5;
+
         $user = auth()->user();
-        $transactionPo = $user->company->transactionPo;
+        $companyId = $user->company->id;
+        $purchaseOrders = PurchasingOrder::whereHas('company', function(Builder $query) use($companyId){
+                            $query->where('id', $companyId);
+                        })->paginate($sort);
 
         return response()->json([
             'status' => 'success',
-            'data' => $transactionPo
+            'data' => $purchaseOrders
         ]);
     }
 

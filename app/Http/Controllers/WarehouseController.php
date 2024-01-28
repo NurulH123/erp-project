@@ -16,6 +16,7 @@ class WarehouseController extends Controller
         $warehouses = Warehouse::whereHas('company', function(Builder $query) {
             $user = auth()->user();
             $companyId = $user->company->id;
+
             $query->where('id', $companyId);
         })->paginate($sort);
 
@@ -28,6 +29,10 @@ class WarehouseController extends Controller
 
     public function show(Warehouse $warehouse)
     {
+        $warehouse = Warehouse::with('products')
+                        ->where('id', $warehouse->id)
+                        ->first();
+
         return response()->json([
             'status' => 'success',
             'data' => $warehouse

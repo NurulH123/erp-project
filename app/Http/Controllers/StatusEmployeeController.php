@@ -26,6 +26,14 @@ class StatusEmployeeController extends Controller
         ]);
     }
 
+    public function show(StatusEmployee $status)
+    {
+        return response()->json([
+            'status' => 'success',
+            'data' => $status
+        ]);
+    }
+
     public function create(Request $request)
     {
         $user  = auth()->user();

@@ -13,7 +13,7 @@ class RoleController extends Controller
     public function index()
     {
         $sort = request('sort');
-        $roles = Role::whereHas('company', function(Builder $query) {
+        $roles = Role::whereHas('roleable', function(Builder $query) {
             $user = auth()->user();
             $companyId = $user->company->id;
 
@@ -23,6 +23,14 @@ class RoleController extends Controller
         return response()->json([
             'status' => 'success', 
             'data' => $roles
+        ]);
+    }
+
+    public function show(Role $role)
+    {
+        return response()->json([
+            'status' => 'success',
+            'data' => $role
         ]);
     }
 
