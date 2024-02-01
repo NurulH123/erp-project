@@ -41,7 +41,10 @@ class WorkOrderController extends Controller
                     $currentStock = $stockInWarehouse - $materialNeed; // Stok digudang saat ini, setelah mengalami pengurangan akibat dipakai
 
                     // Validasi stok material digudang
-                    if ($currentStock < 0) return response()->json(['status' => 'failed', 'message' => 'Stok '.$material->name.' Tidak Mencukupi']);
+                    if ($currentStock < 0) return response()->json([
+                        'status' => 'failed', 
+                        'message' => 'Stok '.$material->name.' Tidak Mencukupi'
+                    ], 501);
                     
                     array_push($stocksMaterial, [
                         'material_id'   => $material->id,

@@ -57,15 +57,11 @@ class SalesOrderController extends Controller
                 $validator = Validator::make($data, $rules, $message);
             }
 
-            if ($key == 'detail_so') {
-
-            }
-
             if ($validator->fails()) {
                 return response()->json([
                     'status' => 'failed',
                     'message' => $validator->errors()
-                ]);
+                ], 501);
             }
         }
 
