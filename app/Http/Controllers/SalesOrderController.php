@@ -18,7 +18,7 @@ class SalesOrderController extends Controller
 
         $user = auth()->user();
         $companyId = $user->company->id;
-        $salesOrders = SalesOrder::with(['warehouse:id,name'])
+        $salesOrders = SalesOrder::with(['warehouse:id,name', 'customer:id,name,phone,address'])
                         ->whereHas('company', function(Builder $query) use($companyId){
                             $query->where('id', $companyId);
                         })->paginate($sort);

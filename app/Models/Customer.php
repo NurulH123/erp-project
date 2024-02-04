@@ -15,4 +15,9 @@ class Customer extends Model
     {
         return $this->morphTo();
     }
+
+    public function transaksiSo()
+    {
+        return $this->hasMany(SalesOrder::class);
+    }
 }
