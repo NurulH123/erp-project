@@ -250,6 +250,7 @@ Route::middleware('auth:sanctum')->group(function() {
                 Route::post('/', [WarehouseController::class, 'store']);
                 Route::patch('/{warehouse}', [WarehouseController::class, 'update']);
                 Route::get('/{warehouse}/change-status', [WarehouseController::class, 'changeStatus']);
+                Route::get('/data/list/all', [WarehouseController::class, 'allWarehouse']);
                 
                 Route::get('/product/data', [ProductWarehouseController::class, 'dataProductWarehouse']);
                 Route::post('/{warehouse}/add', [ProductWarehouseController::class, 'addProductWarehouse']);

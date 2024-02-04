@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -15,8 +14,8 @@ class ProductController extends Controller
         $user = auth()->user();
 
         $products = Product::where('company_id', $user->company->id)
-        ->with('warehouses')
-        ->paginate($sort)->toArray();
+                    ->with(['warehouses', 'unit:id,name', 'category:id,name'])
+                    ->paginate($sort)->toArray();
 
         return response()->json([
             'status' => 'success', 

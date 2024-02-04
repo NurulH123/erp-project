@@ -9,7 +9,6 @@ use App\Models\Employee;
 use Illuminate\Http\Request;
 use App\Models\AdminEmployee;
 use App\Http\Controllers\Controller;
-use App\Models\ProfileEmployee;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -22,7 +21,7 @@ class EmployeeController extends Controller
         $user = User::find(Auth::id());
         $pluck = collect($user->company->employee)->pluck('id', 'username')->toArray();
         $IdEmployee = array_values($pluck);
-        $employees = Employee::with('profile')
+        $employees = Employee::with(['profile.position:id,name', 'profile.status:id,name'])
                         ->whereIn('id', $IdEmployee)
                         ->paginate($sort);
 
@@ -207,14 +206,18 @@ class EmployeeController extends Controller
         }
 
         $employee->update($dataEmployee);
-        $employee->profile()->update($dataProfile);
+
+        if (is_null($employee->profile)) {
+            $employee->profile()->create($dataProfile);
+        } else {
+            $employee->profile()->update($dataProfile);
+        }
 
         if ($employee->is_admin) {
             $admin = AdminEmployee::where('code', $employee->code)->first();
             $admin->user()->update($dataEmployee);
         }
 
-        // dd('keluar');
         $updEmployee = Employee::with('profile')
                         ->where('id', $employee->id)
                         ->first(['id', 'code', 'username', 'email', 'is_admin', 'status']);

@@ -27,6 +27,17 @@ class WarehouseController extends Controller
 
     }
 
+    public function allWarehouse()
+    {
+        $user = auth()->user();
+        $company = $user->company;
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $company->warehouses
+        ]);
+    }
+
     public function show(Warehouse $warehouse)
     {
         $warehouse = Warehouse::with('products')

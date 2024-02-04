@@ -52,7 +52,7 @@ class CustomerController extends Controller
         }
 
         $data = $request->all();
-        $customer = $user->company->customer()->create($data);
+        $customer = $user->company->customers()->create($data);
 
         return response()->json([
             'status' => 'success',
