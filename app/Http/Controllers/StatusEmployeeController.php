@@ -12,7 +12,7 @@ class StatusEmployeeController extends Controller
 {
     public function index()
     {
-        $sort = request('sort');
+        $sort = request('sort') ?? 5;
         $empoyeeStatus = StatusEmployee::whereHas('statusable', function(Builder $query) {
             $user = auth()->user();
             $companyId = $user->company->id;
@@ -23,6 +23,14 @@ class StatusEmployeeController extends Controller
         return response()->json([
             'status' => 'success',
             'data' => $empoyeeStatus,
+        ]);
+    }
+
+    public function allData() 
+    {
+        return response()->json([
+            'status' => 'success',
+            'data' => auth()->user()->company->employeeStatus
         ]);
     }
 

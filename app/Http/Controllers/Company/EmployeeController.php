@@ -33,11 +33,14 @@ class EmployeeController extends Controller
 
     public function show($id)
     {
-        $employee = Employee::with('profile')
+        $employee = Employee::with([
+                            'profile',
+                            'profile.position:id,name',
+                            'profile.status:id,name'
+                        ])
                         ->where('id', $id)
                         ->first(['id', 'code', 'username', 'email', 'is_admin', 'status']);
     
-                        // dd($employee, $id);
         return response()->json([
             'status' => 'success',
             'data' => $employee,

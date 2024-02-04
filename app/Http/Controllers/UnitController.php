@@ -11,7 +11,7 @@ class UnitController extends Controller
 {
     public function index()
     {
-        $sort = request('sort');
+        $sort = request('sort') ??  5;
         $units = Unit::whereHas('company', function(Builder $query) {
             $user = auth()->user();
             $companyId = $user->company->id;

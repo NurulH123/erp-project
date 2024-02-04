@@ -92,6 +92,7 @@ Route::middleware('auth:sanctum')->group(function() {
             ['prefix' => 'position'],
             function() {
             Route::get('/', [PositionController::class, 'index']);
+            Route::get('/data/all', [PositionController::class, 'allData']);
             Route::get('/{position}/show', [PositionController::class, 'show']);
             Route::post('/', [PositionController::class, 'create']);
             Route::patch('{position}/update', [PositionController::class, 'update']);
@@ -131,6 +132,7 @@ Route::middleware('auth:sanctum')->group(function() {
             ['prefix' => 'role'],
             function() {
                 Route::get('/', [RoleController::class, 'index']);
+                Route::get('/data/all', [RoleController::class, 'allData']);
                 Route::get('/{role}/show', [RoleController::class, 'show']);
                 Route::post('/', [RoleController::class, 'create']);
                 Route::patch('{role}/update', [RoleController::class, 'update']);
@@ -155,6 +157,7 @@ Route::middleware('auth:sanctum')->group(function() {
             ['prefix' => 'status-employee'],
             function() {
                 Route::get('/', [StatusEmployeeController::class, 'index']);
+                Route::get('/data/all', [StatusEmployeeController::class, 'allData']);
                 Route::get('/{status}/show', [StatusEmployeeController::class, 'show']);
                 Route::post('/', [StatusEmployeeController::class, 'create']);
                 Route::patch('{status}/update', [StatusEmployeeController::class, 'update']);
@@ -234,6 +237,7 @@ Route::middleware('auth:sanctum')->group(function() {
             function() {
                 Route::get('/', [ProductController::class, 'index']);
                 Route::get('/{product}', [ProductController::class, 'show']);
+                Route::get('/data/all', [ProductController::class, 'allData']);
                 Route::post('/', [ProductController::class, 'store']);
                 Route::patch('/{product}', [ProductController::class, 'update']);
                 Route::get('/{product}/change-status', [ProductController::class, 'changeStatus']);

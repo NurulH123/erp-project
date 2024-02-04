@@ -12,11 +12,12 @@ use Illuminate\Validation\Rule;
 class BranchCompanyController extends Controller
 {
     public function index()
-
     {
-        $company = Company::find(1);
+        $sort = request('sort') ?? 5;
+
         $user = auth()->user();
-        $branch = $user->company->branch;
+        $branch = BranchCompany::where('company_id', $user->company->id)
+                        ->paginate($sort);
 
         return response()->json([
             'status' => 'success',

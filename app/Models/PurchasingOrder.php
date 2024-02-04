@@ -31,4 +31,14 @@ class PurchasingOrder extends Model
     {
         return $this->belongsTo(Company::class);
     }
+
+    public function vendor()
+    {
+        return $this->belongsTo(Vendor::class);
+    }
+
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class, 'code_employee', 'code');
+    }
 }

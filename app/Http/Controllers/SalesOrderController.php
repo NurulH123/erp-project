@@ -18,7 +18,11 @@ class SalesOrderController extends Controller
 
         $user = auth()->user();
         $companyId = $user->company->id;
-        $salesOrders = SalesOrder::with(['warehouse:id,name', 'customer:id,name,phone,address'])
+        $salesOrders = SalesOrder::with([
+                            'warehouse:id,name', 
+                            'customer:id,name,phone,address',
+                            'employee:code,username,email,status',
+                        ])
                         ->whereHas('company', function(Builder $query) use($companyId){
                             $query->where('id', $companyId);
                         })->paginate($sort);
@@ -29,8 +33,16 @@ class SalesOrderController extends Controller
         ]);
     }
 
-    public function show(SalesOrder $salesOrder)
+    public function show($id)
     {
+        $salesOrder = SalesOrder::with([
+                    'warehouse:id,name', 
+                    'customer:id,name,phone,address',
+                    'employee:code,username,email,status',
+                    'details.product:id,name,type_zat,photo'
+                ])
+                ->find($id);
+
         return response()->json([
             'status' => 'success',
             'data' => $salesOrder

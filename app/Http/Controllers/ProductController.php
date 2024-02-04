@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class ProductController extends Controller
 {
@@ -14,7 +15,12 @@ class ProductController extends Controller
         $user = auth()->user();
 
         $products = Product::where('company_id', $user->company->id)
-                    ->with(['warehouses', 'unit:id,name', 'category:id,name'])
+                    ->with(['warehouses' => function(Builder $query) use($user){
+                            $query->where('company_id', $user->company->id);
+                        }, 
+                        'unit:id,name', 
+                        'category:id,name'
+                    ])
                     ->paginate($sort)->toArray();
 
         return response()->json([
@@ -24,9 +30,23 @@ class ProductController extends Controller
 
     }
 
+    public function allData()
+    {
+        $products = Product::all();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $products
+        ]);
+    }
+
     public function show(Product $product)
     {
-        $product = Product::with('warehouses')
+        $product = Product::with(['warehouses' => function(Builder $query) {
+                        $user = auth()->user();
+
+                        $query->where('company_id', $user->company->id);
+                    }, 'unit:id,name', 'category:id,name'])
                     ->where('id', $product->id)
                     ->first();
                     
