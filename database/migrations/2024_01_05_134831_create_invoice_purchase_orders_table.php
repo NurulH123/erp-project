@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('invoice_purchase_orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('detail_purchasing_order_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->integer('come');
-            $table->boolean('is_completed');
+            $table->integer('come')->nullable();
+            $table->boolean('is_completed')->nullable();
             $table->integer('pay');
             $table->timestamps();
         });

@@ -19,7 +19,8 @@ return new class extends Migration
             $table->string('code_employee');
             $table->foreignId('vendor_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->date('date_transaction');
-            $table->enum('status', ['ordered', 'pending','completed'])->default('ordered');
+            $table->date('date_arrival');
+            $table->enum('status', ['pending','accept'])->default('pending');
             $table->text('desc')->nullable();
             $table->integer('total_pay')->nullable();
             $table->timestamps();
