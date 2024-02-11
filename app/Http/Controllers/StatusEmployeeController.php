@@ -12,7 +12,7 @@ class StatusEmployeeController extends Controller
 {
     public function index()
     {
-        $sort = request('sort') ?? 5;
+        $sort = request('sort') ?? '5';
         $empoyeeStatus = StatusEmployee::whereHas('statusable', function(Builder $query) {
             $user = auth()->user();
             $companyId = $user->company->id;

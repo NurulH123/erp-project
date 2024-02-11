@@ -11,7 +11,7 @@ class CustomerController extends Controller
 {
     public function index()
     {
-        $sort = request('sort') ?? 5;
+        $sort = request('sort') ?? '5';
         $customers = Customer::whereHas('customerable', function(Builder $query) {
             $user = auth()->user();
             $companyId = $user->company->id;
@@ -22,6 +22,16 @@ class CustomerController extends Controller
         return response()->json([
             'status' => 'success',
             'data' => $customers,
+        ]);
+    }
+
+    public function allData()
+    {
+        $user = auth()->user();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $user->company->customers
         ]);
     }
 

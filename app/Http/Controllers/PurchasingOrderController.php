@@ -13,7 +13,7 @@ class PurchasingOrderController extends Controller
 {
     public function index()
     {
-        $sort = request('sort') ?? 5;
+        $sort = request('sort') ?? '5';
 
         $user = auth()->user();
         $companyId = $user->company->id;
@@ -107,7 +107,6 @@ class PurchasingOrderController extends Controller
     public function destroy(PurchasingOrder $purchase)
     {
         $purchase->delete();
-        $purchase->invoice()->delete();
 
         return response()->json([
             'status' => 'success',

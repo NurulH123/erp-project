@@ -16,10 +16,13 @@ class EmployeeController extends Controller
 {
     public function index()
     {
-        $sort = request('sort') ?? 5;
+        $sort = request('sort') ?? '5';
 
         $user = User::find(Auth::id());
-        $pluck = collect($user->company->employee)->pluck('id', 'username')->toArray();
+        $company = $user->company ?? 
+                    $user->adminEmployee->employee->company;
+
+        $pluck = collect($company->employee)->pluck('id', 'username')->toArray();
         $IdEmployee = array_values($pluck);
         $employees = Employee::with(['profile.position:id,name', 'profile.status:id,name'])
                         ->whereIn('id', $IdEmployee)
@@ -165,25 +168,25 @@ class EmployeeController extends Controller
     public function update(Request  $request, Employee $employee)
     {
         // Prosess Validasi
-        $rules =  [
-            'username'  => 'required',
-            'email'     => 'required',
-        ];
+        // $rules =  [
+        //     'username'  => 'required',
+        //     'email'     => 'required',
+        // ];
 
-        $messages = [
-            'username.required' => 'Nama Harus Diisi',
-            'email.required'    => 'Email Harus Diisi',
-            'email.email'       => 'Format Email Tidak Sesuai',
-        ];
+        // $messages = [
+        //     'username.required' => 'Nama Harus Diisi',
+        //     'email.required'    => 'Email Harus Diisi',
+        //     'email.email'       => 'Format Email Tidak Sesuai',
+        // ];
 
-        $validator = Validator::make($request->all(), $rules, $messages);
+        // $validator = Validator::make($request->all(), $rules, $messages);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'failed',
-                'message' => $validator->errors()
-            ]);
-        }
+        // if ($validator->fails()) {
+        //     return response()->json([
+        //         'status' => 'failed',
+        //         'message' => $validator->errors()
+        //     ]);
+        // }
 
         // Disini tidak bisa mengupdate is_admin
         // is_admin hanya bisa diupdate melalui method changeAdmin()  

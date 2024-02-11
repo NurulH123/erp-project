@@ -26,4 +26,5 @@ class AdminEmployee extends Model
     {
         return $this->hasOne(Employee::class, 'code', 'code');
     }
+
 }

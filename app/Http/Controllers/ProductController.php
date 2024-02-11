@@ -11,7 +11,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $sort = request('sort') ?? 5;
+        $sort = request('sort') ?? '5';
         $user = auth()->user();
 
         $products = Product::where('company_id', $user->company->id)
@@ -32,11 +32,12 @@ class ProductController extends Controller
 
     public function allData()
     {
-        $products = Product::all();
+        // $products = Product::all();
+        $user = auth()->user();
 
         return response()->json([
             'status' => 'success',
-            'data' => $products
+            'data' => $user->company->products
         ]);
     }
 

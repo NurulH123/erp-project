@@ -14,7 +14,7 @@ class SalesOrderController extends Controller
 {
     public function index()
     {
-        $sort = request('sort') ?? 5;
+        $sort = request('sort') ?? '5';
 
         $user = auth()->user();
         $companyId = $user->company->id;
@@ -119,23 +119,43 @@ class SalesOrderController extends Controller
                 'messsage' => 'Stok '.$productInWarehouse->name.' Tidak Cukup',
             ], 501);
         }
-        
+
         // Create transaksi dan details sales order
         $dataSo['code_employee'] = $user->adminEmployee->code;
         $dataSo['code_transaction'] = date('YmdHis');
         $dataSo['date_transaction'] = date('Y-m-d', strtotime($dataSo['date_transaction']));
         
         $transaction = $company->transactionSo()->create($dataSo); // create transaksi SO
-        $newDetails = $transaction->details()->createMany($details); // create details SO
+        // $newDetails = $transaction->details()->createMany($details); // create details SO
+        
 
-        // Membuat data baru
-        $data = $transaction->toArray();
-        $data['details'] = $newDetails;
+        // Create Detail & Invoice SO
+        $collDetails = collect($details);
+
+        $collDetails->each(function($item) use($transaction){
+            $product = Product::find($item['product_id']);
+            $totPrice = $product->price * $item['quantity'];
+
+            if (!isset($item['desc'])) {$desc = null;}
+
+            $detail = $transaction->details()->create($item); // Create detail
+
+            // Create Invoice
+            $transaction->invoices()->create([
+                'detail_sales_order_id' => $detail->id,
+                'total_price' => $totPrice,
+                'desc' => $desc
+            ]);
+        });
+
+        $invoices = $transaction->invoices;
+        $totPay = $invoices->sum('total_price');
+        $transaction->update(['total_pay' => $totPay]);
 
         return response()->json([
             'status' => 'success',
             'message' => 'Data Transaksi Telah Tersimpan',
-            'data' => $data
+            'data' => $transaction
         ]);
     }
 

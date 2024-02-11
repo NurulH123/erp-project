@@ -21,7 +21,11 @@ class InvoicePurchaseOrderController extends Controller
     public function createInvoice(Request $request, PurchasingOrder $purchase)
     {
         $validator = Validator::make($request->po, ['status' => 'required'], ['status.required' => 'Status Belum Diupdate']);
-        if ($validator->fails()) return response()->json(['status' => 'failed', 'message' => $validator->errors()]);
+        
+        if ($validator->fails()) return response()->json([
+            'status' => 'failed', 
+            'message' => $validator->errors()
+        ], 501);
 
         // Buat invoice transaksi
         $invoices = collect($request->detail_po);

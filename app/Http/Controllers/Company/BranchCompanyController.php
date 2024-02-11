@@ -13,7 +13,7 @@ class BranchCompanyController extends Controller
 {
     public function index()
     {
-        $sort = request('sort') ?? 5;
+        $sort = request('sort') ?? '5';
 
         $user = auth()->user();
         $branch = BranchCompany::where('company_id', $user->company->id)

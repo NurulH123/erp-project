@@ -119,6 +119,7 @@ class AuthController extends Controller
 
         $profile = null;
         $employee = $user->adminEmployee->employee;
+        $user->employee = collect($employee)->only('id', 'code', 'status');
 
         if (!is_null($employee)) {
             $profile = $user->adminEmployee->employee->profile;

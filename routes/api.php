@@ -171,6 +171,7 @@ Route::middleware('auth:sanctum')->group(function() {
             ['prefix' => 'vendor'],
             function() {
                 Route::get('/', [VendorController::class, 'index']);
+                Route::get('/data/all', [VendorController::class, 'allData']);
                 Route::get('/{vendor}', [VendorController::class, 'show']);
                 Route::post('/', [VendorController::class, 'create']);
                 Route::patch('{vendor}/', [VendorController::class, 'update']);
@@ -184,6 +185,7 @@ Route::middleware('auth:sanctum')->group(function() {
             ['prefix' => 'customer'],
             function() {
                 Route::get('/', [CustomerController::class, 'index']);
+                Route::get('/data/all', [CustomerController::class, 'allData']);
                 Route::get('/{customer}', [CustomerController::class, 'show']);
                 Route::post('/', [CustomerController::class, 'create']);
                 Route::patch('/{customer}', [CustomerController::class, 'update']);

@@ -17,7 +17,7 @@ class HasCompany
     {
         $user = auth()->user();
 
-        if (is_null($user->company)) {
+        if (is_null($user->company) && $user->is_owner) {
             return response()->json([
                 'status' => 'failed',
                 'message' => 'Maaf Anda Belum Mendaftarkan Perusahaan Anda'

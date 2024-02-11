@@ -12,7 +12,7 @@ class RoleController extends Controller
 {
     public function index()
     {
-        $sort = request('sort') ?? 5;
+        $sort = request('sort') ?? '5';
 
         $roles = Role::whereHas('roleable', function(Builder $query) {
             $user = auth()->user();
