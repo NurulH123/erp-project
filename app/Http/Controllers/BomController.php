@@ -11,7 +11,12 @@ class BomController extends Controller
 {
     public function dataProdukBom()
     {
-        $products = Product::with('materials')->whereHas('materials')->get();
+        $user = auth()->user();
+
+        $products = Product::with('materials')
+                        ->whereHas('materials')
+                        ->where('company_id', $user->company->id)
+                        ->get();
 
         return response()->json([
             'status' => 'success',

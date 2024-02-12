@@ -4,7 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use App\Models\User;
+use App\Models\Unit;
+use App\Models\Vendor;
 use App\Models\Employee;
+use App\Models\Position;
+use App\Models\Category;
+use App\Models\Customer;
+use App\Models\Warehoouse;
+use App\Models\StatusEmployee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -119,6 +126,7 @@ class AuthController extends Controller
 
         $profile = null;
         $employee = $user->adminEmployee->employee;
+        $dataMaster = $this->dataMaster();
 
         if (!is_null($employee)) {
             $profile = $user->adminEmployee->employee->profile;
@@ -135,6 +143,7 @@ class AuthController extends Controller
 
         $data = $this->checkLoginEmployee($user);
         $data['role'] = $roles;
+        $data['master_data'] = $dataMaster;
 
         return response()->json(['data' => $data]);
     }
@@ -160,5 +169,23 @@ class AuthController extends Controller
         $data['company'] = $company;
 
         return $data;
+    }
+
+    private function dataMaster()
+    {
+        $user = auth()->user();
+        $company = $user->company;
+
+        return [
+            'unit' => count($company->units),
+            'vendor' => count($company->vendor),
+            'role' => count($company->roles),
+            'position' => count($company->positions),
+            'category' => count($company->productCategories),
+            'warehouse' => count($company->warehouses),
+            'status_employee' => count($company->employeeStatus),
+            'customer' => count($company->customer)
+        ];
+
     }
 }

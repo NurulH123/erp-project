@@ -12,7 +12,8 @@ class ProductWarehouseController extends Controller
 {
     public function dataProductWarehouse()
     {
-        $prouctWarehouse = ProductWarehouse::with(['product', 'warehouse'])->get();
+        $prouctWarehouse = ProductWarehouse::with(['product', 'warehouse'])
+                            ->get();
 
         return response()->json([
             'status' => 'success',
