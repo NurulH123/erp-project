@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Warehouse;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
 
 class WarehouseController extends Controller
 {
     public function index()
     {
-        $sort =  request('sort') ?? 5;
+        $sort =  request('sort') ?? '5';
 
         $warehouses = Warehouse::whereHas('company', function(Builder $query) {
             $user = auth()->user();
@@ -25,6 +25,16 @@ class WarehouseController extends Controller
             'data' => $warehouses
         ]);
 
+    }
+
+    public function allWarehouse()
+    {
+        $user = auth()->user();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $user->company->warehouses
+        ]);
     }
 
     public function show(Warehouse $warehouse)

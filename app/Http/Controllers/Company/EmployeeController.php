@@ -9,7 +9,6 @@ use App\Models\Employee;
 use Illuminate\Http\Request;
 use App\Models\AdminEmployee;
 use App\Http\Controllers\Controller;
-use App\Models\ProfileEmployee;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -17,12 +16,15 @@ class EmployeeController extends Controller
 {
     public function index()
     {
-        $sort = request('sort') ?? 5;
+        $sort = request('sort') ?? '5';
 
         $user = User::find(Auth::id());
-        $pluck = collect($user->company->employee)->pluck('id', 'username')->toArray();
+        $company = $user->company ?? 
+                    $user->adminEmployee->employee->company;
+
+        $pluck = collect($company->employee)->pluck('id', 'username')->toArray();
         $IdEmployee = array_values($pluck);
-        $employees = Employee::with('profile')
+        $employees = Employee::with(['profile.position:id,name', 'profile.status:id,name'])
                         ->whereIn('id', $IdEmployee)
                         ->paginate($sort);
 
@@ -34,11 +36,14 @@ class EmployeeController extends Controller
 
     public function show($id)
     {
-        $employee = Employee::with('profile')
+        $employee = Employee::with([
+                            'profile',
+                            'profile.position:id,name',
+                            'profile.status:id,name'
+                        ])
                         ->where('id', $id)
                         ->first(['id', 'code', 'username', 'email', 'is_admin', 'status']);
     
-                        // dd($employee, $id);
         return response()->json([
             'status' => 'success',
             'data' => $employee,
@@ -163,25 +168,25 @@ class EmployeeController extends Controller
     public function update(Request  $request, Employee $employee)
     {
         // Prosess Validasi
-        $rules =  [
-            'username'  => 'required',
-            'email'     => 'required',
-        ];
+        // $rules =  [
+        //     'username'  => 'required',
+        //     'email'     => 'required',
+        // ];
 
-        $messages = [
-            'username.required' => 'Nama Harus Diisi',
-            'email.required'    => 'Email Harus Diisi',
-            'email.email'       => 'Format Email Tidak Sesuai',
-        ];
+        // $messages = [
+        //     'username.required' => 'Nama Harus Diisi',
+        //     'email.required'    => 'Email Harus Diisi',
+        //     'email.email'       => 'Format Email Tidak Sesuai',
+        // ];
 
-        $validator = Validator::make($request->all(), $rules, $messages);
+        // $validator = Validator::make($request->all(), $rules, $messages);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'failed',
-                'message' => $validator->errors()
-            ]);
-        }
+        // if ($validator->fails()) {
+        //     return response()->json([
+        //         'status' => 'failed',
+        //         'message' => $validator->errors()
+        //     ]);
+        // }
 
         // Disini tidak bisa mengupdate is_admin
         // is_admin hanya bisa diupdate melalui method changeAdmin()  
@@ -207,14 +212,18 @@ class EmployeeController extends Controller
         }
 
         $employee->update($dataEmployee);
-        $employee->profile()->update($dataProfile);
+
+        if (is_null($employee->profile)) {
+            $employee->profile()->create($dataProfile);
+        } else {
+            $employee->profile()->update($dataProfile);
+        }
 
         if ($employee->is_admin) {
             $admin = AdminEmployee::where('code', $employee->code)->first();
             $admin->user()->update($dataEmployee);
         }
 
-        // dd('keluar');
         $updEmployee = Employee::with('profile')
                         ->where('id', $employee->id)
                         ->first(['id', 'code', 'username', 'email', 'is_admin', 'status']);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use App\Models\DetailSalesOrder;
 use App\Models\Product;
 use App\Models\SalesOrder;
@@ -13,11 +14,16 @@ class SalesOrderController extends Controller
 {
     public function index()
     {
-        $sort = request('sort') ?? 5;
+        $sort = request('sort') ?? '5';
 
         $user = auth()->user();
         $companyId = $user->company->id;
-        $salesOrders = SalesOrder::whereHas('company', function(Builder $query) use($companyId){
+        $salesOrders = SalesOrder::with([
+                            'warehouse:id,name', 
+                            'customer:id,name,phone,address',
+                            'employee:code,username,email,status',
+                        ])
+                        ->whereHas('company', function(Builder $query) use($companyId){
                             $query->where('id', $companyId);
                         })->paginate($sort);
 
@@ -27,8 +33,16 @@ class SalesOrderController extends Controller
         ]);
     }
 
-    public function show(SalesOrder $salesOrder)
+    public function show($id)
     {
+        $salesOrder = SalesOrder::with([
+                    'warehouse:id,name', 
+                    'customer:id,name,phone,address',
+                    'employee:code,username,email,status',
+                    'details.product:id,name,type_zat,photo'
+                ])
+                ->find($id);
+
         return response()->json([
             'status' => 'success',
             'data' => $salesOrder
@@ -37,91 +51,111 @@ class SalesOrderController extends Controller
 
     public function store(Request $request)
     {
-        $datas  = $request->all();
-        foreach ($datas as $key => $data) {
-            $rules = [
-                'warehouse_id' => 'required',
-                'date_transaction' => 'required',
-            ];
-            $message = [
-                'warehouse_id.required' => 'Customer Harus Diisi',
-                'date_transaction.required' => 'Tanggal Transaksi Harus Diisi'
-            ];
-
-            if ($key == 'so') {
-                if (isset($data['customer_id'])) {
-                    $rules['customer_id'] = 'required';
-                    $message['customer_id.required'] = 'Customer Harus Diisi';
-                }
-
-                $validator = Validator::make($data, $rules, $message);
-            }
-
-            if ($key == 'detail_so') {
-
-            }
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => 'failed',
-                    'message' => $validator->errors()
-                ]);
-            }
-        }
-
-
         $user = auth()->user();
         $company = $user->company;
 
-        // Create transaksi sales order
-        $dataSo = $request->so;
-        $dataSo['code_employee'] = $user->adminEmployee->code;
-        $dataSo['code_transaction'] = date('YmdHis');
-        $dataSo['date_transaction'] = date('Y-m-d', strtotime($dataSo['date_transaction']));
-        
-        $transaction = $company->transactionSo()->create($dataSo);
+        $datas  = $request->all();
+        $dataSo = $datas['so'];
 
-        // proses create detail transaksi
-        $newDetails = [];
-        $details = $dataSo['detail_so'];
+        // Proses validasi dan create customer jika itu adl customer baru
+        if (!isset($dataSo['customer_id'])) {
+            $validator = Validator::make($datas['new_customer'],[
+                'name' => 'required',
+                'phone' => 'required',
+                'address' => 'required'
+            ], [
+                'name.required' => 'Nama Masih Kosong',
+                'phone.required' => 'Nomor Telepon Harus Diisi',
+                'address.required' => 'Alamat Masih Kosong',
+            ]);
+
+            if ($validator->fails()) return response()->json([
+                'status' => 'failed',
+                'message' => $validator->errors()
+            ], 501);
+
+            $customer = $company->customers()->firstOrCreate($datas['new_customer']);
+            $dataSo['customer_id'] = $customer->id; // Menambahkan data id customer kedlm data SO
+        }
+
+
+        // Validasi data transaksi SO
+        $validator = Validator::make($dataSo, [
+            'warehouse_id' => 'required',
+            'date_transaction' => 'required'
+        ], [
+            'warehouse_id.required' => 'Gudang Harus Diisi',
+            'date_transaction.required' => 'Tanggal Transaksi Masih Kosong'
+        ]);
+
+        if ($validator->fails()) return response()->json([
+            'status' => 'failed',
+            'message' => $validator->errors()
+        ]);
+
+
+
+        // Proses validasi detail transaksi
+        $details = $datas['detail_so'];
 
         foreach ($details as $item) {
             $product = Product::find($item['product_id']);
-            $productInWarehouse = $transaction->warehouse->products->find($item['product_id']);
+            $warehouse = $company->warehouses->find($dataSo['warehouse_id']);
+            
+            $productInWarehouse = $warehouse->products->find($item['product_id']);
 
-            // validasi ketersediaan produk digudang 
+            // Cek produk digudang 
             if (is_null($productInWarehouse)) return response()->json([
                 'status' => 'failed',
-                'message' => 'Produk '.$product->name. ' Tidak Tersedia Di '.$transaction->warehouse->name
-            ]);
+                'message' => 'Produk '.$product->name. ' Tidak Tersedia Di '.$warehouse->name
+            ], 501);
 
             $stockProduct  = $productInWarehouse->pivot->stock;
             $currentStock = $stockProduct - $item['quantity'];
 
-            // validasi stok digudang
+            // Validasi stok produk digudang
             if ($currentStock < 0) return response()->json([
                 'status' => 'failed',
                 'messsage' => 'Stok '.$productInWarehouse->name.' Tidak Cukup',
-            ]);
-
-             // create detail 
-            $detail = collect($transaction->details()->create($item));
-            array_push(
-                $newDetails, 
-                $detail
-                    ->except('created_at', 'updated_at', 'sales_order_id')
-                    ->toArray()
-            );
+            ], 501);
         }
 
-        // Membuat data baru
-        $data = $transaction->toArray();
-        $data['details'] = $newDetails;
+        // Create transaksi dan details sales order
+        $dataSo['code_employee'] = $user->adminEmployee->code;
+        $dataSo['code_transaction'] = date('YmdHis');
+        $dataSo['date_transaction'] = date('Y-m-d', strtotime($dataSo['date_transaction']));
+        
+        $transaction = $company->transactionSo()->create($dataSo); // create transaksi SO
+        // $newDetails = $transaction->details()->createMany($details); // create details SO
+        
+
+        // Create Detail & Invoice SO
+        $collDetails = collect($details);
+
+        $collDetails->each(function($item) use($transaction){
+            $product = Product::find($item['product_id']);
+            $totPrice = $product->price * $item['quantity'];
+
+            if (!isset($item['desc'])) {$desc = null;}
+
+            $detail = $transaction->details()->create($item); // Create detail
+
+            // Create Invoice
+            $transaction->invoices()->create([
+                'detail_sales_order_id' => $detail->id,
+                'total_price' => $totPrice,
+                'desc' => $desc
+            ]);
+        });
+
+        $invoices = $transaction->invoices;
+        $totPay = $invoices->sum('total_price');
+        $transaction->update(['total_pay' => $totPay]);
 
         return response()->json([
             'status' => 'success',
             'message' => 'Data Transaksi Telah Tersimpan',
-            'data' => $data
+            'data' => $transaction
         ]);
     }
 

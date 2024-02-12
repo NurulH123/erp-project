@@ -11,7 +11,7 @@ class VendorController extends Controller
 {
     public function index()
     {
-        $sort = request('sort') ?? 5;
+        $sort = request('sort') ?? '5';
         $vendors = Vendor::whereHas('vendorable', function(Builder $query) {
             $user = auth()->user();
             $companyId = $user->company->id;
@@ -22,6 +22,16 @@ class VendorController extends Controller
         return response()->json([
             'status' => 'success',
             'data' => $vendors,
+        ]);
+    }
+
+    public function allData()
+    {
+        $user = auth()->user();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $user->company->vendor
         ]);
     }
 

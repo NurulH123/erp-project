@@ -12,18 +12,27 @@ class PositionController extends Controller
 {
     public function index()
     {
-        $sort = request('sort') ?? 5;
+        $sort = request('sort') ?? '5';
 
         $user = auth()->user();
         $companyId = $user->company->id;
         $positions = Position::whereHas('positionable', function(Builder $query) use($companyId){
                             $query->where('positionable_id', $companyId);
                         })->paginate($sort);
-        // $positions = $user->company->positions;
 
         return response()->json([
             'status' => 'success', 
             'data' => $positions
+        ]);
+    }
+
+    public function allData()
+    {
+        $positions = Position::all();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => auth()->user()->company->positions
         ]);
     }
 

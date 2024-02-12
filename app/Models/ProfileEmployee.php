@@ -14,7 +14,7 @@ class ProfileEmployee extends Model
 
     public function status()
     {
-        return $this->belongsTo(StatusEmployee::class, 'status_id');
+        return $this->belongsTo(StatusEmployee::class, 'status_employee_id');
     }
 
     public function position()

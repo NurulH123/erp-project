@@ -13,13 +13,19 @@ class PurchasingOrderController extends Controller
 {
     public function index()
     {
-        $sort = request('sort') ?? 5;
+        $sort = request('sort') ?? '5';
 
         $user = auth()->user();
         $companyId = $user->company->id;
         $purchaseOrders = PurchasingOrder::whereHas('company', function(Builder $query) use($companyId){
                             $query->where('id', $companyId);
-                        })->paginate($sort);
+                        })
+                        ->with([
+                            'vendor:id,name', 
+                            'warehouse:id,name',
+                            'employee:code,username,email,status'
+                        ])
+                        ->paginate($sort);
 
         return response()->json([
             'status' => 'success',
@@ -29,7 +35,12 @@ class PurchasingOrderController extends Controller
 
     public function show($id)
     {
-        $purchaseOrder = PurchasingOrder::with('details')->find($id);
+        $purchaseOrder = PurchasingOrder::with([
+                            'vendor:id,name',
+                            'warehouse:id,name',
+                            'employee:code,username,email,status',
+                            'details.product:id,name,type_zat,photo'
+                        ])->find($id);
 
         return response()->json([
             'status' => 'success',
@@ -97,7 +108,6 @@ class PurchasingOrderController extends Controller
     public function destroy(PurchasingOrder $purchase)
     {
         $purchase->delete();
-        $purchase->invoice()->delete();
 
         return response()->json([
             'status' => 'success',

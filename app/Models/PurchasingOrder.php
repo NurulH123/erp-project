@@ -37,4 +37,13 @@ class PurchasingOrder extends Model
         return $this->hasOne(HistoryPo::class);
     }
     
+    public function vendor()
+    {
+        return $this->belongsTo(Vendor::class);
+    }
+
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class, 'code_employee', 'code');
+    }
 }

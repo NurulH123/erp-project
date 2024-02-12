@@ -1,0 +1,253 @@
+===============================================================
+|========================== TRANSAKSI PO =====================|
+===============================================================
+# ALL DATA PURCHASE ORDER
+
+Route : {{ $host }}/po
+@method: GET
+
+Mengambil data purchase order
+
+****************************************
+
+# SHOW DATA PURCHASE ORDER
+
+Route : {{ $host }}/po/{id}/show
+@method: GET
+@param : id -> id dari purchase order
+
+Menampilkan data purchase order
+
+****************************************
+
+# ADD PURCHASE ORDER
+
+Route : {{ $host }}/po
+@method: POST
+
+@body:  - po (array)
+        - detail_po (array) 
+@type: MULTI  ARRAY
+
+# contoh format data yg harus dikirim
+{
+  "po":{
+    "vendor_id": 1,
+    "date_transaction": "20-01-2024",
+    "warehouse_id": 1 
+  },
+  "detail_po": {
+    "0":{
+      "product_id": 2,
+      "order": 50,
+      "pay": 200000
+    },
+    "1":{
+      "product_id": 3,
+      "order": 100,
+      "pay": 2000000
+    }
+  }
+}
+
+ket : - warehouse_id : Id dari warehouse yg ingin kita 
+                        tuju utk menyimpan product
+
+Menambah transaksi purchase order
+
+****************************************
+# DELETE DATA PURCHASE ORDER
+
+Route : {{ $host }}/po/{id}
+@method: DELETE
+@param : id -> id dari purchase order
+
+Menghapus data purchase order
+
+****************************************
+
+
+
+
+=============================================================
+|========================== INVOICE PO =====================|
+=============================================================
+# DETAIL INVOICE PURCHASE ORDER
+
+Route : {{ $host }}/invoice/po/{id}
+@method: GET
+@param : id -> id dari purchase order
+
+Mengambil data purchase order berdasar id
+
+****************************************
+
+# CREATE INVOICE PURCHASE ORDER
+
+Route : {{ $host }}/invoice/po/{id}
+@method: PATCH
+@param : id -> id dari purchase order
+
+# contoh format data yg dikirim
+{
+  "po":{
+    "status": "pending"
+  },
+  "detail_po": {
+    "0":{
+      "detail_id": 10,
+      "come": 50,
+      "is_completed": 1,
+      "pay": 200000
+    },
+    "1":{
+      "detail_id": 11,
+      "come": 50,
+      "is_completed": 0,
+      "pay": 200000
+    }
+  }
+}
+
+Membuat invoice purchase order. Setelah membuat invoice purchase order,
+maka sistem akan menngecek apakah produk tersebut sebelumnya tersedia digudang.
+Setelah maka akan ada penambahan stok digudang
+
+****************************************
+
+
+
+
+===============================================================
+|========================== TRANSAKSI SO =====================|
+===============================================================
+# ALL DATA SALES ORDER
+
+Route : {{ $host }}/so
+@method: GET
+
+Mengambil data transaksi sales order
+
+****************************************
+
+# SHOW DATA SALES ORDER
+
+Route : {{ $host }}/so/{id}/show
+@method: GET
+@param : id -> id dari purchase order
+
+Menampilkan data transaksi sales order
+
+****************************************
+
+# ADD SALES ORDER
+
+Route : {{ $host }}/so
+@method: POST
+
+@body:  - so (array)
+        - new_customer (array) -> optional
+        - detail_so (array) 
+@type: MULTI  ARRAY
+
+# contoh format data yg harus dikirim
+{
+    "so": {
+        "customer_id": 1, (optional)
+        "warehouse_id": 1,
+        "date_transaction": "18-01-2024"
+    },
+    "new_customer": {
+        "name": "Sidomuncul",
+        "phone": "089673223123",
+        "address": "Jambi"
+    },
+    "detail_so": {
+        "0": {  
+            "product_id": 3,
+            "quantity": 50
+        },
+        "1": {  
+            "product_id": 2,
+            "quantity": 50
+        }
+    }
+}
+
+KET : 
+    - warehouse_id : Id dari warehouse tempat mengambil 
+    - customer_id : Id  dari data  customer. Optional, jika ada data customer_id
+                    berarti ini adl customer lama. Namun, jika tdk ada data customer_id
+                    berarti itu adl customer baru. Dan wajib mengirimkan data new_customer
+
+Menambah transaksi sales order. Saat membuat transaksi sales order,
+maka sistem akan memvalidasi ketersediaan stok dan mengecek produk digudang
+
+****************************************
+# UPDATE DATA SALES ORDER
+
+Route : {{ $host }}/po/{id}/
+@method: PATCH
+@param : id -> id dari sales order
+
+# contoh format data 
+{
+  "so": {
+    "warehouse_id": 1,
+    "detail_so": {
+      "0": {
+        "detail_id": 17,
+        "product_id": 5,
+        "quantity": 40
+      },
+      "1": {
+        "detail_id": 18,
+        "product_id": 3,
+        "quantity": 20
+      }
+    }
+  }
+}
+
+
+Untuk fitur update transaksi sales order ini optional.
+Setelah membuat transaksi, maka sebelum melanjukan ke
+tahap sebelumnya yaitu membuat invoice, maka terdapat opsi
+utk update. Namun setelah membuat invoice, maka sdh tidak
+bisa update lagi
+
+****************************************
+
+
+
+
+=============================================================
+|========================== INVOICE SO =====================|
+=============================================================
+# CREATE INVOICE SALES ORDER
+
+Route : {{ $host }}/invoice/so/{id}
+@method: PATCH
+@param : id -> id dari sales order
+
+# contoh format data yg dikirim
+{
+  "invoice_so": {
+    "0": {
+      "detail_sales_order_id": 17,
+      "price": 20000,
+      "pay": 180000,
+      "desc": "diskon 20%"
+    },
+    "1": {
+      "detail_sales_order_id": 18,
+      "price": 20000,
+      "pay": 200000
+    }
+  }
+}
+
+Membuat invoice sales order. Ketika sudah membuat invoice,
+maka secara otoomatis data yg ada digudang akan berkurang
+
+****************************************
