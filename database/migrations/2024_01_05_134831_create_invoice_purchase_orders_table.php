@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('invoice_purchase_orders', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('purchasing_order_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('detail_purchasing_order_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->integer('come');
             $table->boolean('is_completed');

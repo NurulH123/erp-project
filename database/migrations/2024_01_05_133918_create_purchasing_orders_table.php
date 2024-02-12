@@ -18,8 +18,9 @@ return new class extends Migration
             $table->foreignId('warehouse_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('code_employee');
             $table->foreignId('vendor_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->date('date_transaction');
-            $table->enum('status', ['ordered', 'pending','completed'])->default('ordered');
+            $table->date('date_accepted')->nullable();
+            $table->date('date_order');
+            $table->enum('status', ['ordered','accepted'])->default('ordered');
             $table->text('desc')->nullable();
             $table->integer('total_pay')->nullable();
             $table->timestamps();
@@ -29,6 +30,7 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
+    
     public function down(): void
     {
         Schema::dropIfExists('purchasing_orders');

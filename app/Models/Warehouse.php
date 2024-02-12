@@ -32,4 +32,9 @@ class Warehouse extends Model
     {
         return $this->hasMany(SalesOrder::class);
     }
+
+    public function historyPo()
+    {
+        return $this->hasMany(HistoryPo::class);
+    }
 }

@@ -39,16 +39,23 @@ class PurchasingOrderController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->all();
-        $data['po'] = $request->po ?? '';
-        $data['detail_po'] = $request->detail_po ?? '';
 
-        $validator = Validator::make($data, [
-                'po' => 'required',
-                'detail_po' => 'required',
+        if (!isset($request->po) || !isset($request->detail_po)) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Data Purchase Order atau Detail Tidak  Boleh Kosong'
+            ]);
+        }
+
+        $dataPo = $request->po;
+        $validator = Validator::make($dataPo, [
+                'vendor_id' => 'required',
+                'date_order' => 'required',
+                'warehouse_id' => 'required',
             ],[
-                'po.required' => 'PO Harus Diisi',
-                'detail_po.required' => 'Detail PO Harus Diisi',
+                'vendor_id.required' => 'Vendor Masih Kosong',
+                'date_order.required' => 'Tanggal Transaksi Masih Kosong',
+                'warehouse_id.required' => 'Gudang Penyimpanan Belum Diisi'
         ]);
 
         if ($validator->fails()) {
@@ -58,38 +65,32 @@ class PurchasingOrderController extends Controller
             ]);
         }
 
-        $dataPo = $data['po'];
-        $detailPO = collect($data['detail_po']);
+        $detailPO = collect($request->detail_po);
         
-        $warehouse = Warehouse::find($dataPo['warehouse_id']);
+        // $warehouse = Warehouse::find($dataPo['warehouse_id']);
 
+        // Data transaksi
         $user = auth()->user();
         $company = $user->company;
         $dataPo['code_employee'] = $user->adminEmployee->code;
         $dataPo['code_transaction'] = date('YmdHis');
-        $dataPo['date_transaction'] = date('Y-m-d', strtotime($dataPo['date_transaction']));
+        $dataPo['date_order'] = date('Y-m-d', strtotime($dataPo['date_order']));
 
         // Create transaksi po
-        $transactionPo = $company->transactionPo()->create($dataPo);
+        $transaction = $company->transactionPo()->create($dataPo);
 
         // Create detail transaksi  po
-        $newDetail = [];
-        foreach ($detailPO as $detail) {
-            $createDetail = $transactionPo->details()->create($detail);
-            $dataDetail = collect($createDetail)
-                            ->only('id', 'product_id', 'order')
-                            ->toArray();
+        $detailPO->each(function($item) use($transaction){
+            $transaction->details()->create($item);
+        });
 
-            array_push($newDetail, $dataDetail);
-        }
-
-        $data = $transactionPo->toArray();
-        $data['details'] = $newDetail;
+        $newData = $transaction;
+        $newData['details'] = $transaction->details;
 
         return response()->json([
             'status' => 'success',
             'message' => 'Data Transaksi PO Berhasil Ditambahkan',
-            'data' => $data
+            'data' => $newData
         ]);
     }
 

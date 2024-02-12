@@ -25,6 +25,17 @@ class ProductController extends Controller
 
     }
 
+    public function allData()
+    {
+        $user = auth()->user();
+        $company = $user->company;
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $company->products
+        ]);
+    }
+
     public function show(Product $product)
     {
         $product = Product::with('warehouses')
