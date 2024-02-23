@@ -20,7 +20,6 @@ class RoleController extends Controller
 
                         $query->where('id', $companyId);
                     })
-                    ->where('status', true)
                     ->paginate($sort);
 
         return response()->json([
@@ -29,13 +28,14 @@ class RoleController extends Controller
         ]);
     }
 
-    public function allData() 
+    public function allData()
     {
         $user = auth()->user()->employee;
+        $roles = $user->company->roles->where('status', true);
 
         return response()->json([
             'status' => 'success',
-            'data' => $user->company->roles
+            'data' => $roles
         ]);
     }
 

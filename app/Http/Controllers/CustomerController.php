@@ -18,7 +18,6 @@ class CustomerController extends Controller
 
                             $query->where('id', $companyId);
                         })
-                        ->where('is_active', true)
                         ->paginate($sort);
 
         return response()->json([
@@ -30,10 +29,11 @@ class CustomerController extends Controller
     public function allData()
     {
         $user = auth()->user()->employee;
+        $customers = $user->company->customers->where('is_active', true);
 
         return response()->json([
             'status' => 'success',
-            'data' => $user->company->customers
+            'data' => $customers
         ]);
     }
 

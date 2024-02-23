@@ -21,7 +21,6 @@ class ProductController extends Controller
                             'unit:id,name', 
                             'category:id,name'
                         ])
-                        ->where('status', true)
                         ->paginate($sort)->toArray();
 
         return response()->json([
@@ -34,11 +33,11 @@ class ProductController extends Controller
     public function allData()
     {
         $user = auth()->user()->employee;
-        $company = $user->company;
+        $products = $user->company->products->where('status', true);
 
         return response()->json([
             'status' => 'success',
-            'data' => $company->products
+            'data' => $products
         ]);
     }
 

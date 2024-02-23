@@ -18,7 +18,7 @@ class VendorController extends Controller
 
                             $query->where('id', $companyId);
                         })
-                        ->where('is_active', true)
+                        
                         ->paginate($sort);
 
         return response()->json([
@@ -30,10 +30,11 @@ class VendorController extends Controller
     public function allData()
     {
         $user = auth()->user()->employee;
+        $vendors = $user->company->vendor->where('is_active', true);
 
         return response()->json([
             'status' => 'success',
-            'data' => $user->company->vendor
+            'data' => $vendors
         ]);
     }
 

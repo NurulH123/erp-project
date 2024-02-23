@@ -19,7 +19,6 @@ class PositionController extends Controller
         $positions = Position::whereHas('positionable', function(Builder $query) use($companyId){
                             $query->where('positionable_id', $companyId);
                         })
-                        ->where('status', true)
                         ->paginate($sort);
 
         return response()->json([
@@ -30,11 +29,12 @@ class PositionController extends Controller
 
     public function allData()
     {
-        $positions = Position::all();
+        $user = auth()->user()->employee;
+        $positions = $user->company->positions->where('status', true);
 
         return response()->json([
             'status' => 'success',
-            'data' => auth()->user()->employee->company->positions
+            'data' => $positions
         ]);
     }
 

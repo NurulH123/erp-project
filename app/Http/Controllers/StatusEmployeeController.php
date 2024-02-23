@@ -20,7 +20,6 @@ class StatusEmployeeController extends Controller
 
                                 $query->where('id', $companyId);
                             })
-                            ->where('status', true)
                             ->paginate($sort);
 
         return response()->json([
@@ -32,10 +31,11 @@ class StatusEmployeeController extends Controller
     public function allData() 
     {
         $user = auth()->user()->employee;
+        $status = $user->company->employeeStatus->where('status', true);
 
         return response()->json([
             'status' => 'success',
-            'data' => $user->company->employeeStatus
+            'data' => $status
         ]);
     }
 

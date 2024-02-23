@@ -18,12 +18,22 @@ class UnitController extends Controller
 
                         $query->where('id', $companyId);
                     })
-                    ->where('status', true)
                     ->paginate($sort);
 
         return response()->json([
             'status' => 'success',
             'data' => $units,
+        ]);
+    }
+
+    public function allData()
+    {
+        $user = auth()->user()->employee;
+        $units = $user->company->units->where('status', true);
+
+        return response()->json([
+            'status' => 'suuccess',
+            'data' => $units
         ]);
     }
 

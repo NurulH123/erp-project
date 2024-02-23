@@ -19,23 +19,22 @@ class WarehouseController extends Controller
 
                             $query->where('id', $companyId);
                         })
-                        ->where()
                         ->paginate($sort);
 
         return response()->json([
             'status' => 'success', 
             'data' => $warehouses
         ]);
-
     }
 
     public function allWarehouse()
     {
         $user = auth()->user()->employee;
+        $warehouses = $user->company->warehouses;
 
         return response()->json([
             'status' => 'success',
-            'data' => $user->company->warehouses
+            'data' => $warehouses->where('status', true)
         ]);
     }
 
