@@ -15,11 +15,13 @@ class RoleController extends Controller
         $sort = request('sort') ?? '5';
 
         $roles = Role::whereHas('roleable', function(Builder $query) {
-            $user = auth()->user();
-            $companyId = $user->company->id;
+                        $user = auth()->user()->employee;
+                        $companyId = $user->company->id;
 
-            $query->where('id', $companyId);
-        })->paginate($sort);
+                        $query->where('id', $companyId);
+                    })
+                    ->where('status', true)
+                    ->paginate($sort);
 
         return response()->json([
             'status' => 'success', 
@@ -29,7 +31,7 @@ class RoleController extends Controller
 
     public function allData() 
     {
-        $user = auth()->user();
+        $user = auth()->user()->employee;
 
         return response()->json([
             'status' => 'success',
@@ -47,7 +49,7 @@ class RoleController extends Controller
 
     public function create(Request $request)
     {
-        $user = auth()->user();
+        $user = auth()->user()->employee;
         $validator = Validator::make($request->all(),['name' => 'required'],['name.required' => 'Nama Harus Diisi']);
     
         if ($validator->fails()) {
@@ -99,7 +101,7 @@ class RoleController extends Controller
         return response()->json([
             'status' => 'success',
             'is_status' => $status,
-            'message' => 'Role berhasil di '.$statusText,
+            'message' => 'Role '.$role->name.' berhasil di '.$statusText,
             'data' => $role
         ]);
     }

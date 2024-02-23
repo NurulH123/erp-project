@@ -14,7 +14,7 @@ class CategoryProductController extends Controller
         $sort = request('sort') ?? '5';
 
         $productCategories = CategoryProduct::whereHas('company', function(Builder $query) {
-            $user = auth()->user();
+            $user = auth()->user()->employee;
             $companyId = $user->company->id;
 
             $query->where('id', $companyId);
@@ -28,7 +28,7 @@ class CategoryProductController extends Controller
 
     public function store(Request $request)
     {
-        $user = auth()->user();
+        $user = auth()->user()->employee;
         $company = $user->company;
 
         $validator = Validator::make($request->all(), [
@@ -66,7 +66,7 @@ class CategoryProductController extends Controller
 
     public function update(Request $request, CategoryProduct $category)
     {
-        $user = auth()->user();
+        $user = auth()->user()->employee;
 
         $validator = Validator::make($request->all(), [
             'name'  => 'required',

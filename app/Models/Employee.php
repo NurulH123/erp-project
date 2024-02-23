@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Employee extends Model
 {
@@ -22,8 +22,8 @@ class Employee extends Model
         return $this->hasOne(ProfileEmployee::class, 'employee_id');
     }
 
-    // public function adminEmployee()
-    // {
-    //     return $this->hasOne(AdminEmployee::class, 'employee_id');
-    // }
+    public function adminEmployee()
+    {
+        return $this->hasOne(AdminEmployee::class, 'code', 'code');
+    }
 }

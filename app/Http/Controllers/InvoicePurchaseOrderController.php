@@ -12,7 +12,7 @@ class InvoicePurchaseOrderController extends Controller
 {
     public function detailInvoice(PurchasingOrder $purchase)
     {
-        $user = auth()->user();
+        $user = auth()->user()->employee;
 
         $detailInvoice = PurchasingOrder::with('invoices')
                             ->where('company_id', $user->company->id)

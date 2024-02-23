@@ -26,6 +26,7 @@ use App\Http\Controllers\InvoiceSalesOrderController;
 use App\Http\Controllers\InvoicePurchaseOrderController;
 use App\Http\Controllers\Company\BranchCompanyController;
 use App\Http\Controllers\Company\CompanyPermissionController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,7 +53,7 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::group(
         ['prefix' => 'company'],
         function() {
-            Route::get('/', [CompanyController::class, 'index']);
+            Route::get('/', [CompanyController::class, 'show']);
             Route::get('/list', [CompanyController::class, 'listAll']);
             Route::post('/', [CompanyController::class, 'create']);
             Route::patch('/{company}', [CompanyController::class, 'update']);
@@ -83,248 +84,260 @@ Route::middleware('auth:sanctum')->group(function() {
             Route::get('/{permission}/change-status', [PermissionController::class, 'changeStatus'])->name('permission.change-status');
     });
 
-    Route::middleware('hasCompany')->group(function() {
+    Route::middleware(
+        ['hasCompany', 'user.active']
+    )->group(function() {
 
-    // ========================================================================
-    // |=============================== POSITION =============================|
-    // ========================================================================
+        // ========================================================================
+        // |============================== DASHBOARD =============================|
+        // ========================================================================
         Route::group(
-            ['prefix' => 'position'],
+            ['prefix' => 'dashboard'],
             function() {
-            Route::get('/', [PositionController::class, 'index']);
-            Route::get('/data/all', [PositionController::class, 'allData']);
-            Route::get('/{position}/show', [PositionController::class, 'show']);
-            Route::post('/', [PositionController::class, 'create']);
-            Route::patch('{position}/update', [PositionController::class, 'update']);
-            Route::get('{position}/status/change', [PositionController::class, 'changeStatus'])->name('position.change-status');
-        });
-    
-    // ========================================================================
-    // |=============================== EMPLOYEE =============================|
-    // ========================================================================
-        Route::group(
-            ['prefix' => 'employee'],
-            function()  {
-                Route::get('/', [EmployeeController::class, 'index']);
-                Route::get('/{id}', [EmployeeController::class, 'show']);
-                Route::post('/', [EmployeeController::class, 'create']);
-                Route::patch('/{employee}', [EmployeeController::class, 'update']);
-                Route::get('/{employee}/change/status', [EmployeeController::class, 'changeStatus']);
-                Route::post('/{employee}/change/admin', [EmployeeController::class, 'changeAdmin']);
+                Route::get('/', [DashboardController::class, 'index']);
             }
         );
 
-    // ========================================================================
-    // |========================= ROLE USER EMPLOYEE =========================|
-    // ========================================================================
-        Route::group(
-            ['prefix' => 'employee/{employee}/role'],
-            function() {
-                Route::post('/add', [AdminRoleController::class, 'addRoleToAdmin']);
-                Route::post('/status/change', [AdminRoleController::class, 'changeStatus']);
-            }
-        );
-    
-    // ========================================================================
-    // |================================== ROLE ==============================|
-    // ========================================================================
-        Route::group(
-            ['prefix' => 'role'],
-            function() {
-                Route::get('/', [RoleController::class, 'index']);
-                Route::get('/data/all', [RoleController::class, 'allData']);
-                Route::get('/{role}/show', [RoleController::class, 'show']);
-                Route::post('/', [RoleController::class, 'create']);
-                Route::patch('{role}/update', [RoleController::class, 'update']);
-                Route::get('/{role}/change-status', [RoleController::class, 'changeStatus'])->name('role.change-status');
-        });
-
-    // ========================================================================
-    // |=========================== ROLE PERMISSION ==========================|
-    // ========================================================================
-        Route::group(
-            ['prefix' => 'role/{role}/permission'],
-            function() {
-                Route::post('/', [PermissionRoleController::class, 'givePermissionTo']);
-                Route::patch('/', [PermissionRoleController::class, 'updateRolePermission']);
-            }
-        );
-    
-    // ========================================================================
-    // |=========================== STATUS EMPLOYEE ==========================|
-    // ========================================================================
-        Route::group(
-            ['prefix' => 'status-employee'],
-            function() {
-                Route::get('/', [StatusEmployeeController::class, 'index']);
-                Route::get('/data/all', [StatusEmployeeController::class, 'allData']);
-                Route::get('/{status}/show', [StatusEmployeeController::class, 'show']);
-                Route::post('/', [StatusEmployeeController::class, 'create']);
-                Route::patch('{status}/update', [StatusEmployeeController::class, 'update']);
-                Route::get('/{employeeStatus}/change-status', [StatusEmployeeController::class, 'changeStatus']);
-        });
-
-    // ========================================================================
-    // |================================ VENDOR ==============================|
-    // ========================================================================
-        Route::group(
-            ['prefix' => 'vendor'],
-            function() {
-                Route::get('/', [VendorController::class, 'index']);
-                Route::get('/data/all', [VendorController::class, 'allData']);
-                Route::get('/{vendor}', [VendorController::class, 'show']);
-                Route::post('/', [VendorController::class, 'create']);
-                Route::patch('{vendor}/', [VendorController::class, 'update']);
-                Route::get('/{vendor}/change-status', [VendorController::class, 'changeStatus']);
-        });
-    
-    // ========================================================================
-    // |=============================== CUSTOMER =============================|
-    // ========================================================================
-        Route::group(
-            ['prefix' => 'customer'],
-            function() {
-                Route::get('/', [CustomerController::class, 'index']);
-                Route::get('/data/all', [CustomerController::class, 'allData']);
-                Route::get('/{customer}', [CustomerController::class, 'show']);
-                Route::post('/', [CustomerController::class, 'create']);
-                Route::patch('/{customer}', [CustomerController::class, 'update']);
-                Route::get('/{customer}/change-status', [CustomerController::class, 'changeStatus']);
-        });
-
-    // ========================================================================
-    // |=============================== BRANCH ===============================|
-    // ========================================================================
-        Route::group(
-            ['prefix' => 'branch'],
-            function() {
-                Route::get('/', [BranchCompanyController::class, 'index']);
-                Route::get('/{branch}', [BranchCompanyController::class, 'show']);
-                Route::post('/', [BranchCompanyController::class, 'create']);
-                Route::patch('/{branch}/update', [BranchCompanyController::class, 'update']);
-                Route::get('/{branch}/change-status', [BranchCompanyController::class, 'changeStatus']);
-        });
-    
-    // =======================================================================
-    // |================================ UNITS ==============================|
-    // =======================================================================
-        Route::group(
-            ['prefix' => 'unit'],
-            function() {
-                Route::get('/', [UnitController::class, 'index']);
-                Route::post('/', [UnitController::class, 'store']);
-                Route::post('/{unit}', [UnitController::class, 'show']);
-                Route::patch('/{unit}', [UnitController::class, 'update']);
-                Route::get('/{unit}/change-status', [UnitController::class, 'changeStatus']);
-        });
-    
-    // =========================================================================
-    // |================================ CATEGORY =============================|
-    // =========================================================================
-        Route::group(
-            ['prefix' => 'category'],
-            function() {
-                Route::get('/', [CategoryProductController::class, 'index']);
-                Route::post('/', [CategoryProductController::class, 'store']);
-                Route::post('/{category}', [CategoryProductController::class, 'show']);
-                Route::patch('/{category}', [CategoryProductController::class, 'update']);
-                Route::get('/{category}/change-status', [CategoryProductController::class, 'changeStatus']);
-        });
+        // ========================================================================
+        // |=============================== POSITION =============================|
+        // ========================================================================
+            Route::group(
+                ['prefix' => 'position'],
+                function() {
+                Route::get('/', [PositionController::class, 'index']);
+                Route::get('/data/all', [PositionController::class, 'allData']);
+                Route::get('/{position}/show', [PositionController::class, 'show']);
+                Route::post('/', [PositionController::class, 'create']);
+                Route::patch('{position}/update', [PositionController::class, 'update']);
+                Route::get('{position}/status/change', [PositionController::class, 'changeStatus'])->name('position.change-status');
+            });
         
-    // ========================================================================
-    // |================================ PRODUCT =============================|
-    // ========================================================================
-        Route::group(
-            ['prefix' => 'product'],
-            function() {
-                Route::get('/', [ProductController::class, 'index']);
-                Route::get('/{product}', [ProductController::class, 'show']);
-                Route::get('/data/all', [ProductController::class, 'allData']);
-                Route::post('/', [ProductController::class, 'store']);
-                Route::patch('/{product}', [ProductController::class, 'update']);
-                Route::get('/{product}/change-status', [ProductController::class, 'changeStatus']);
-        });
+        // ========================================================================
+        // |=============================== EMPLOYEE =============================|
+        // ========================================================================
+            Route::group(
+                ['prefix' => 'employee'],
+                function()  {
+                    Route::get('/', [EmployeeController::class, 'index']);
+                    Route::get('/{id}', [EmployeeController::class, 'show']);
+                    Route::post('/', [EmployeeController::class, 'create']);
+                    Route::patch('/{employee}', [EmployeeController::class, 'update']);
+                    Route::get('/{employee}/change/status', [EmployeeController::class, 'changeStatus']);
+                    Route::post('/{employee}/change/admin', [EmployeeController::class, 'changeAdmin']);
+                }
+            );
 
-    // =========================================================================
-    // |================================ WAREHOUSE ============================|
-    // =========================================================================
-        Route::group(
-            ['prefix' => 'warehouse'],
-            function() {
-                Route::get('/', [WarehouseController::class, 'index']);
-                Route::get('/{warehouse}', [WarehouseController::class, 'show']);
-                Route::post('/', [WarehouseController::class, 'store']);
-                Route::patch('/{warehouse}', [WarehouseController::class, 'update']);
-                Route::get('/{warehouse}/change-status', [WarehouseController::class, 'changeStatus']);
-                Route::get('/data/list/all', [WarehouseController::class, 'allWarehouse']);
-                
-                Route::get('/product/data', [ProductWarehouseController::class, 'dataProductWarehouse']);
-                Route::post('/{warehouse}/add', [ProductWarehouseController::class, 'addProductWarehouse']);
-                Route::post('/{warehouse}/product/attach', [ProductWarehouseController::class, 'addProductTo']);
-                Route::delete('/{warehouse}/product/detach', [ProductWarehouseController::class, 'deleteProductIn']);
-        });
-
-    // ========================================================================
-    // |================================== BOM ===============================|
-    // ========================================================================
-        Route::group(
-            ['prefix' => 'bom'],
-            function() {
-                Route::get('/', [BomController::class, 'dataProdukBom']);
-                Route::post('/{product}/add', [BomController::class, 'addBom']);
-        });
-
-    // ===========================================================================
-    // |================================ WORK ORDER =============================|
-    // ===========================================================================
-        Route::group(
-            ['prefix' => 'work-order'],
-            function() {
-                Route::post('/{warehouse}', [WorkOrderController::class, 'addWorkOrder']);
-        });
-
-    // ================================================================================
-    // |================================ PURCHASE ORDER ==============================|
-    // ================================================================================
-        Route::group(
-            ['prefix' => 'po'],
-            function() {
-                Route::get('/', [PurchasingOrderController::class, 'index']);
-                Route::post('/', [PurchasingOrderController::class, 'store']);
-                Route::get('/{purchase}/show', [PurchasingOrderController::class, 'show']);
-                Route::delete('/{purchase}', [PurchasingOrderController::class, 'destroy']);
-        });
-
+        // ========================================================================
+        // |========================= ROLE USER EMPLOYEE =========================|
+        // ========================================================================
+            Route::group(
+                ['prefix' => 'employee/{employee}/role'],
+                function() {
+                    Route::post('/add', [AdminRoleController::class, 'addRoleToAdmin']);
+                    Route::post('/status/change', [AdminRoleController::class, 'changeStatus']);
+                }
+            );
         
-    // ============================================================================
-    // |================================ INVOICE PO ==============================|
-    // ============================================================================
-        Route::group(
-            ['prefix' => 'invoice/po'],
-            function() {
-                Route::get('/{purchase}', [InvoicePurchaseOrderController::class, 'detailInvoice']);
-                Route::patch('/{purchase}', [InvoicePurchaseOrderController::class, 'createInvoice']);
+        // ========================================================================
+        // |================================== ROLE ==============================|
+        // ========================================================================
+            Route::group(
+                ['prefix' => 'role'],
+                function() {
+                    Route::get('/', [RoleController::class, 'index']);
+                    Route::get('/data/all', [RoleController::class, 'allData']);
+                    Route::get('/{role}/show', [RoleController::class, 'show']);
+                    Route::post('/', [RoleController::class, 'create']);
+                    Route::patch('{role}/update', [RoleController::class, 'update']);
+                    Route::get('/{role}/change-status', [RoleController::class, 'changeStatus'])->name('role.change-status');
+            });
+
+        // ========================================================================
+        // |=========================== ROLE PERMISSION ==========================|
+        // ========================================================================
+            Route::group(
+                ['prefix' => 'role/{role}/permission'],
+                function() {
+                    Route::post('/', [PermissionRoleController::class, 'givePermissionTo']);
+                    Route::patch('/', [PermissionRoleController::class, 'updateRolePermission']);
+                }
+            );
+        
+        // ========================================================================
+        // |=========================== STATUS EMPLOYEE ==========================|
+        // ========================================================================
+            Route::group(
+                ['prefix' => 'status-employee'],
+                function() {
+                    Route::get('/', [StatusEmployeeController::class, 'index']);
+                    Route::get('/data/all', [StatusEmployeeController::class, 'allData']);
+                    Route::get('/{status}/show', [StatusEmployeeController::class, 'show']);
+                    Route::post('/', [StatusEmployeeController::class, 'create']);
+                    Route::patch('{status}/update', [StatusEmployeeController::class, 'update']);
+                    Route::get('/{employeeStatus}/change-status', [StatusEmployeeController::class, 'changeStatus']);
+            });
+
+        // ========================================================================
+        // |================================ VENDOR ==============================|
+        // ========================================================================
+            Route::group(
+                ['prefix' => 'vendor'],
+                function() {
+                    Route::get('/', [VendorController::class, 'index']);
+                    Route::get('/data/all', [VendorController::class, 'allData']);
+                    Route::get('/{vendor}', [VendorController::class, 'show']);
+                    Route::post('/', [VendorController::class, 'create']);
+                    Route::patch('{vendor}/', [VendorController::class, 'update']);
+                    Route::get('/{vendor}/change-status', [VendorController::class, 'changeStatus']);
+            });
+        
+        // ========================================================================
+        // |=============================== CUSTOMER =============================|
+        // ========================================================================
+            Route::group(
+                ['prefix' => 'customer'],
+                function() {
+                    Route::get('/', [CustomerController::class, 'index']);
+                    Route::get('/data/all', [CustomerController::class, 'allData']);
+                    Route::get('/{customer}', [CustomerController::class, 'show']);
+                    Route::post('/', [CustomerController::class, 'create']);
+                    Route::patch('/{customer}', [CustomerController::class, 'update']);
+                    Route::get('/{customer}/change-status', [CustomerController::class, 'changeStatus']);
+            });
+
+        // ========================================================================
+        // |=============================== BRANCH ===============================|
+        // ========================================================================
+            Route::group(
+                ['prefix' => 'branch'],
+                function() {
+                    Route::get('/', [BranchCompanyController::class, 'index']);
+                    Route::get('/{branch}', [BranchCompanyController::class, 'show']);
+                    Route::post('/', [BranchCompanyController::class, 'create']);
+                    Route::patch('/{branch}/update', [BranchCompanyController::class, 'update']);
+                    Route::get('/{branch}/change-status', [BranchCompanyController::class, 'changeStatus']);
+            });
+        
+        // =======================================================================
+        // |================================ UNITS ==============================|
+        // =======================================================================
+            Route::group(
+                ['prefix' => 'unit'],
+                function() {
+                    Route::get('/', [UnitController::class, 'index']);
+                    Route::post('/', [UnitController::class, 'store']);
+                    Route::post('/{unit}', [UnitController::class, 'show']);
+                    Route::patch('/{unit}', [UnitController::class, 'update']);
+                    Route::get('/{unit}/change-status', [UnitController::class, 'changeStatus']);
+            });
+        
+        // =========================================================================
+        // |================================ CATEGORY =============================|
+        // =========================================================================
+            Route::group(
+                ['prefix' => 'category'],
+                function() {
+                    Route::get('/', [CategoryProductController::class, 'index']);
+                    Route::post('/', [CategoryProductController::class, 'store']);
+                    Route::post('/{category}', [CategoryProductController::class, 'show']);
+                    Route::patch('/{category}', [CategoryProductController::class, 'update']);
+                    Route::get('/{category}/change-status', [CategoryProductController::class, 'changeStatus']);
+            });
+            
+        // ========================================================================
+        // |================================ PRODUCT =============================|
+        // ========================================================================
+            Route::group(
+                ['prefix' => 'product'],
+                function() {
+                    Route::get('/', [ProductController::class, 'index']);
+                    Route::get('/{product}', [ProductController::class, 'show']);
+                    Route::get('/data/all', [ProductController::class, 'allData']);
+                    Route::post('/', [ProductController::class, 'store']);
+                    Route::patch('/{product}', [ProductController::class, 'update']);
+                    Route::get('/{product}/change-status', [ProductController::class, 'changeStatus']);
+            });
+
+        // =========================================================================
+        // |================================ WAREHOUSE ============================|
+        // =========================================================================
+            Route::group(
+                ['prefix' => 'warehouse'],
+                function() {
+                    Route::get('/', [WarehouseController::class, 'index']);
+                    Route::get('/{warehouse}', [WarehouseController::class, 'show']);
+                    Route::post('/', [WarehouseController::class, 'store']);
+                    Route::patch('/{warehouse}', [WarehouseController::class, 'update']);
+                    Route::get('/{warehouse}/change-status', [WarehouseController::class, 'changeStatus']);
+                    Route::get('/data/list/all', [WarehouseController::class, 'allWarehouse']);
+                    
+                    Route::get('/product/data', [ProductWarehouseController::class, 'dataProductWarehouse']);
+                    Route::post('/{warehouse}/add', [ProductWarehouseController::class, 'addProductWarehouse']);
+                    Route::post('/{warehouse}/product/attach', [ProductWarehouseController::class, 'addProductTo']);
+                    Route::delete('/{warehouse}/product/detach', [ProductWarehouseController::class, 'deleteProductIn']);
+            });
+
+        // ========================================================================
+        // |================================== BOM ===============================|
+        // ========================================================================
+            Route::group(
+                ['prefix' => 'bom'],
+                function() {
+                    Route::get('/', [BomController::class, 'dataProdukBom']);
+                    Route::post('/{product}/add', [BomController::class, 'addBom']);
+            });
+
+        // ===========================================================================
+        // |================================ WORK ORDER =============================|
+        // ===========================================================================
+            Route::group(
+                ['prefix' => 'work-order'],
+                function() {
+                    Route::post('/{warehouse}', [WorkOrderController::class, 'addWorkOrder']);
+            });
+
+        // ================================================================================
+        // |================================ PURCHASE ORDER ==============================|
+        // ================================================================================
+            Route::group(
+                ['prefix' => 'po'],
+                function() {
+                    Route::get('/', [PurchasingOrderController::class, 'index']);
+                    Route::post('/', [PurchasingOrderController::class, 'store']);
+                    Route::get('/{purchase}/show', [PurchasingOrderController::class, 'show']);
+                    Route::delete('/{purchase}', [PurchasingOrderController::class, 'destroy']);
+            });
+
+            
+        // ============================================================================
+        // |================================ INVOICE PO ==============================|
+        // ============================================================================
+            Route::group(
+                ['prefix' => 'invoice/po'],
+                function() {
+                    Route::get('/{purchase}', [InvoicePurchaseOrderController::class, 'detailInvoice']);
+                    Route::patch('/{purchase}', [InvoicePurchaseOrderController::class, 'createInvoice']);
+            });
         });
-    });
 
-    // =============================================================================
-    // |================================ SALES ORDER ==============================|
-    // =============================================================================
-    Route::group(
-        ['prefix' => 'so'],
-        function() {
-            Route::get('/', [SalesOrderController::class, 'index']);
-            Route::get('/{salesOrder}/show', [SalesOrderController::class, 'show']);
-            Route::post('/', [SalesOrderController::class, 'store']);
-            Route::patch('/{salesOrder}', [SalesOrderController::class, 'update']);
-    });
+        // =============================================================================
+        // |================================ SALES ORDER ==============================|
+        // =============================================================================
+        Route::group(
+            ['prefix' => 'so'],
+            function() {
+                Route::get('/', [SalesOrderController::class, 'index']);
+                Route::get('/{salesOrder}/show', [SalesOrderController::class, 'show']);
+                Route::post('/', [SalesOrderController::class, 'store']);
+                Route::patch('/{salesOrder}', [SalesOrderController::class, 'update']);
+        });
 
-    // =====================================================================================
-    // |================================ INVOICE SALES ORDER ==============================|
-    // =====================================================================================
-    Route::group(
-        ['prefix' => 'invoice/so'],
-        function() {
-            Route::post('/{salesOrder}', [InvoiceSalesOrderController::class, 'createInvoice']);
-    });
+        // =====================================================================================
+        // |================================ INVOICE SALES ORDER ==============================|
+        // =====================================================================================
+        Route::group(
+            ['prefix' => 'invoice/so'],
+            function() {
+                Route::post('/{salesOrder}', [InvoiceSalesOrderController::class, 'createInvoice']);
+        });
 });

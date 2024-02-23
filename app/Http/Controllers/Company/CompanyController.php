@@ -9,11 +9,11 @@ use Illuminate\Support\Facades\Validator;
 
 class CompanyController extends Controller
 {
-    public function index()
+    public function show()
     {
         // Private
-        $user = auth()->user();
-        $company = Company::with('permission')->where('id', $user->company->id)->first();
+        $user = auth()->user()->employee;
+        $company = Company::with('permission.children')->where('id', $user->company->id)->first();
 
         return response()->json(['status' => 'success', 'data' => $company]);
     }
@@ -28,7 +28,7 @@ class CompanyController extends Controller
 
     public function create(Request $request)
     {
-        $user = auth()->user();
+        $user = auth()->user()->employee;
         
         // validation
         $validator  = Validator::make($request->all(), [
@@ -84,7 +84,7 @@ class CompanyController extends Controller
 
     public function update(Request $request, Company $company)
     {
-        $user = auth()->user();
+        $user = auth()->user()->employee;
         $data = $request->all();
 
         if ($request->hasFile('logo')) {
@@ -113,7 +113,7 @@ class CompanyController extends Controller
 
     public function changeStatus()
     {
-        $user = auth()->user();
+        $user = auth()->user()->employee;
         $status = $user->company->status;
 
         $user->company()->update(['status' => !$status]);

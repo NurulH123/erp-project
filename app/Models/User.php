@@ -51,6 +51,6 @@ class User extends Authenticatable
 
     public function employee()
     {
-        return $this->hasManyThrough(Employee::class, Company::class, 'empoyee_id', 'company_id');
+        return $this->hasOneThrough(Employee::class, AdminEmployee::class, 'user_id', 'code', 'id', 'code');
     }
 }

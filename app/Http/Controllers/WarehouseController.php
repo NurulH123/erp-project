@@ -14,11 +14,13 @@ class WarehouseController extends Controller
         $sort =  request('sort') ?? '5';
 
         $warehouses = Warehouse::whereHas('company', function(Builder $query) {
-            $user = auth()->user();
-            $companyId = $user->company->id;
+                            $user = auth()->user()->employee;
+                            $companyId = $user->company->id;
 
-            $query->where('id', $companyId);
-        })->paginate($sort);
+                            $query->where('id', $companyId);
+                        })
+                        ->where()
+                        ->paginate($sort);
 
         return response()->json([
             'status' => 'success', 
@@ -29,7 +31,7 @@ class WarehouseController extends Controller
 
     public function allWarehouse()
     {
-        $user = auth()->user();
+        $user = auth()->user()->employee;
 
         return response()->json([
             'status' => 'success',
@@ -51,7 +53,7 @@ class WarehouseController extends Controller
 
     public function store(Request $request)
     {
-        $user = auth()->user();
+        $user = auth()->user()->employee;
 
         $validator = Validator::make($request->all(), [
             'name' => 'required',

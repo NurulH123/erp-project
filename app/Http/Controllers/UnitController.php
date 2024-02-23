@@ -13,11 +13,13 @@ class UnitController extends Controller
     {
         $sort = request('sort') ??  '5';
         $units = Unit::whereHas('company', function(Builder $query) {
-            $user = auth()->user();
-            $companyId = $user->company->id;
+                        $user = auth()->user()->employee;
+                        $companyId = $user->company->id;
 
-            $query->where('id', $companyId);
-        })->paginate($sort);
+                        $query->where('id', $companyId);
+                    })
+                    ->where('status', true)
+                    ->paginate($sort);
 
         return response()->json([
             'status' => 'success',
@@ -27,7 +29,7 @@ class UnitController extends Controller
 
     public function store(Request $request)
     {
-        $user = auth()->user();
+        $user = auth()->user()->employee;
         $company = $user->company;
 
         $validator = Validator::make($request->all(), [
@@ -65,7 +67,7 @@ class UnitController extends Controller
 
     public function update(Request $request, Unit $unit)
     {
-        $user = auth()->user();
+        $user = auth()->user()->employee;
         $company = $user->company;
 
         $validator = Validator::make($request->all(), [

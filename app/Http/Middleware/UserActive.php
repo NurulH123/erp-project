@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class HasCompany
+class UserActive
 {
     /**
      * Handle an incoming request.
@@ -17,10 +17,10 @@ class HasCompany
     {
         $user = auth()->user();
 
-        if (is_null($user->company) && $user->is_owner) {
+        if (!$user->status) {
             return response()->json([
                 'status' => 'failed',
-                'message' => 'Maaf Anda Belum Mendaftarkan Perusahaan Anda'
+                'message' => 'Akun Anda Tidak aktif'
             ], Response::HTTP_BAD_REQUEST);
         }
 

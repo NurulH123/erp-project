@@ -14,11 +14,13 @@ class PositionController extends Controller
     {
         $sort = request('sort') ?? '5';
 
-        $user = auth()->user();
+        $user = auth()->user()->employee;
         $companyId = $user->company->id;
         $positions = Position::whereHas('positionable', function(Builder $query) use($companyId){
                             $query->where('positionable_id', $companyId);
-                        })->paginate($sort);
+                        })
+                        ->where('status', true)
+                        ->paginate($sort);
 
         return response()->json([
             'status' => 'success', 
@@ -32,7 +34,7 @@ class PositionController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'data' => auth()->user()->company->positions
+            'data' => auth()->user()->employee->company->positions
         ]);
     }
 
@@ -46,7 +48,7 @@ class PositionController extends Controller
 
     public function create(Request $request)
     {
-        $user = auth()->user();
+        $user = auth()->user()->employee;
 
         try {
             $validator = Validator::make($request->all(), [
@@ -78,7 +80,7 @@ class PositionController extends Controller
 
     public function update(Request $request, Position $position)
     {
-        $user = auth()->user();
+        $user = auth()->user()->employee;
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'code' => 'required',
@@ -107,6 +109,7 @@ class PositionController extends Controller
     public function changeStatus(Position $position)
     {
         $status = !$position->status;
+        $statusText = $status ? 'Diaktifkan' :  'Dinonaktifkan';
         $position->update(['status' => $status]);
 
         $updPosition = Position::findOrFail($position->id);
@@ -114,7 +117,7 @@ class PositionController extends Controller
         return response()->json([
             'status' => 'success',
             'is_status' => $status,
-            'message' => 'Status Berhasil Diubah',
+            'message' => 'Posisi '.$position->name. ' Telah '.$statusText,
             'position' => $updPosition
         ]);
     }

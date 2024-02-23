@@ -11,7 +11,7 @@ class BomController extends Controller
 {
     public function dataProdukBom()
     {
-        $user = auth()->user();
+        $user = auth()->user()->employee;
 
         $products = Product::with('materials')
                         ->whereHas('materials')

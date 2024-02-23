@@ -22,7 +22,7 @@ class CompanyPermissionController extends Controller
             ], 442);
         }
 
-        $user = auth()->user();
+        $user = auth()->user()->employee;
         $permissionGroup = $request->permission_group_id;
 
         $user->company->permission()->attach($permissionGroup);
@@ -35,7 +35,7 @@ class CompanyPermissionController extends Controller
 
     public function updateCompanyPermission(Request $request)
     {
-        $user = auth()->user();
+        $user = auth()->user()->employee;
         $permissionGroup = $request->permission_group_id;
 
         $user->company->permission()->sync($permissionGroup);

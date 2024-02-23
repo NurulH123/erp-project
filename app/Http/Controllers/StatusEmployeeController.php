@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use Illuminate\Http\Request;
 use App\Models\StatusEmployee;
 use Illuminate\Database\Console\Migrations\StatusCommand;
@@ -14,11 +15,13 @@ class StatusEmployeeController extends Controller
     {
         $sort = request('sort') ?? '5';
         $empoyeeStatus = StatusEmployee::whereHas('statusable', function(Builder $query) {
-            $user = auth()->user();
-            $companyId = $user->company->id;
+                                $user = auth()->user()->employee;
+                                $companyId = $user->company->id;
 
-            $query->where('id', $companyId);
-        })->paginate($sort);
+                                $query->where('id', $companyId);
+                            })
+                            ->where('status', true)
+                            ->paginate($sort);
 
         return response()->json([
             'status' => 'success',
@@ -28,9 +31,11 @@ class StatusEmployeeController extends Controller
 
     public function allData() 
     {
+        $user = auth()->user()->employee;
+
         return response()->json([
             'status' => 'success',
-            'data' => auth()->user()->company->employeeStatus
+            'data' => $user->company->employeeStatus
         ]);
     }
 
@@ -44,7 +49,7 @@ class StatusEmployeeController extends Controller
 
     public function create(Request $request)
     {
-        $user  = auth()->user();
+        $user  = auth()->user()->employee;
 
         $validator = Validator::make($request->all(), [
             'name' =>  'required',

@@ -12,16 +12,17 @@ class ProductController extends Controller
     public function index()
     {
         $sort = request('sort') ?? '5';
-        $user = auth()->user();
+        $user = auth()->user()->employee;
 
         $products = Product::where('company_id', $user->company->id)
-                    ->with(['warehouses' => function(Builder $query) use($user){
-                            $query->where('company_id', $user->company->id);
-                        }, 
-                        'unit:id,name', 
-                        'category:id,name'
-                    ])
-                    ->paginate($sort)->toArray();
+                        ->with(['warehouses' => function(Builder $query) use($user){
+                                $query->where('company_id', $user->company->id);
+                            }, 
+                            'unit:id,name', 
+                            'category:id,name'
+                        ])
+                        ->where('status', true)
+                        ->paginate($sort)->toArray();
 
         return response()->json([
             'status' => 'success', 
@@ -32,7 +33,7 @@ class ProductController extends Controller
 
     public function allData()
     {
-        $user = auth()->user();
+        $user = auth()->user()->employee;
         $company = $user->company;
 
         return response()->json([
@@ -44,7 +45,7 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         $product = Product::with(['warehouses' => function(Builder $query) {
-                        $user = auth()->user();
+                        $user = auth()->user()->employee;
 
                         $query->where('company_id', $user->company->id);
                     }, 'unit:id,name', 'category:id,name'])
@@ -59,7 +60,7 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        $user = auth()->user();
+        $user = auth()->user()->employee;
 
         $validator = Validator::make($request->all(), [
             'name' => 'required',

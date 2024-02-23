@@ -15,7 +15,7 @@ class BranchCompanyController extends Controller
     {
         $sort = request('sort') ?? '5';
 
-        $user = auth()->user();
+        $user = auth()->user()->employee;
         $branch = BranchCompany::where('company_id', $user->company->id)
                         ->paginate($sort);
 
@@ -35,7 +35,7 @@ class BranchCompanyController extends Controller
 
     public function create(Request $request)
     {
-        $user = auth()->user();
+        $user = auth()->user()->employee;
 
         $validator = Validator::make($request->all(), [
             'name'      => 'required',

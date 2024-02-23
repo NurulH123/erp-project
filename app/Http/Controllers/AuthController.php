@@ -14,6 +14,7 @@ use App\Models\Warehoouse;
 use App\Models\StatusEmployee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
 {
@@ -82,18 +83,22 @@ class AuthController extends Controller
         ]);
 
         if (User::where('email', $request->email)->first() == null) {
-            return response(['message' => 'Email belum terdaftar'], 404);
+            return response()->json([
+                'message' => 'Email belum terdaftar'
+            ], Response::HTTP_NOT_ACCEPTABLE);
         }
 
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'failed',
                 'message' => $validator->errors(),
-            ], 442);
+            ], Response::HTTP_NOT_ACCEPTABLE);
         }
 
         if (!auth()->attempt($validator->getData())) {
-            return response(['message' => 'password atau email yang anda masukkan tidak sesuai'], 404);
+            return response()->json([
+                'message' => 'password atau email yang anda masukkan tidak sesuai'
+            ], Response::HTTP_NOT_ACCEPTABLE);
         }
 
         $user = User::where('email', $request->email)
@@ -101,6 +106,14 @@ class AuthController extends Controller
 
         $profile = null;
         $employee = $user->adminEmployee->employee;
+
+        // Validasi user active
+        if (!$user->status) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Akun Anda Tidak aktif'
+            ], Response::HTTP_BAD_REQUEST);
+        }
 
         if (!is_null($employee)) {
             $profile = $user->adminEmployee->employee->profile;
@@ -174,18 +187,18 @@ class AuthController extends Controller
 
     private function dataMaster()
     {
-        $user = auth()->user();
+        $user = auth()->user()->employee;
         $company = $user->company;
 
         return [
-            'unit' => count($company->units),
-            'vendor' => count($company->vendor),
-            'role' => count($company->roles),
-            'position' => count($company->positions),
-            'category' => count($company->productCategories),
-            'warehouse' => count($company->warehouses),
-            'status_employee' => count($company->employeeStatus),
-            'customer' => count($company->customer)
+            'unit' => $company->units !== null ? count($company->units) : 0,
+            'vendor' => $company->vendor !== null ? count($company->vendor) : 0,
+            'role' => $company->roles !== null ? count($company->roles) : 0,
+            'position' => $company->positions!== null ? count($company->positions) : 0,
+            'category' => $company->productCategories !== null ? count($company->productCategories) : 0,
+            'warehouse' => $company->warehouses  !== null ? count($company->warehouses) : 0,
+            'status_employee' => $company->employeeStatus !== null ? count($company->employeeStatus) : 0,
+            'customer' => $company->customers !== null ? count($company->customers) : 0
         ];
 
     }

@@ -16,7 +16,7 @@ class SalesOrderController extends Controller
     {
         $sort = request('sort') ?? '5';
 
-        $user = auth()->user();
+        $user = auth()->user()->employee;
         $companyId = $user->company->id;
         $salesOrders = SalesOrder::with([
                             'warehouse:id,name', 
@@ -36,10 +36,12 @@ class SalesOrderController extends Controller
     public function show($id)
     {
         $salesOrder = SalesOrder::with([
+                    'company:id,user_id,name,category,address,phone,email,logo',
                     'warehouse:id,name', 
                     'customer:id,name,phone,address',
                     'employee:code,username,email,status',
-                    'details.product:id,name,type_zat,photo'
+                    'details.product:id,name,type_zat,photo',
+                    'invoices',
                 ])
                 ->find($id);
 
@@ -51,7 +53,7 @@ class SalesOrderController extends Controller
 
     public function store(Request $request)
     {
-        $user = auth()->user();
+        $user = auth()->user()->employee;
         $company = $user->company;
 
         $datas  = $request->all();

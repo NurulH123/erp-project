@@ -13,11 +13,13 @@ class CustomerController extends Controller
     {
         $sort = request('sort') ?? '5';
         $customers = Customer::whereHas('customerable', function(Builder $query) {
-            $user = auth()->user();
-            $companyId = $user->company->id;
+                            $user = auth()->user()->employee;
+                            $companyId = $user->company->id;
 
-            $query->where('id', $companyId);
-        })->paginate($sort);
+                            $query->where('id', $companyId);
+                        })
+                        ->where('is_active', true)
+                        ->paginate($sort);
 
         return response()->json([
             'status' => 'success',
@@ -27,7 +29,7 @@ class CustomerController extends Controller
 
     public function allData()
     {
-        $user = auth()->user();
+        $user = auth()->user()->employee;
 
         return response()->json([
             'status' => 'success',
@@ -45,7 +47,7 @@ class CustomerController extends Controller
 
     public function create(Request $request)
     {
-        $user = auth()->user();
+        $user = auth()->user()->employee;
         $validator = Validator::make($request->all(), [
             'name'  => 'required',
             'address' => 'required'
@@ -103,15 +105,15 @@ class CustomerController extends Controller
 
     public function changeStatus(Customer $customer)
     {
-        $status = $customer->is_active;
+        $status = !$customer->is_active;
 
-        $customer->update(['is_active' => !$status]);
+        $customer->update(['is_active' => $status]);
         $IStatus = $status ? 'Aktif' : 'Tidak Aktif';
 
         return response()->json([
             'status' => 'success', 
             'is_status' => $status,
-            'message' => 'Vendor '.$IStatus
+            'message' => 'Pelanggan '.$customer->name.' '.$IStatus
         ]);
     }
 }

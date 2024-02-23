@@ -15,7 +15,7 @@ class PurchasingOrderController extends Controller
     {
         $sort = request('sort') ?? '5';
 
-        $user = auth()->user();
+        $user = auth()->user()->employee;
         $companyId = $user->company->id;
         $purchaseOrders = PurchasingOrder::whereHas('company', function(Builder $query) use($companyId){
                             $query->where('id', $companyId);
@@ -36,10 +36,11 @@ class PurchasingOrderController extends Controller
     public function show($id)
     {
         $purchaseOrder = PurchasingOrder::with([
-                            'vendor:id,name',
+                            'vendor:id,name,phone,address,industry',
                             'warehouse:id,name',
                             'employee:code,username,email,status',
-                            'details.product:id,name,type_zat,photo'
+                            'details.product:id,name,type_zat,photo',
+                            'invoices'
                         ])->find($id);
 
         return response()->json([
@@ -81,7 +82,7 @@ class PurchasingOrderController extends Controller
         // $warehouse = Warehouse::find($dataPo['warehouse_id']);
 
         // Data transaksi
-        $user = auth()->user();
+        $user = auth()->user()->employee;
         $company = $user->company;
         $dataPo['code_employee'] = $user->adminEmployee->code;
         $dataPo['code_transaction'] = date('YmdHis');
