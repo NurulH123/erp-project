@@ -23,8 +23,8 @@ class DatabaseSeeder extends Seeder
         $this->call(PermissionSeeder::class);
 
         $user1 = User::create([
-            'username' => 'Admin ',
-            'email' => 'admin@makenliving.com',
+            'username' => 'Master ',
+            'email' => 'master@gmail.com',
             'password' => '12345678',
         ]);
 
@@ -35,23 +35,6 @@ class DatabaseSeeder extends Seeder
         AdminEmployee::create([
             'user_id'   => $user1->id,
             'code'      => $code1,
-        ]);
-
-
-
-        $user2 = User::create([
-            'username' => 'Admin 2',
-            'email' => 'admin2@makenliving.com',
-            'password' => '12345678',
-        ]);
-
-        $num2 = 1000000 + $user2->id;
-        $uniqCode2 = (string)substr($num2, 1);
-        $code2 = '00-'.date('Ymd').'-'.$uniqCode2;
-
-        AdminEmployee::create([
-            'user_id'   => $user2->id,
-            'code'      => $code2,
         ]);
     }
 
