@@ -28,7 +28,7 @@ class CompanyController extends Controller
 
     public function create(Request $request)
     {
-        $user = auth()->user()->employee;
+        $user = auth()->user();
         
         // validation
         $validator  = Validator::make($request->all(), [
