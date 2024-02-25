@@ -187,18 +187,18 @@ class AuthController extends Controller
 
     private function dataMaster()
     {
-        $user = auth()->user()->employee;
+        $user = auth()->user();
         $company = $user->company;
 
         return [
-            'unit' => $company->units !== null ? count($company->units) : 0,
-            'vendor' => $company->vendor !== null ? count($company->vendor) : 0,
-            'role' => $company->roles !== null ? count($company->roles) : 0,
-            'position' => $company->positions!== null ? count($company->positions) : 0,
-            'category' => $company->productCategories !== null ? count($company->productCategories) : 0,
-            'warehouse' => $company->warehouses  !== null ? count($company->warehouses) : 0,
-            'status_employee' => $company->employeeStatus !== null ? count($company->employeeStatus) : 0,
-            'customer' => $company->customers !== null ? count($company->customers) : 0
+            'unit' => !is_null($company) ? (!is_null($company->units) ? count($company->units) : 0) : 0,
+            'vendor' => !is_null($company) ? (!is_null($company->vendor) ? count($company->vendor) : 0) : 0,
+            'role' => !is_null($company) ? (!is_null($company->roles) ? count($company->roles) : 0) : 0,
+            'position' => !is_null($company) ? (!is_null($company->positions) ? count($company->positions) : 0) : 0,
+            'category' => !is_null($company) ? (!is_null($company->productCategories) ? count($company->productCategories) : 0) : 0,
+            'warehouse' => !is_null($company) ? (!is_null($company->warehouses) ? count($company->warehouses) : 0) : 0,
+            'status_employee' => !is_null($company) ? (!is_null($company->employeeStatus) ? count($company->employeeStatus) : 0) : 0,
+            'customer' => !is_null($company) ? (!is_null($company->customers) ? count($company->customers) : 0) : 0
         ];
 
     }
