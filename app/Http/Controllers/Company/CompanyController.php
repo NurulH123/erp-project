@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Validator;
 
 class CompanyController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('hasCompany')->except('create');
+    }
+
     public function show()
     {
         // Private
