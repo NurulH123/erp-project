@@ -18,7 +18,6 @@ use App\Http\Controllers\Auth\PermissionController;
 use App\Http\Controllers\Company\CompanyController;
 use App\Http\Controllers\CategoryProductController;
 use App\Http\Controllers\PurchasingOrderController;
-use App\Http\Controllers\DetailSalesOrderController;
 use App\Http\Controllers\Company\EmployeeController;
 use App\Http\Controllers\ProductWarehouseController;
 use App\Http\Controllers\Company\PositionController;
@@ -27,6 +26,7 @@ use App\Http\Controllers\InvoicePurchaseOrderController;
 use App\Http\Controllers\Company\BranchCompanyController;
 use App\Http\Controllers\Company\CompanyPermissionController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Controller;
 
 /*
 |--------------------------------------------------------------------------
@@ -340,4 +340,6 @@ Route::middleware('auth:sanctum')->group(function() {
             function() {
                 Route::post('/{salesOrder}', [InvoiceSalesOrderController::class, 'createInvoice']);
         });
+
+        Route::get('search/{type}', [Controller::class, 'search']);
 });

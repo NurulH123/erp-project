@@ -4,14 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use App\Models\User;
-use App\Models\Unit;
-use App\Models\Vendor;
 use App\Models\Employee;
-use App\Models\Position;
-use App\Models\Category;
-use App\Models\Customer;
-use App\Models\Warehoouse;
-use App\Models\StatusEmployee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
@@ -198,8 +191,6 @@ class AuthController extends Controller
         $checkEmployee = is_null(auth()->user()->employee);
         $user = $checkEmployee ? 
                     auth()->user() : auth()->user()->employee;
-                    // $user = auth()->user()->employee;
-                    // dd($user);
         $company = $user->company;
 
         return $checkEmployee ? null : [

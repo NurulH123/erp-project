@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 
 class CategoryProductController extends Controller
 {
+    
     public function index()
     {
         $sort = request('sort') ?? '5';
