@@ -13,13 +13,16 @@ class PositionController extends Controller
     public function index()
     {
         $sort = request('sort') ?? '5';
+        $search = request('search') ?? '';
+        
+        $positions = Position::whereHas('positionable', function(Builder $query) {
+            $user = auth()->user()->employee;
+            $companyId = $user->company->id;
 
-        $user = auth()->user()->employee;
-        $companyId = $user->company->id;
-        $positions = Position::whereHas('positionable', function(Builder $query) use($companyId){
-                            $query->where('positionable_id', $companyId);
-                        })
-                        ->paginate($sort);
+            $query->where('positionable_id', $companyId);
+        })
+        ->where('name', 'like', "%$search%")
+        ->paginate($sort);
 
         return response()->json([
             'status' => 'success', 

@@ -341,5 +341,4 @@ Route::middleware('auth:sanctum')->group(function() {
                 Route::post('/{salesOrder}', [InvoiceSalesOrderController::class, 'createInvoice']);
         });
 
-        Route::get('search/{type}', [Controller::class, 'search']);
 });

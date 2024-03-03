@@ -12,13 +12,16 @@ class CustomerController extends Controller
     public function index()
     {
         $sort = request('sort') ?? '5';
-        $customers = Customer::whereHas('customerable', function(Builder $query) {
-                            $user = auth()->user()->employee;
-                            $companyId = $user->company->id;
+        $search = request('search') ?? '';
 
-                            $query->where('id', $companyId);
-                        })
-                        ->paginate($sort);
+        $customers = Customer::whereHas('customerable', function(Builder $query) {
+            $user = auth()->user()->employee;
+            $companyId = $user->company->id;
+
+            $query->where('id', $companyId);
+        })
+        ->where('name', 'like', "%$search%")
+        ->paginate($sort);
 
         return response()->json([
             'status' => 'success',
