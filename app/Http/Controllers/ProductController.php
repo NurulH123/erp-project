@@ -12,16 +12,18 @@ class ProductController extends Controller
     public function index()
     {
         $sort = request('sort') ?? '5';
+        $search = request('search') ?? '';
         $user = auth()->user()->employee;
 
         $products = Product::where('company_id', $user->company->id)
-                        ->with(['warehouses' => function(Builder $query) use($user){
-                                $query->where('company_id', $user->company->id);
-                            }, 
-                            'unit:id,name', 
-                            'category:id,name'
-                        ])
-                        ->paginate($sort)->toArray();
+        ->with(['warehouses' => function(Builder $query) use($user){
+                $query->where('company_id', $user->company->id);
+            }, 
+            'unit:id,name', 
+            'category:id,name'
+        ])
+        ->where('name', 'like', "%$search%")
+        ->paginate($sort)->toArray();
 
         return response()->json([
             'status' => 'success', 

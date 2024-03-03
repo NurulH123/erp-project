@@ -19,6 +19,7 @@ class EmployeeController extends Controller
     public function index()
     {
         $sort = request('sort') ?? '5';
+        $search = request('search') ?? '';
 
         $user = User::find(Auth::id());
         $company = $user->company ?? 
@@ -26,14 +27,16 @@ class EmployeeController extends Controller
 
         $pluck = collect($company->employee)->pluck('id', 'username')->toArray();
         $IdEmployee = array_values($pluck);
+
         $employees = Employee::with([
-                            'profile.position:id,name', 
-                            'profile.status:id,name',
-                            'adminEmployee.user:id,status,is_owner',
-                            'adminEmployee.roles'
-                        ])
-                        ->whereIn('id', $IdEmployee)
-                        ->paginate($sort);
+            'profile.position:id,name', 
+            'profile.status:id,name',
+            'adminEmployee.user:id,status,is_owner',
+            'adminEmployee.roles'
+        ])
+        ->whereIn('id', $IdEmployee)
+        ->where('username', 'like', "%$search%")
+        ->paginate($sort);
 
         return response()->json([
             'status' => 'success', 
