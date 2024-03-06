@@ -179,7 +179,13 @@ class EmployeeController extends Controller
     {
         // Disini tidak bisa mengupdate is_admin
         // is_admin hanya bisa diupdate melalui method changeAdmin()  
-        $dataEmployee = $request->only('username', 'email'); 
+        $dataEmployee = $request->only('username', 'email');
+        $validate = Validator::make($dataEmployee, ['email' => 'email|unique:employees,id,'.$employee->id]);
+
+        if ($validate->fails()) return response()->json([
+            'status' => 'failed',
+            'message' => $validate->errors()
+        ]);
 
         // Process inputing profile
         $dataProfile = $request->except('username', 'is_admin', 'email', '_method');
@@ -187,6 +193,13 @@ class EmployeeController extends Controller
         $dataProfile['resaign'] = isset($request->resaign) ? date('Y-m-d', strtotime($request->resaign)) : null;
         
         if ($request->hasFile('photo')) {
+            $validator = Validator::make($dataProfile, ['photo' => 'required'], ['photo.required' => 'Foto Masih Kosong']);
+
+            if ($validator->fails()) return response()->json([
+                'status' => 'failed',
+                'message' => $validator->errors()
+            ]);
+
             $photo = $employee->profile->photo;
             
             if (!is_null($photo)) {
