@@ -171,17 +171,20 @@ class AuthController extends Controller
 
     private function checkLoginEmployee($user)
     {
+        $admin = $user->adminEmployee;
         $company = is_null($user->company) ? 
                     null : collect($user->company)->toArray();
                     
         if (!$user['is_owner']) {
-            $code = $user->adminEmployee->code;
+            $code = $admin->code;
             $employee = Employee::where('code', $code)->first();
             $company = collect($employee->company)->toArray();
         }
 
+        $roles = $admin->roles;
         $data = collect($user)->except('admin_employee')->toArray();
         $data['company'] = $company;
+        $data['role'] = isset($roles) ? count($roles) : 0;
 
         return $data;
     }
