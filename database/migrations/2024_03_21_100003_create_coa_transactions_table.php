@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('invoice_sales_orders', function (Blueprint $table) {
+        Schema::create('coa_transactions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('sales_order_id')->constrained()->cascadeOnUpdate()->nullOnDelete();
-            $table->foreignId('detail_sales_order_id')->constrained()->cascadeOnUpdate()->nullOnDelete();
+            $table->morphs('companiable');
+            $table->morphs('invoiceable');
+            $table->enum('type', ['cash, bank']);
             $table->foreignId('transaction_category')->constrained('c_o_a_s')->nullOnDelete();
             $table->foreignId('fund')->constrained('c_o_a_s')->nullOnDelete();
-            $table->integer('total_price');
-            $table->text('desc')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('invoice_sales_orders');
+        Schema::dropIfExists('coa_transactions');
     }
 };
