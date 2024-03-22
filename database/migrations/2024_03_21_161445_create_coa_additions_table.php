@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('c_o_a_s', function (Blueprint $table) {
+        Schema::create('coa_additions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('coa_id')->constrained('c_o_a_s')->cascadeOnUpdate()->cascadeOnDelete();
             $table->morphs('companiable');
-            $table->integer('code');
-            $table->string('name_account');
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('c_o_a_s');
+        Schema::dropIfExists('coa_additions');
     }
 };

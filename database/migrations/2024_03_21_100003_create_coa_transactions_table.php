@@ -16,8 +16,8 @@ return new class extends Migration
             $table->morphs('companiable');
             $table->morphs('invoiceable');
             $table->enum('type', ['cash, bank']);
-            $table->foreignId('transaction_category')->constrained('c_o_a_s')->nullOnDelete();
-            $table->foreignId('fund')->constrained('c_o_a_s')->nullOnDelete();
+            $table->foreignId('debet')->constrained('c_o_a_s')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('kredit')->constrained('c_o_a_s')->cascadeOnUpdate()->cascadeOnDelete();
             $table->timestamps();
         });
     }

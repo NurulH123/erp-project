@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('invoice_sales_orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('sales_order_id')->constrained()->cascadeOnUpdate()->nullOnDelete();
-            $table->foreignId('detail_sales_order_id')->constrained()->cascadeOnUpdate()->nullOnDelete();
-            $table->foreignId('transaction_category')->constrained('c_o_a_s')->nullOnDelete();
-            $table->foreignId('fund')->constrained('c_o_a_s')->nullOnDelete();
+            $table->foreignId('sales_order_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('detail_sales_order_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('debet')->constrained('c_o_a_s')->cascadeOnDelete();
+            $table->foreignId('kredit')->constrained('c_o_a_s')->cascadeOnDelete();
             $table->integer('total_price');
             $table->text('desc')->nullable();
             $table->timestamps();

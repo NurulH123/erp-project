@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
     {
 
         $this->call(PermissionSeeder::class);
+        $this->call(AccountingSeeder::class);
 
         $user1 = User::create([
             'username' => 'Master ',

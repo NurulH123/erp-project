@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Customer;
-use App\Models\DetailSalesOrder;
+use App\Models\COA;
 use App\Models\Product;
 use App\Models\SalesOrder;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use App\Models\DetailSalesOrder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
 
 class SalesOrderController extends Controller
@@ -55,6 +55,9 @@ class SalesOrderController extends Controller
     {
         $user = auth()->user()->employee;
         $company = $user->company;
+        $coa = COA::pluck('id', 'name_account');
+        $aknPiutangDagang = $coa['Piutang Dagang'];
+        $aknPenjualan = $coa['Penjualan'];
 
         $datas  = $request->all();
         $dataSo = $datas['so'];
@@ -134,7 +137,9 @@ class SalesOrderController extends Controller
         // Create Detail & Invoice SO
         $collDetails = collect($details);
 
-        $collDetails->each(function($item) use($transaction){
+        $collDetails->each(function($item) 
+        use($transaction, $aknPiutangDagang, $aknPenjualan)
+        {
             $product = Product::find($item['product_id']);
             $totPrice = $product->price * $item['quantity'];
 
@@ -146,6 +151,8 @@ class SalesOrderController extends Controller
             $transaction->invoices()->create([
                 'detail_sales_order_id' => $detail->id,
                 'total_price' => $totPrice,
+                'debet' => $aknPiutangDagang,
+                'kredit' => $aknPenjualan,
                 'desc' => $desc
             ]);
         });

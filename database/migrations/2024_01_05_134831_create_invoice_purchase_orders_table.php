@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('purchasing_order_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('detail_purchasing_order_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('debet')->constrained('c_o_a_s')->cascadeOnDelete();
+            $table->foreignId('kredit')->constrained('c_o_a_s')->cascadeOnDelete();
             $table->integer('come')->nullable();
             $table->boolean('is_completed')->nullable();
             $table->integer('pay');

@@ -22,6 +22,10 @@ class PermissionSeeder extends Seeder
             'Sales Order' => [
                 'input customer',
                 'input transaksi'
+            ],
+            'Finance' => [
+                'Input CoA',
+                'Transaksi Finance',
             ]
         ];
 
