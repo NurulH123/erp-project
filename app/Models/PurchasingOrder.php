@@ -46,4 +46,9 @@ class PurchasingOrder extends Model
     {
         return $this->belongsTo(Employee::class, 'code_employee', 'code');
     }
+
+    public function coaTransaction()
+    {
+        return $this->morphMany(CoaTransaction::class, 'invoiceable');
+    }
 }

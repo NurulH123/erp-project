@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('code');
             $table->string('name_account');
+            $table->enum('type', ['default', 'company'])->default('default');
             $table->text('desc')->nullable();
             $table->timestamps();
         });

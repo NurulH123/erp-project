@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id();
             $table->morphs('companiable');
             $table->morphs('invoiceable');
-            $table->enum('type', ['cash, bank']);
+            $table->enum('type', ['cash','bank'])->nullable();
+            $table->integer('nominal')->default(0);
             $table->foreignId('debet')->constrained('c_o_a_s')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('kredit')->constrained('c_o_a_s')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->text('desc')->nullable();
             $table->timestamps();
         });
     }

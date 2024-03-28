@@ -22,6 +22,7 @@ return new class extends Migration
             $table->date('date_order');
             $table->enum('status', ['ordered','accepted'])->default('ordered');
             $table->text('desc')->nullable();
+            $table->boolean('is_payed')->nullable();
             $table->integer('total_pay')->nullable();
             $table->timestamps();
         });

@@ -16,4 +16,5 @@ class InvoicePurchaseOrder extends Model
     {
         return $this->belongsTo(DetailPurchasingOrder::class);
     }
+
 }

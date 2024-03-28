@@ -26,7 +26,8 @@ use App\Http\Controllers\InvoicePurchaseOrderController;
 use App\Http\Controllers\Company\BranchCompanyController;
 use App\Http\Controllers\Company\CompanyPermissionController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\CoaController;
+use App\Http\Controllers\CoaTransactionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -339,6 +340,16 @@ Route::middleware('auth:sanctum')->group(function() {
             ['prefix' => 'invoice/so'],
             function() {
                 Route::post('/{salesOrder}', [InvoiceSalesOrderController::class, 'createInvoice']);
+        });
+
+
+        Route::group(
+            ['prefix' => 'accountant'], 
+            function() {
+                Route::post('/', [CoaController::class, 'store']);
+                
+                # Transaksi CoA
+                Route::post('/transaction/{transaction}', [CoaTransactionController::class, 'updateTransaction']);
         });
 
 });

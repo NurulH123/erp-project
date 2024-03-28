@@ -32,4 +32,9 @@ class BranchCompany extends Model
     {
         return $this->morphMany(StatusEmployee::class, 'statusable');
     }
+
+    public function coaAddition()
+    {
+        return $this->morphMany(CoaAddition::class, 'companiable');
+    }
 }

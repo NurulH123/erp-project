@@ -131,13 +131,11 @@ class SalesOrderController extends Controller
         $dataSo['date_transaction'] = date('Y-m-d', strtotime($dataSo['date_transaction']));
         
         $transaction = $company->transactionSo()->create($dataSo); // create transaksi SO
-        // $newDetails = $transaction->details()->createMany($details); // create details SO
         
-
         // Create Detail & Invoice SO
         $collDetails = collect($details);
 
-        $collDetails->each(function($item) 
+        $collDetails->each(function($item)
         use($transaction, $aknPiutangDagang, $aknPenjualan)
         {
             $product = Product::find($item['product_id']);
@@ -161,6 +159,14 @@ class SalesOrderController extends Controller
         $totPay = $invoices->sum('total_price');
         $transaction->update(['total_pay' => $totPay]);
 
+        // Create coa transaction
+        $transaction->coaTransaction()->create([
+            'companiable_id' => $company->id,
+            'companiable_type' => get_class($company),
+            'debet' => $aknPiutangDagang,
+            'kredit' => $aknPenjualan,
+        ]); 
+        
         return response()->json([
             'status' => 'success',
             'message' => 'Data Transaksi Telah Tersimpan',

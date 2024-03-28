@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\COA;
 use Illuminate\Http\Request;
 use App\Models\PurchasingOrder;
 use App\Models\DetailPurchasingOrder;
@@ -26,12 +27,17 @@ class InvoicePurchaseOrderController extends Controller
     
     public function createInvoice(Request $request, PurchasingOrder $purchase)
     {
+
+        $coas = COA::pluck('id', 'name_account');
+        $user = auth()->user()->employee;
+        $company = $user->company;
+
         $validator = Validator::make($request->all(), [
             'date_accepted' => 'required',
-            'detail_po' => 'required'
+            'detail_po' => 'required',
         ], [
             'date_accepted.required' => 'Tanggal Diterima Masih Kosong',
-            'detail_po.required' => 'Detail harus Diisi'
+            'detail_po.required' => 'Detail harus Diisi',
         ]);
 
         if ($validator->fails()) return response()->json([
@@ -45,6 +51,7 @@ class InvoicePurchaseOrderController extends Controller
         $invoices = collect($request->detail_po);
 
         $invoices->each(function($item) use($purchase, $accepted){
+
             $item['purchasing_order_id'] = $purchase->id;
             $item ['is_completed'] = true;
 
@@ -55,7 +62,7 @@ class InvoicePurchaseOrderController extends Controller
 
             $price = $detail->product->price;
             $item['pay'] = $price * $item['come']; // Total pay yg harus dibayar
-            $detail->invoice()->create($item); // Create invoice
+            $invoice = $detail->invoice()->create($item); // Create invoice
 
             // Create history
             $dataHistory = [
@@ -90,6 +97,14 @@ class InvoicePurchaseOrderController extends Controller
         $dataPo['desc'] = $desc;
         $dataPo['total_pay'] = $newInvoices->sum('pay');
         $purchase->update($dataPo);
+
+        // Create CoA transaksi
+        $purchase->coaTransaction()->create([
+            'companiable_id' => $company->id,
+            'companiable_type' => get_class($company),
+            'debet' => $coas['Piutang Dagang'],
+            'kredit' => $coas['Pembelian']
+        ]);
 
         return response()->json([
             'status' => 'success',

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('customer_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->date('date_transaction');
             $table->text('desc')->nullable();
+            $table->boolean('is_payed')->nullable();
             $table->integer('total_pay')->nullable();
             $table->timestamps();
         });
