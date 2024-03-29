@@ -5,10 +5,29 @@ namespace App\Http\Controllers;
 use App\Models\CoaTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Database\Eloquent\Builder;
 use Symfony\Component\HttpFoundation\Response;
 
 class CoaTransactionController extends Controller
 {
+
+    public function index()
+    {
+        $user = auth()->user()->employee;
+        $companyId = $user->company->id;
+
+        $sort = request('sort') ?? '5';
+        // $search = request('search') ?? '';
+
+        $coaTransaction = CoaTransaction::where('companiable_id', $companyId)
+                            ->paginate($sort);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $coaTransaction,
+        ]);
+    }
+
     public function updateTransaction(Request $request, CoaTransaction $transaction)
     {
         $data = $request->only('type', 'nominal', 'desc');
