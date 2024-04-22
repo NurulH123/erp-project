@@ -165,6 +165,7 @@ class SalesOrderController extends Controller
             'companiable_type' => get_class($company),
             'debet' => $aknPiutangDagang,
             'kredit' => $aknPenjualan,
+            'user_id' => auth()->user()->id
         ]);
         
         return response()->json([

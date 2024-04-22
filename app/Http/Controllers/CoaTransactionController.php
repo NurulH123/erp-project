@@ -9,15 +9,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CoaTransactionController extends Controller
 {
-
     public function index()
     {
         $user = auth()->user()->employee;
         $companyId = $user->company->id;
 
         $sort = request('sort') ?? '5';
-        // $search = request('search') ?? '';
-
+        
         $coaTransaction = CoaTransaction::where('companiable_id', $companyId)
                             ->paginate($sort);
 
@@ -55,6 +53,7 @@ class CoaTransactionController extends Controller
         $class = get_class($classParent);
 
         if ($coaTransaction->sum('nominal') == 0) {
+            $data['user_id'] = auth()->user()->id;
             $transaction->update($data);
         } else {
 
@@ -63,7 +62,7 @@ class CoaTransactionController extends Controller
             $data['companiable_type'] = get_class($company);
             $data['debet'] = $transaction->debet;
             $data['kredit'] = $transaction->kredit;
-
+            $data['user_id'] = auth()->user()->id;
             
             $classParent->coaTransaction()->create($data);
         }

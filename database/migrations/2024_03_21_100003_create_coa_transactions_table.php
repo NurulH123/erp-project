@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('debet')->constrained('c_o_a_s')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('kredit')->constrained('c_o_a_s')->cascadeOnUpdate()->cascadeOnDelete();
             $table->text('desc')->nullable();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }

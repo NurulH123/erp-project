@@ -489,3 +489,54 @@ Memproduksi suatu barang berdasarkan id produk dari
 data produk yg sudah memiliki behance of material
 
 ****************************************
+
+
+
+
+============================================================
+|========================== DASHBOARD =====================|
+============================================================
+# DATA DASHBOARD
+
+Route : {{ $host }}/dashboard
+@method: GET
+
+
+Menampilkan data dashboard
+
+****************************************
+
+
+
+
+
+======================================================
+|========================== CoA =====================|
+======================================================
+# Menambahkan Akun Keuangan
+
+Route : {{ $host }}/accountant
+@method: POST
+
+
+@body : - code
+        - name_account
+
+Menambahkan akun keuangan baru
+
+
+****************************************
+
+# Update Transaksi CoA
+
+Route : {{ $host }}/accountant/transaction/{transactionIdCoA}
+@method: POST
+@param: - transactionIdCoA = id dari transaksi coa
+
+@body : - type (cash, bank)
+        - nominal
+        - desc (optional)
+
+Update transaksi CoA
+
+****************************************

@@ -103,7 +103,8 @@ class InvoicePurchaseOrderController extends Controller
             'companiable_id' => $company->id,
             'companiable_type' => get_class($company),
             'debet' => $coas['Piutang Dagang'],
-            'kredit' => $coas['Pembelian']
+            'kredit' => $coas['Pembelian'],
+            'user_id' => auth()->user()->id
         ]);
 
         return response()->json([
