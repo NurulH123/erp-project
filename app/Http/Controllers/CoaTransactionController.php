@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\CoaTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Database\Eloquent\Builder;
 use Symfony\Component\HttpFoundation\Response;
 
 class CoaTransactionController extends Controller
