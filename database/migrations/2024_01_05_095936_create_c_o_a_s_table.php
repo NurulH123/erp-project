@@ -16,6 +16,7 @@ return new class extends Migration
             $table->integer('code');
             $table->string('name_account');
             $table->enum('type', ['default', 'company'])->default('default');
+            $table->integer('saldo')->default(0);
             $table->text('desc')->nullable();
             $table->timestamps();
         });
