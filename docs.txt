@@ -520,6 +520,7 @@ Route : {{ $host }}/accountant
 
 @body : - code
         - name_account
+        - category (optional)
 
 Menambahkan akun keuangan baru
 
@@ -535,6 +536,8 @@ Route : {{ $host }}/accountant/transaction/{transactionIdCoA}
 @body : - type (cash, bank)
         - nominal
         - desc (optional)
+        - debet
+        - kredit
 
 Update transaksi CoA
 
