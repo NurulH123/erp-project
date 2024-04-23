@@ -17,6 +17,12 @@ class CoaTransactionController extends Controller
         $sort = request('sort') ?? '5';
         
         $coaTransaction = CoaTransaction::where('companiable_id', $companyId)
+                            ->with([
+                                'invoiceable:id,code_transaction,total_pay', 
+                                'kredit:id,code,name_account',
+                                'debet:id,code,name_account',
+                                'user:id,username',
+                            ])
                             ->paginate($sort);
 
         return response()->json([
@@ -42,7 +48,7 @@ class CoaTransactionController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'status' => 'failed',
+                'status' => 'failed', 
                 'message' => $validator->errors()
             ], Response::HTTP_NOT_ACCEPTABLE);
         }
