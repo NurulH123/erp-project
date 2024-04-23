@@ -51,7 +51,6 @@ class PurchasingOrderController extends Controller
 
     public function store(Request $request)
     {
-
         if (!isset($request->po) || !isset($request->detail_po)) {
             return response()->json([
                 'status' => 'failed',
@@ -79,8 +78,6 @@ class PurchasingOrderController extends Controller
 
         $detailPO = collect($request->detail_po);
         
-        // $warehouse = Warehouse::find($dataPo['warehouse_id']);
-
         // Data transaksi
         $user = auth()->user()->employee;
         $company = $user->company;

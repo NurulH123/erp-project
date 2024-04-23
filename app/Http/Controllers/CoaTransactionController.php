@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\COA;
 use App\Models\CoaTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -33,17 +34,20 @@ class CoaTransactionController extends Controller
 
     public function updateTransaction(Request $request, CoaTransaction $transaction)
     {
-        $data = $request->only('type', 'nominal', 'desc');
         $user = auth()->user()->employee;
         $company = $user->company;
 
-        $validator = Validator::make($data, [
+        $validator = Validator::make($request->all(), [
             'type' => 'required|in:cash,bank',
-            'nominal' => 'required'
+            'nominal' => 'required',
+            'debet' => 'required',
+            'kredit' => 'required'
         ], [
             'type.required' => 'Tipe Masih Kosong',
             'type.in' => 'Tipe Tidak Sesuai',
-            'nominal.required' => 'Nominal Harus Diisi'
+            'nominal.required' => 'Nominal Harus Diisi',
+            'debet.required' => 'Debet Harus Diisi',
+            'kredit.required' => 'Kedit Harus Diisi'
         ]);
 
         if ($validator->fails()) {
@@ -54,6 +58,10 @@ class CoaTransactionController extends Controller
         }
 
         // mengambil jumlah uang yg harus dibayar
+        $data = $request->only('type', 'nominal', 'desc', 'debet', 'kredit');
+        $debet = $request->input('debet');
+        $kredit = $request->input('kredit');
+
         $classParent = $transaction->invoiceable;
         $coaTransaction = $classParent->coaTransaction;
         $class = get_class($classParent);
@@ -66,8 +74,8 @@ class CoaTransactionController extends Controller
             // create transaksi
             $data['companiable_id'] = $company->id;
             $data['companiable_type'] = get_class($company);
-            $data['debet'] = $transaction->debet;
-            $data['kredit'] = $transaction->kredit;
+            $data['debet'] = $debet;
+            $data['kredit'] = $kredit;
             $data['user_id'] = auth()->user()->id;
             
             $classParent->coaTransaction()->create($data);
@@ -81,7 +89,6 @@ class CoaTransactionController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Transaksi Telah Ditambahkan',
-            // 'data_transaction' => $transaction
         ], Response::HTTP_CREATED);
     }
 }

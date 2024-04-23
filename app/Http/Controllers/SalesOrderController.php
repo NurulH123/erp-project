@@ -58,6 +58,7 @@ class SalesOrderController extends Controller
         $coa = COA::pluck('id', 'name_account');
         $aknPiutangDagang = $coa['Piutang Dagang'];
         $aknPenjualan = $coa['Penjualan'];
+        $kas = $coa['Kas'];
 
         $datas  = $request->all();
         $dataSo = $datas['so'];
@@ -87,10 +88,13 @@ class SalesOrderController extends Controller
         // Validasi data transaksi SO
         $validator = Validator::make($dataSo, [
             'warehouse_id' => 'required',
-            'date_transaction' => 'required'
+            'date_transaction' => 'required',
+            'type' => 'required|in:cash,bank'
         ], [
             'warehouse_id.required' => 'Gudang Harus Diisi',
-            'date_transaction.required' => 'Tanggal Transaksi Masih Kosong'
+            'date_transaction.required' => 'Tanggal Transaksi Masih Kosong',
+            'type.required' => 'Tipe Transaksi Harus Diisi',
+            'type.in' => 'Tipe Transaksi Tidak Sesuai'
         ]);
 
         if ($validator->fails()) return response()->json([
@@ -134,9 +138,10 @@ class SalesOrderController extends Controller
         
         // Create Detail & Invoice SO
         $collDetails = collect($details);
+        $debet = $dataSo['type'] == 'cash' ? $kas : $aknPiutangDagang;
 
         $collDetails->each(function($item)
-        use($transaction, $aknPiutangDagang, $aknPenjualan)
+        use($transaction, $debet, $aknPenjualan)
         {
             $product = Product::find($item['product_id']);
             $totPrice = $product->price * $item['quantity'];
@@ -149,7 +154,7 @@ class SalesOrderController extends Controller
             $transaction->invoices()->create([
                 'detail_sales_order_id' => $detail->id,
                 'total_price' => $totPrice,
-                'debet' => $aknPiutangDagang,
+                'debet' => $debet,
                 'kredit' => $aknPenjualan,
                 'desc' => $desc
             ]);
@@ -158,13 +163,14 @@ class SalesOrderController extends Controller
         $invoices = $transaction->invoices;
         $totPay = $invoices->sum('total_price');
         $transaction->update(['total_pay' => $totPay]);
-
+        
         // Create coa transaction
         $transaction->coaTransaction()->create([
             'companiable_id' => $company->id,
             'companiable_type' => get_class($company),
-            'debet' => $aknPiutangDagang,
+            'debet' => $debet,
             'kredit' => $aknPenjualan,
+            'type' => $dataSo['type'],
             'user_id' => auth()->user()->id
         ]);
         

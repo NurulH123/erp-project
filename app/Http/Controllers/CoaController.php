@@ -8,16 +8,23 @@ use Illuminate\Support\Facades\Validator;
 
 class CoaController extends Controller
 {
+
+    public function index()
+    {
+        $user = auth()->user()->employee;
+        $company = $user->company;
+
+        return response()->json([
+            'data' => $company->coas
+        ]);
+    }
+
     /**
      *  Menambahkan Akun Baru Keuangan
      */
     public function store(Request $request)
     {
-        $user = auth()->user()->employee;
-        $company = $user->company;
-        $classname = get_class($company);
-
-        $req = $request->only('code', 'name_account');
+        $req = $request->only('code', 'name_account', 'category');
 
         $validator = Validator::make($req, [
             'code' => 'required',
@@ -35,11 +42,6 @@ class CoaController extends Controller
         }
 
         $coa = COA::create($req);
-        
-        $coa->addition()->create([
-            'companiable_id' => $company->id,
-            'companiable_type' => $classname
-        ]);
 
         return response()->json([
             'status' => 'success',

@@ -109,7 +109,7 @@ class CompanyController extends Controller
 
         $collAccounts = collect($accounts);
         $collAccounts->each(function($item) use($company) {
-            $company->coa()->create($item);
+            $company->coas()->create($item);
         });
 
         // response

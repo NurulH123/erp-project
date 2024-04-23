@@ -27,16 +27,20 @@ class InvoicePurchaseOrderController extends Controller
     
     public function createInvoice(Request $request, PurchasingOrder $purchase)
     {
-
         $coas = COA::pluck('id', 'name_account');
         $user = auth()->user()->employee;
         $company = $user->company;
+        $aknHutangDagang = $coas['Hutang Dagang'];
+        $aknPembelian = $coas['Pembelian'];
+        $kas = $coas['Kas'];
 
         $validator = Validator::make($request->all(), [
             'date_accepted' => 'required',
+            'type' => 'required',
             'detail_po' => 'required',
         ], [
             'date_accepted.required' => 'Tanggal Diterima Masih Kosong',
+            'type.required' => 'Tipe Transaksi Harus Diisi',
             'detail_po.required' => 'Detail harus Diisi',
         ]);
 
@@ -62,7 +66,7 @@ class InvoicePurchaseOrderController extends Controller
 
             $price = $detail->product->price;
             $item['pay'] = $price * $item['come']; // Total pay yg harus dibayar
-            $invoice = $detail->invoice()->create($item); // Create invoice
+            $detail->invoice()->create($item); // Create invoice
 
             // Create history
             $dataHistory = [
@@ -98,12 +102,15 @@ class InvoicePurchaseOrderController extends Controller
         $dataPo['total_pay'] = $newInvoices->sum('pay');
         $purchase->update($dataPo);
 
+
+        $debet = $request->type == 'cash' ? $kas : $aknHutangDagang;
+
         // Create CoA transaksi
         $purchase->coaTransaction()->create([
             'companiable_id' => $company->id,
             'companiable_type' => get_class($company),
-            'debet' => $coas['Piutang Dagang'],
-            'kredit' => $coas['Pembelian'],
+            'debet' => $debet,
+            'kredit' => $aknPembelian,
             'user_id' => auth()->user()->id
         ]);
 
