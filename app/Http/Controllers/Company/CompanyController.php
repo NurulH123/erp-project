@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Company;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\COA;
 use Illuminate\Support\Facades\Validator;
 
 class CompanyController extends Controller
@@ -78,6 +79,38 @@ class CompanyController extends Controller
             'code' => $user->adminEmployee->code, 
         ]);
 
+        // Create Default Akun CoA
+        $accounts = [
+            [
+                'code' => 1110,
+                'name_account' => 'Kas',
+            ],
+            [
+                'code' => 1120,
+                'name_account' => 'Bank',
+            ],
+            [
+                'code' => 1130,
+                'name_account' => 'Piutang Dagang',
+            ],
+            [
+                'code' => 2110,
+                'name_account' => 'Hutang Dagang',
+            ],
+            [
+                'code' => 4100,
+                'name_account' => 'Penjualan'
+            ],
+            [
+                'code' => 5100,
+                'name_account' => 'Pembelian'
+            ],
+        ];
+
+        $collAccounts = collect($accounts);
+        $collAccounts->each(function($item) use($company) {
+            $company->coa()->create($item);
+        });
 
         // response
         return response()->json([

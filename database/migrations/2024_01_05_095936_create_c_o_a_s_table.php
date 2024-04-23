@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->integer('code');
             $table->string('name_account');
-            $table->enum('type', ['default', 'company'])->default('default');
+            $table->string('category')->nullable();
             $table->integer('saldo')->default(0);
             $table->text('desc')->nullable();
+            $table->morphs('companiable');
             $table->timestamps();
         });
     }

@@ -86,8 +86,8 @@ class Company extends Model
         return $this->hasMany(SalesOrder::class);
     }
 
-    public function coaAddition()
+    public function coa()
     {
-        return $this->morphMany(CoaAddition::class, 'companiable');
+        return $this->morphMany(COA::class, 'companiable');
     }
 }
