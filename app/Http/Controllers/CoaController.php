@@ -69,6 +69,7 @@ class CoaController extends Controller
     public function update(Request $request, COA $coa)
     {
         $data = $request->only('code', 'name_account', 'category', 'desc');
+        $saldo = $coa->saldo;
         $coa->update($data);
 
         return response()->json([

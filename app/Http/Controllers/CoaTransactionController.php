@@ -92,11 +92,11 @@ class CoaTransactionController extends Controller
         ], Response::HTTP_CREATED);
     }
 
-    public function show(CoaTransaction $coaTransaction)
+    public function show(CoaTransaction $transaction)
     {
         return response()->json([
             'status' => 'success',
-            'data' => $coaTransaction
+            'data' => $transaction
         ]);
     }
 }
