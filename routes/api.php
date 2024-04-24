@@ -347,6 +347,7 @@ Route::middleware('auth:sanctum')->group(function() {
             ['prefix' => 'accountant'], 
             function() {
                 Route::get('/', [CoaController::class, 'index']);
+                Route::get('/list', [CoaController::class, 'allData']);
                 Route::post('/', [CoaController::class, 'store']);
                 
                 # Transaksi CoA

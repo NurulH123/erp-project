@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Validator;
 
 class CoaController extends Controller
 {
-
     public function index()
     {
         $user = auth()->user()->employee;
@@ -16,6 +15,27 @@ class CoaController extends Controller
 
         return response()->json([
             'data' => $company->coas
+        ]);
+    }
+
+    public function allData()
+    {
+        $user = auth()->user()->employee;
+        $company = $user->company;
+
+        $sort = request('sort') ?? '5';
+
+        $coas = COA::where('companiable_id', $company->id)
+                            ->with([
+                                'invoiceable:id,code_transaction,total_pay', 
+                                'kredit:id,code,name_account',
+                                'debet:id,code,name_account',
+                                'user:id,username',
+                            ])
+                            ->paginate($sort);
+        
+        return response()->json([
+            'data' => $coas
         ]);
     }
 
@@ -48,5 +68,10 @@ class CoaController extends Controller
             'message' => 'Data Telah Disimpan',
             'data' => $coa
         ]);
+    }
+
+    public function update(Request $request, COA $coa)
+    {
+            
     }
 }
