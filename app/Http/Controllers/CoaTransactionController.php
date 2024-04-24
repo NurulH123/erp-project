@@ -91,4 +91,12 @@ class CoaTransactionController extends Controller
             'message' => 'Transaksi Telah Ditambahkan',
         ], Response::HTTP_CREATED);
     }
+
+    public function show(CoaTransaction $coaTransaction)
+    {
+        return response()->json([
+            'status' => 'success',
+            'data' => $coaTransaction
+        ]);
+    }
 }

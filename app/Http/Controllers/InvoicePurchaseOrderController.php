@@ -45,7 +45,7 @@ class InvoicePurchaseOrderController extends Controller
         ]);
 
         if ($validator->fails()) return response()->json([
-            'status' => 'failed', 
+            'status' => 'failed',
             'message' => $validator->errors()
         ], Response::HTTP_NOT_ACCEPTABLE);
 
@@ -110,6 +110,7 @@ class InvoicePurchaseOrderController extends Controller
         $purchase->coaTransaction()->create([
             'companiable_id' => $company->id,
             'companiable_type' => get_class($company),
+            'type' => $request->type,
             'debet' => $debet,
             'kredit' => $aknPembelian,
             'user_id' => auth()->user()->id

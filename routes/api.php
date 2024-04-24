@@ -349,10 +349,12 @@ Route::middleware('auth:sanctum')->group(function() {
                 Route::get('/', [CoaController::class, 'index']);
                 Route::get('/list', [CoaController::class, 'allData']);
                 Route::post('/', [CoaController::class, 'store']);
+                Route::patch('/', [CoaController::class, 'update']);
                 
                 # Transaksi CoA
                 Route::get('/transaction', [CoaTransactionController::class, 'index']);
                 Route::post('/transaction/{transaction}', [CoaTransactionController::class, 'updateTransaction']);
+                Route::post('/transaction/{transaction}/show', [CoaTransactionController::class, 'show']);
         });
 
 });

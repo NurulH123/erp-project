@@ -37,7 +37,7 @@ class CoaController extends Controller
      *  Menambahkan Akun Baru Keuangan
      */
     public function store(Request $request)
-    {
+    {                                                                                                                                     
         $user = auth()->user()->employee;
         $company = $user->company;
         $req = $request->only('code', 'name_account', 'category', 'desc');
@@ -68,6 +68,12 @@ class CoaController extends Controller
 
     public function update(Request $request, COA $coa)
     {
-            
+        $data = $request->only('code', 'name_account', 'category', 'desc');
+        $coa->update($data);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Data Telah Diupdate'
+        ]);
     }
 }
