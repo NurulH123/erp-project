@@ -52,6 +52,7 @@ class WarehouseController extends Controller
         ]);
     }
 
+
     public function store(Request $request)
     {
         $user = auth()->user()->employee;
