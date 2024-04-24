@@ -53,11 +53,15 @@ class InvoicePurchaseOrderController extends Controller
         $desc = '';
         $accepted = date('Y-m-d', strtotime($request->date_accepted));
         $invoices = collect($request->detail_po);
+        
+        $debet = $request->type == 'cash' ? $kas : $aknHutangDagang; // debet
 
-        $invoices->each(function($item) use($purchase, $accepted){
+        $invoices->each(function($item) use($purchase, $accepted, $debet, $aknPembelian){
 
             $item['purchasing_order_id'] = $purchase->id;
             $item ['is_completed'] = true;
+            $item['debet'] = $debet;
+            $item['kredit'] = $aknPembelian;
 
             $detail = DetailPurchasingOrder::find($item['detail_id']);
             $order = $detail->order;
@@ -101,9 +105,6 @@ class InvoicePurchaseOrderController extends Controller
         $dataPo['desc'] = $desc;
         $dataPo['total_pay'] = $newInvoices->sum('pay');
         $purchase->update($dataPo);
-
-
-        $debet = $request->type == 'cash' ? $kas : $aknHutangDagang;
 
         // Create CoA transaksi
         $purchase->coaTransaction()->create([
