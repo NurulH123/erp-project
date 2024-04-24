@@ -38,6 +38,8 @@ class CoaController extends Controller
      */
     public function store(Request $request)
     {
+        $user = auth()->user()->employee;
+        $company = $user->company;
         $req = $request->only('code', 'name_account', 'category');
 
         $validator = Validator::make($req, [
@@ -55,12 +57,12 @@ class CoaController extends Controller
             ]);
         }
 
-        $coa = COA::create($req);
+        $coas = $company->coas()->create($req);
 
         return response()->json([
             'status' => 'success',
             'message' => 'Data Telah Disimpan',
-            'data' => $coa
+            'data' => $coas
         ]);
     }
 
