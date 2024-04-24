@@ -40,7 +40,7 @@ class CoaController extends Controller
     {
         $user = auth()->user()->employee;
         $company = $user->company;
-        $req = $request->only('code', 'name_account', 'category');
+        $req = $request->only('code', 'name_account', 'category', 'desc');
 
         $validator = Validator::make($req, [
             'code' => 'required',
