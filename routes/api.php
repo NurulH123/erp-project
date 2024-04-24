@@ -344,7 +344,7 @@ Route::middleware('auth:sanctum')->group(function() {
 
 
         Route::group(
-            ['prefix' => 'accountant'], 
+            ['prefix' => 'accountant'],
             function() {
                 Route::get('/', [CoaController::class, 'index']);
                 Route::get('/list', [CoaController::class, 'allData']);

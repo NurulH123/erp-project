@@ -26,12 +26,6 @@ class CoaController extends Controller
         $sort = request('sort') ?? '5';
 
         $coas = COA::where('companiable_id', $company->id)
-                            ->with([
-                                'invoiceable:id,code_transaction,total_pay', 
-                                'kredit:id,code,name_account',
-                                'debet:id,code,name_account',
-                                'user:id,username',
-                            ])
                             ->paginate($sort);
         
         return response()->json([
