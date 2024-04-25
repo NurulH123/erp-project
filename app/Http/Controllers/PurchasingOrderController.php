@@ -40,7 +40,7 @@ class PurchasingOrderController extends Controller
                             'warehouse:id,name',
                             'employee:code,username,email,status',
                             'details.product:id,name,type_zat,photo',
-                            'invoices'
+                            'details.invoice:detail_purchasing_order_id,come,is_completed,pay'
                         ])->find($id);
 
         return response()->json([
