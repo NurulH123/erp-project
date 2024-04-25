@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DetailPurchasingOrder;
-use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use App\Models\PurchasingOrder;
 use Illuminate\Database\Eloquent\Builder;
