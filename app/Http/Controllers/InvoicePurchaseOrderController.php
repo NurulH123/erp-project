@@ -59,18 +59,24 @@ class InvoicePurchaseOrderController extends Controller
         $invoices->each(function($item) use($purchase, $accepted, $debet, $aknPembelian){
 
             $item['purchasing_order_id'] = $purchase->id;
-            $item ['is_completed'] = true;
+            $item ['is_completed'] = false;
             $item['debet'] = $debet;
             $item['kredit'] = $aknPembelian;
 
             $detail = DetailPurchasingOrder::find($item['detail_id']);
             $order = $detail->order;
 
-            if ($order != $item['come']) $item['is_completed']  = false;
+            // if ($order != $item['come']) $item['is_completed']  = false;
 
             $price = $detail->product->price;
             $item['pay'] = $price * $item['come']; // Total pay yg harus dibayar
-            $detail->invoice()->create($item); // Create invoice
+            $createInv = $detail->invoices()->create($item); // Create invoice
+            
+            $comes = $detail->invoices->sum('come');
+            // update status penerimaan produk dan check complete
+            if ($comes >= $order) {
+                $createInv->update(['is_completed' => true]);
+            }
 
             // Create history
             $dataHistory = [
@@ -98,13 +104,20 @@ class InvoicePurchaseOrderController extends Controller
         if (isset($request->desc)) $desc = $request->desc;
 
         // Update transaksi po
+        $details = $purchase->details;
         $newInvoices = $purchase->invoices;
 
         $dataPo['date_accepted'] = $accepted;
-        $dataPo['status'] = 'accepted';
         $dataPo['desc'] = $desc;
         $dataPo['total_pay'] = $newInvoices->sum('pay');
         $purchase->update($dataPo);
+
+        // update status po
+        $orders = $details->sum('order');
+        $comes = $newInvoices->sum('come');
+
+        if ($comes > 0 && ($comes >= $orders)) $purchase->update(['status' => 'accepted']);
+        elseif ($comes > 0 && ($comes < $orders)) $purchase->update(['status' => 'pending']);
 
         // Create CoA transaksi
         $purchase->coaTransaction()->create([

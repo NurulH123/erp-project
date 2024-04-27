@@ -16,9 +16,9 @@ class DetailPurchasingOrder extends Model
         return $this->belongsTo(PurchasingOrder::class);
     }
 
-    public function invoice()
+    public function invoices()
     {
-        return $this->hasOne(InvoicePurchaseOrder::class);
+        return $this->hasMany(InvoicePurchaseOrder::class);
     }
 
     public function product()
