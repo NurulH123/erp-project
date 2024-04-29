@@ -72,11 +72,12 @@ class ProductWarehouseController extends Controller
 
         if ($validator->fails()) return response()->json(['status' => 'failed', 'message' => $validator->errors()],  442);
         
-        $products_stock = collect($request->product_stock);
+        // $products_stock = collect($request->product_stock);
+        $products_stock = $request->product_stock;
 
         // Proses pemindahan produk dari satu gudang ke gudang yg lain 
-        $products_stock->each(function($item) use($warehouse) {
-
+        foreach ($products_stock as $item) {
+            
             $prevWarehouse = Warehouse::find($item['warehouse_id']); // warehouse yg ingin dipindahhkan produknya ke warehouse lain
             $product = $prevWarehouse->products->find($item['product_id']);
             $stockInPrevWarehouse = $product->pivot->stock;
@@ -85,7 +86,7 @@ class ProductWarehouseController extends Controller
 
             // Proses pengurangan produk sebelumnya dan validasi
             $productReduction = $stockInPrevWarehouse - $item['stock'];
-            if($productReduction < 0) return response()->json(['status' => 'failed', 'message' => 'Pengurangan Produk Terlalu Banyak']);
+            if($productReduction < 0) return response()->json(['status' => 'failed', 'message' => 'Stok Tidak Cukup. Pengurangan Produk Terlalu Banyak']);
             
             // Proses penambahan stock
             if (!is_null($product)) {
@@ -102,8 +103,7 @@ class ProductWarehouseController extends Controller
 
             // Proses pengurangan stok di gudang sebelumnya
             $prevWarehouse->products()->updateExistingPivot($item['product_id'], ['stock' => $productReduction]);
-
-        });
+        }
 
         return response()->json([
             'status' => 'success',
