@@ -7,6 +7,7 @@ use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use App\Models\ProductWarehouse;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProductWarehouseController extends Controller
 {
@@ -70,7 +71,9 @@ class ProductWarehouseController extends Controller
             ['product_stock.required' => 'Produk atau Stok Harus Diisi']
         );
 
-        if ($validator->fails()) return response()->json(['status' => 'failed', 'message' => $validator->errors()],  442);
+        if ($validator->fails()) return response()->json([
+            'status' => 'failed', 
+            'message' => $validator->errors()],  Response::HTTP_NOT_ACCEPTABLE);
         
         // $products_stock = collect($request->product_stock);
         $products_stock = $request->product_stock;
