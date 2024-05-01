@@ -89,7 +89,10 @@ class ProductWarehouseController extends Controller
 
             // Proses pengurangan produk sebelumnya dan validasi
             $productReduction = $stockInPrevWarehouse - $item['stock'];
-            if($productReduction < 0) return response()->json(['status' => 'failed', 'message' => 'Stok Tidak Cukup. Pengurangan Produk Terlalu Banyak']);
+            if($productReduction < 0) return response()->json([
+                'status' => 'failed', 
+                'message' => 'Stok Tidak Cukup. Pengurangan Produk Terlalu Banyak'
+            ], Response::HTTP_NOT_ACCEPTABLE);
             
             // Proses penambahan stock
             if (!is_null($product)) {
